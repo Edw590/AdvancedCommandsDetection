@@ -48,8 +48,8 @@ This project is licensed under Apache 2.0 License - http://www.apache.org/licens
 
 ## Support
 If you have any questions, try the options below:
-- Create an Issue here: https://github.com/DADi590/LEGION---A-real-assistant--PlatformsUnifier/issues
-- Create a Discussion here: https://github.com/DADi590/LEGION---A-real-assistant--PlatformsUnifier/discussions
+- Create an Issue here: https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier/issues
+- Create a Discussion here: https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier/discussions
 
 ## Final notes
 Any new ideas are welcomed! (I just may or may not implement them that fast - student)
