@@ -1,11 +1,7 @@
 # LEGION - A real assistant [Platforms Unifier]
 
-## Notice
-This project is a part of a bigger project, consisting of the following:
-- [LEGION - A real assistant [Android/Client]](https://github.com/DADi590/LEGION---A-real-assistant--Android-Client)
-- [LEGION - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
-
 ## Table of Contents
+- [Notice](#notice)
 - [Background](#background)
 - [Current sub-modules](#current-sub-modules)
 - [For developers](#for-developers)
@@ -16,6 +12,11 @@ This project is a part of a bigger project, consisting of the following:
 - - [License](#--license)
 - [Support](#support)
 - [Final notes](#final-notes)
+
+## Notice
+This project is a part of a bigger project, consisting of the following:
+- [LEGION - A real assistant [Android/Client]](https://github.com/DADi590/LEGION---A-real-assistant--Android-Client)
+- [LEGION - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
 
 ## Background
 This is a module which is supposed to connect the assistant in different platforms. Something is coded in Go and does not need to be coded specifically in Java, then for iOS, for example, Objective C, then C++ or C (Windows/Linux), or Python (Raspberry Pi), or any other. This should compile to all needed architectures and be present as a global utilities library.
@@ -31,6 +32,7 @@ This is a module which is supposed to connect the assistant in different platfor
 And a small explanation of the module structure:
 - Each main package has its name beginning with "APU_". The reason is on Android, without that, appears, for example "CmdDetection" only. And that comes from where? No idea. No indication. So "APU_CmdDetection" seems better to differentiate where the class came from (APU comes from Assist_Plaforms_Unifier - the name of the project).
 - Each sub-module is inside a package. Like the Commands Detector module, which is inside APU_CmdDetection.
+- There are packages which end in "Int". That means Internal - not to be exported like the packages which don't end in Int. With Gomobile it's possible to choose which packages are exported. The others will be compiled but will not be exported. So that's the idea of those Int-ended packages.
 - There's also a Python program which updates the VERSION constant each the module is compiled for Android. That way forgetting to update the version doesn't happen.
 - As this module is compiled for Android with Gomobile, it's limited to the supported types by go/build: https://pkg.go.dev/golang.org/x/mobile/cmd/gobind#hdr-Type_restrictions, so all the exported elements must follow those rules (some, as for example if an array is exported, no error is thrown, so doesn't seem to be bad to export those to be accessible across packages - won't be accessible on Android though).
 
@@ -46,8 +48,8 @@ This project is licensed under Apache 2.0 License - http://www.apache.org/licens
 
 ## Support
 If you have any questions, try the options below:
-- Create an Issue here: https://github.com/DADi590/LEGION---A-real-assistant--PlatformsUnifier/issues
-- Create a Discussion here: https://github.com/DADi590/LEGION---A-real-assistant--PlatformsUnifier/discussions
+- Create an Issue here: https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier/issues
+- Create a Discussion here: https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier/discussions
 
 ## Final notes
 Any new ideas are welcomed! (I just may or may not implement them that fast - student)
