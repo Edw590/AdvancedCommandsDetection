@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build AAR Android" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="Assist_Platforms_Unifier" />
+    <working_directory value="$PROJECT_DIR$" />
+    <kind value="PACKAGE" />
+    <package value="Assist_Platforms_Unifier" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <option name="run" value="false" />
+    <method v="2">
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_Update VERSION var" />
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_Gomobile Build Android" />
+    </method>
+  </configuration>
+</component>
