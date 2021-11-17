@@ -1,11 +1,7 @@
 # LEGION - A real assistant [Platforms Unifier]
 
-## Notice
-This project is a part of a bigger project, consisting of the following:
-- [LEGION - A real assistant [Android/Client]](https://github.com/DADi590/LEGION---A-real-assistant--Android-Client)
-- [LEGION - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
-
 ## Table of Contents
+- [Notice](#notice)
 - [Background](#background)
 - [Current sub-modules](#current-sub-modules)
 - [For developers](#for-developers)
@@ -16,6 +12,11 @@ This project is a part of a bigger project, consisting of the following:
 - - [License](#--license)
 - [Support](#support)
 - [Final notes](#final-notes)
+
+## Notice
+This project is a part of a bigger project, consisting of the following:
+- [LEGION - A real assistant [Android/Client]](https://github.com/DADi590/LEGION---A-real-assistant--Android-Client)
+- [LEGION - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
 
 ## Background
 This is a module which is supposed to connect the assistant in different platforms. Something is coded in Go and does not need to be coded specifically in Java, then for iOS, for example, Objective C, then C++ or C (Windows/Linux), or Python (Raspberry Pi), or any other. This should compile to all needed architectures and be present as a global utilities library.
