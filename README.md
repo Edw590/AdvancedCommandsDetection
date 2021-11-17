@@ -31,6 +31,7 @@ This is a module which is supposed to connect the assistant in different platfor
 And a small explanation of the module structure:
 - Each main package has its name beginning with "APU_". The reason is on Android, without that, appears, for example "CmdDetection" only. And that comes from where? No idea. No indication. So "APU_CmdDetection" seems better to differentiate where the class came from (APU comes from Assist_Plaforms_Unifier - the name of the project).
 - Each sub-module is inside a package. Like the Commands Detector module, which is inside APU_CmdDetection.
+- There are packages which end in "Int". That means Internal - not to be exported like the packages which don't end in Int. With Gomobile it's possible to choose which packages are exported. The others will be compiled but will not be exported. So that's the idea of those Int-ended packages.
 - There's also a Python program which updates the VERSION constant each the module is compiled for Android. That way forgetting to update the version doesn't happen.
 - As this module is compiled for Android with Gomobile, it's limited to the supported types by go/build: https://pkg.go.dev/golang.org/x/mobile/cmd/gobind#hdr-Type_restrictions, so all the exported elements must follow those rules (some, as for example if an array is exported, no error is thrown, so doesn't seem to be bad to export those to be accessible across packages - won't be accessible on Android though).
 
