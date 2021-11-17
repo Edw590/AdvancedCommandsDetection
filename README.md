@@ -49,4 +49,4 @@ If you have any questions, try the options below:
 - Create a Discussion here: https://github.com/DADi590/LEGION---A-real-assistant--PlatformsUnifier/discussions
 
 ## Final notes
-Hope you like the app! Any new ideas are welcomed! (I just may or may not implement them that fast - student)
+Any new ideas are welcomed! (I just may or may not implement them that fast - student)
