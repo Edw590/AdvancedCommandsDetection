@@ -28,12 +28,6 @@ import (
 	"strings"
 )
 
-// todo Put the assistant calculating some of the parameters for the function.
-// For example, it could see if with "set an alarm", "set" appears only in the first sub-array, it would set the
-// parameter to exclude that word from the list, but not if words are repeated on the sub-arrays!
-// Infinite parameters on the function but some automatic! Customizable assistant by itself!
-
-
 const ALL_SUB_VERIFS_STR string = "3234_ALL_SUB_VERIFS_STR"
 const ALL_SUB_VERIFS_INT int = -1
 const INDEX_EVEN string = "3234_INDEX_EVEN"
@@ -46,7 +40,7 @@ const WVD_ERR_1 string = "-1"
 const WVD_ERR_2 string = "-2"
 
 /*
-wordsVerification iterates a sentence and searches for keywords provided on a list and returns the words it found.
+wordsVerificationDADi iterates a sentence and searches for keywords provided on a list and returns the words it found.
 
 The search is done through intervals of words, so other words can be in between the keywords and the function will still
 find the correct words. Aside from that various parameters can be set to adjust the behavior of the function. A good
@@ -149,11 +143,11 @@ the 2nd index, the index on which the word was found (or one of the error consta
 NONE will be used and on the index will be a non-negative index - discard that index, it's wrong (no word found, how
 can there be an index there)
 */
-func wordsVerification(sentence []string, sentence_index int, main_words []string, words_list [][]string,
-					   left_intervs [][]string, right_intervs [][]string, init_indexes_sub_verifs [][]string,
-					   exclude_found_word []int, return_last_match bool, ignore_repets_main_words bool,
-					   ignore_repets_original_word bool, order_words_list bool, stop_first_not_found bool,
-					   exclude_original_words bool, continue_with_words_array_number int) [][]string {
+func wordsVerificationDADi(sentence []string, sentence_index int, main_words []string, words_list [][]string,
+	left_intervs [][]string, right_intervs [][]string, init_indexes_sub_verifs [][]string,
+	exclude_found_word []int, return_last_match bool, ignore_repets_main_words bool,
+	ignore_repets_original_word bool, order_words_list bool, stop_first_not_found bool,
+	exclude_original_words bool, continue_with_words_array_number int) [][]string {
 	// Note: this function was created recursive and is now a loop for easier debugging.
 
 	var ret_var [][]string = nil
@@ -273,12 +267,12 @@ func wordsVerification(sentence []string, sentence_index int, main_words []strin
 		var index_word_found int = init_index_int // Can't be a negative number as those are reserved for error codes...
 
 		/*
-		Given a 'word', the 'sentence' array, and the current 'index' of iterating the 'sentence', this checks if the
-		'word' is equal to the word on the current 'index' of the 'sentence', or in case it's a special command as those
-		on the function documentation, it checks if the word on the index is equivalent to said special command.
-		Example: in case the 'word' is a special command requesting a number, this checks if the word on the 'index' of
-		'sentence' is a number.
-		Returns true if it found a match, false otherwise.
+			Given a 'word', the 'sentence' array, and the current 'index' of iterating the 'sentence', this checks if the
+			'word' is equal to the word on the current 'index' of the 'sentence', or in case it's a special command as those
+			on the function documentation, it checks if the word on the index is equivalent to said special command.
+			Example: in case the 'word' is a special command requesting a number, this checks if the word on the 'index' of
+			'sentence' is a number.
+			Returns true if it found a match, false otherwise.
 		*/
 		check_word := func(word string, index int) bool {
 			// Checking special commands here.
@@ -330,7 +324,7 @@ func wordsVerification(sentence []string, sentence_index int, main_words []strin
 			// For each word in the current 'words_list_int' array and within the words interval specified, this looks
 			// for the word in the 'sentence'. When it finds one of the words in the array, it notes down the word and
 			// the index.
-			for counter := init_index_int - left_interv; counter <= init_index_int + right_interv; counter++ {
+			for counter := init_index_int - left_interv; counter <= init_index_int+right_interv; counter++ {
 				if counter >= 0 && counter < sentence_len && counter != init_index_int {
 					for _, word := range words_list_int[sub_verification] {
 						if check_word(word, counter) {
@@ -351,8 +345,8 @@ func wordsVerification(sentence []string, sentence_index int, main_words []strin
 		// "set ah... set 2 alarms" - so this verification is ignored to give place to the correct one (next call).
 		// In that case, stop the verification and complete the rest of the return array with NONE.
 		if init_word_repeated {
-			if index_word_found >= index_init_word_repeated - left_interv &&
-				index_word_found <= index_init_word_repeated + right_interv {
+			if index_word_found >= index_init_word_repeated-left_interv &&
+				index_word_found <= index_init_word_repeated+right_interv {
 				for counter := 0; counter < len(words_list_int[sub_verification:]); counter++ {
 					ret_var = append(ret_var, []string{NONE, WVD_ERR_1})
 				}
@@ -469,14 +463,14 @@ func wordsVerification(sentence []string, sentence_index int, main_words []strin
 					init_index_next_sub_verif = strconv.Itoa(index_word_found - number)
 				}
 			} else if strings.Contains(init_index_next_sub_verif, INDEX_DEFAULT) {
-				init_index_next_sub_verif = strconv.Itoa(int((float32(init_index_int) + float32(index_word_found)) /
+				init_index_next_sub_verif = strconv.Itoa(int((float32(init_index_int)+float32(index_word_found))/
 					float32(2) + float32(0.5)))
 			} else {
 				// If an index was specified, calculate the next initial index by calculating an average and summing 0.5.
 				// If it was index 3, it's now 3.5, which is 3 when converted to int. If it was 3.5, it's now 4.
 				// It's just a way of increasing the index sometimes. Sometimes not - random.
 				if init_index_next_sub_verif == "" {
-					init_index_next_sub_verif = strconv.Itoa(int((float32(init_index_int) + float32(index_word_found)) /
+					init_index_next_sub_verif = strconv.Itoa(int((float32(init_index_int)+float32(index_word_found))/
 						float32(2) + float32(0.5)))
 				}
 			}
@@ -497,7 +491,7 @@ func wordsVerification(sentence []string, sentence_index int, main_words []strin
 }
 
 /*
-checkResultsWordsVerifDADi checks if the results coming from the wordsVerification() function are acceptable or not,
+checkResultsWordsVerifDADi checks if the results coming from the wordsVerificationDADi() function are acceptable or not,
 depending on the given parameters.
 
 If there are conditions (described below), those will be checked. If not (leave 'conditions_continue' nil or empty),
@@ -571,11 +565,11 @@ The verification only stops if it:
 
 > Params:
 
-- words_list – same as in wordsVerification() (the same that was sent to that function)
+- words_list – same as in wordsVerificationDADi() (the same that was sent to that function)
 
 - main_word – the word that triggered the command detection (in "turn the flashligh on", would be "turn")
 
-- results_wordsVerificationDADi – the output of wordsVerification()
+- results_wordsVerificationDADi – the output of wordsVerificationDADi()
 
 - conditions_continue – a 3D array with a set of conditions on which the results are acceptable. Empty to allow
 any combination of words on the results to say they are acceptable (as long as the words on the results are inside the
@@ -590,7 +584,7 @@ acceptable. See the format above.
 - true if the results are acceptable for the given parameters, false otherwise
 */
 func checkResultsWordsVerifDADi(words_list [][]string, main_word string, results_wordsVerificationDADi [][]string,
-							conditions_continue [][][]string, conditions_not_continue [][][][]string) bool {
+	conditions_continue [][][]string, conditions_not_continue [][][][]string) bool {
 	//log.Println("-------------------------------")
 	//log.Println(words_list)
 	//log.Println(main_word)
@@ -615,27 +609,26 @@ func checkResultsWordsVerifDADi(words_list [][]string, main_word string, results
 		// The variable below is a copy of the results of the verification function with the main word added in the
 		// index 0, so the conditions can be checked by their index (0 corresponding to the main word and 1 to the first
 		// word of the results).
-		var modified_results_verifDADi [][]string = APU_GlobalUtilsInt.CopyOuterSlice(results_wordsVerificationDADi).
-			([][]string) // Will only add a new slice to the outer slice, so no problem in using CopyOuterSlice().
+		var modified_results_verifDADi [][]string = APU_GlobalUtilsInt.CopyOuterSlice(results_wordsVerificationDADi).([][]string) // Will only add a new slice to the outer slice, so no problem in using CopyOuterSlice().
 		APU_GlobalUtilsInt.AddElemSlice(&modified_results_verifDADi, []string{main_word, "-1"}, 0)
 
 		/*
-		checkConditionNotContinueMatch checks if any condition on the main condition of the conditions of no
-		continuation corresponding to a given condition of continuation has a match.
+			checkConditionNotContinueMatch checks if any condition on the main condition of the conditions of no
+			continuation corresponding to a given condition of continuation has a match.
 
-		Which means, if there is a match, it's NOT to continue with that continuation condition because it can't be
-		applied --> go check the next condition of continuation, and the corresponding conditions of no continuation.
+			Which means, if there is a match, it's NOT to continue with that continuation condition because it can't be
+			applied --> go check the next condition of continuation, and the corresponding conditions of no continuation.
 
-		-----------------------------------------------------------
+			-----------------------------------------------------------
 
-		> Params:
+			> Params:
 
-		- cond_index – the index of the condition of continuation currently in analysis
+			- cond_index – the index of the condition of continuation currently in analysis
 
 
-		> Returns:
+			> Returns:
 
-		- true if there is a match in a condition of no continuation, false if there is no match
+			- true if there is a match in a condition of no continuation, false if there is no match
 		*/
 		checkConditionNotContinueMatch := func(cont_cond_index int) bool {
 			// Main note: this function is almost copy-paste of what's below it. So to understand it, read below it first.

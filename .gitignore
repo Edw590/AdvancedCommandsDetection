@@ -1,9 +1,22 @@
+########################################################
+# Exclude from Git, Project and Deployment (unused files in the project - documentation, notes,...)
+-*
+# Exclude only from Git (EOG = Exclude Only Git) - personal things
+*_EOG.*
+*_EOG
+########################################################
+
+# URL where I got this from: https://github.com/github/gitignore/blob/master/Go.gitignore
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+
+*.jar
+*.aar
 
 # Test binary, built with `go test -c`
 *.test

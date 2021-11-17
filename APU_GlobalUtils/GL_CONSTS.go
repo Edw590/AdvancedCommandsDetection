@@ -24,7 +24,7 @@ package APU_GlobalUtils
 
 // VERSION is the constant to check to know the version of the compiled Go module. The format is
 // "yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])".
-const VERSION string = "2021-11-15 -- 01:43:27.138160 (Hora padrão de GMT)"
+const VERSION string = "2021-11-17 -- 01:27:03.820937 (Hora padrão de GMT)"
 
 // ASSISTANT_NAME is the constant which has the assistant name used in the entire Go module.
 const ASSISTANT_NAME string = "LEGION"
