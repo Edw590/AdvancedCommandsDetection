@@ -36,13 +36,13 @@ var conditions_continue_GL = [...][][][]string{
 	{}, // 2
 	{}, // 3
 	{ // 4
-		{{}, {"on","off","wifi","wi-fi"}, {"on","off","wifi","wi-fi"}},
+		{{}, {"on", "off", "wifi", "wi-fi"}, {"on", "off", "wifi", "wi-fi"}},
 	},
 	{ // 5
-		{{}, {"on","off","mobile","data","connection"}, {"mobile","data","connection"}, {"on","off","mobile","data","connection"}, {"on","off","connection"}},
+		{{}, {"on", "off", "mobile", "data", "connection"}, {"mobile", "data", "connection"}, {"on", "off", "mobile", "data", "connection"}, {"on", "off", "connection"}},
 	},
 	{ // 6
-		{{}, {"on","off","bluetooth"}, {"on","off","bluetooth"}},
+		{{}, {"on", "off", "bluetooth"}, {"on", "off", "bluetooth"}},
 	},
 	{}, // 7
 	{ // 8
@@ -50,34 +50,34 @@ var conditions_continue_GL = [...][][][]string{
 	},
 	{}, // 9
 	{ // 10
-		{{}, {"on","off","speaker","speakers"}, {"on","off","speaker","speakers"}},
+		{{}, {"on", "off", "speaker", "speakers"}, {"on", "off", "speaker", "speakers"}},
 	},
 	{ // 11
-		{{}, {"on","off","airplane"}, {"mode","airplane"}, {"on","off","mode"}},
+		{{}, {"on", "off", "airplane"}, {"mode", "airplane"}, {"on", "off", "mode"}},
 	},
 	{ // 12
 		{{"how"}, {"is"}, {"battery"}},
 		{{"how's", "tell"}, {"battery"}, {}},
 	},
 	{ // 13
-		{{"power","turn"}, {"off","down","phone"}, {"off","down","phone"}},
-		{{"shut"}, {"down","phone"}, {"down","phone"}},
+		{{"power", "turn"}, {"off", "down", "phone"}, {"off", "down", "phone"}},
+		{{"shut"}, {"down", "phone"}, {"down", "phone"}},
 		{{"shutdown"}, {"phone"}, {}},
 	},
 	{}, // 14
 	{ // 15
 		// This is here cecause only one of the words on the 2nd sub-list of the words_list is mandatory ("take a
 		// picture"). No word of the first sub-list is mandatory.
-		{{}, {}, {"selfie","picture","photo","photograph"}},
+		{{}, {}, {"selfie", "picture", "photo", "photograph"}},
 	},
 	{ // 16
 		// Because only one of the words on the 2nd sub-list of the words_list is mandatory ("record the audio").
 		// No word of the first sub-list is mandatory.
-		{{}, {}, {"video","camera","audio","sound"}},
+		{{}, {}, {"video", "camera", "audio", "sound"}},
 	},
 	{ // 17
 		{{"say"}, {"again"}},
-		{{"what"}, {"say","said"}},
+		{{"what"}, {"say", "said"}},
 	},
 	{}, // 18
 }
@@ -89,34 +89,34 @@ var conditions_not_continue_GL = [...][][][][]string{
 	{}, // 3
 	{ // 4
 		{
-			{{}, {"off"}, {"on"}},  {{}, {"on"}, {"off"}},
+			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
 		},
 	},
 	{ // 5
 		{
-			{{}, {"on"}, {}, {"off"}},  {{}, {"off"}, {}, {"on"}},
+			{{}, {"on"}, {}, {"off"}}, {{}, {"off"}, {}, {"on"}},
 		},
 	},
 	{ // 6
 		{
-			{{}, {"off"}, {"on"}},  {{}, {"on"}, {"off"}},
+			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
 		},
 	},
 	{}, // 7
 	{ // 8
 		{
-			{{}, {"off"}, {"on"}},  {{}, {"on"}, {"off"}},
+			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
 		},
 	},
 	{}, // 9
 	{ // 10
 		{
-			{{}, {"off"}, {"on"}},  {{}, {"on"}, {"off"}},
+			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
 		},
 	},
 	{ // 11
 		{
-			{{}, {"off"}, {}, {"on"}},  {{}, {"on"}, {}, {"off"}},
+			{{}, {"off"}, {}, {"on"}}, {{}, {"on"}, {}, {"off"}},
 		},
 	},
 	{}, // 12
@@ -126,12 +126,12 @@ var conditions_not_continue_GL = [...][][][][]string{
 	{ // 16
 		// Can't record frontal or rear audios xD.
 		{
-			{{}, {"frontal","front","rear"}, {"audio","sound"}},
+			{{}, {"frontal", "front", "rear"}, {"audio", "sound"}},
 		},
 	},
 	{ // 17
 		{
-			{{"say"}, {"say","said"}},
+			{{"say"}, {"say", "said"}},
 		},
 		{
 			{{"what"}, {"again"}},
@@ -143,6 +143,8 @@ var conditions_not_continue_GL = [...][][][][]string{
 /*
 Each sub-array ("condition") contains a set of conditions that can come in the results. Each array in the sub-array
 ("sub-condition") in question is related to an index of the results of the wordsVerificationDADi() function call.
+
+Naming convention: same as with the continuation conditions (read on checkResultsWordsVerifDADi()).
 
 ---------------
 

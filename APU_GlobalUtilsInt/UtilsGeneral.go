@@ -75,7 +75,6 @@ Tcf {
 */
 ///////////////////////////////////////
 
-
 /*
 Tern is an (inefficient) implementation of the Ternary Operator, not present in Go.
 
@@ -108,9 +107,8 @@ func Tern(statement bool, true_return interface{}, false_return interface{}) int
 	return false_return
 }
 
-
 /*
-DelEleInSlice removes an element from a Slice of any type by index.
+DelElemInSlice removes an element from a Slice of any type by index.
 
 Credits to https://stackoverflow.com/a/56591107/8228163 (optimized here).
 
@@ -127,11 +125,10 @@ Credits to https://stackoverflow.com/a/56591107/8228163 (optimized here).
 
 - nothing
 */
-func DelEleInSlice(slice interface{}, index int) {
+func DelElemInSlice(slice interface{}, index int) {
 	var slice_value reflect.Value = reflect.ValueOf(slice).Elem()
 	slice_value.Set(reflect.AppendSlice(slice_value.Slice(0, index), slice_value.Slice(index+1, slice_value.Len())))
 }
-
 
 /*
 AddElemSlice adds an element to a specific index of a slice, keeping the elements' order.

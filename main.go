@@ -51,7 +51,16 @@ func main() {
 	}
 	log.Println("")
 	// Test of good functioning of the commands detector.
-	log.Println("To do: " + APU_CmdDetection.CmdsDetector("turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on", all_allowed_cmds))
+	//log.Println("To do: " + APU_CmdDetection.CmdsDetector("turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on", all_allowed_cmds))
+
+	//var sentence_str string = "turn on the wifi please"
+	var sentence_str string = "turn it on turn on wifi and the airplane mode get it it on no don't turn it on turn off airplane mode and the wifi turn it on"
+	//var sentence_str string = "what's the time and the date please"
+	//var sentence_str string = "the airplane mode turn it freaking on"
+	//var sentence []string = strings.Split(sentence_str, " ")
+
+	//APU_CmdDetection.ReplaceIts(&sentence, sentence_str)
+	log.Println("To do: " + APU_CmdDetection.CmdsDetector(sentence_str, all_allowed_cmds))
 
 	// todo None of these below work decently... Fix them.
 

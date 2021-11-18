@@ -164,7 +164,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 			for counter, words_array := range words_list_int {
 				for counter1, word := range words_array {
 					if word == main_word {
-						APU_GlobalUtilsInt.DelEleInSlice(&words_list_int[counter], counter1)
+						APU_GlobalUtilsInt.DelElemInSlice(&words_list_int[counter], counter1)
 
 						break
 					}
@@ -410,7 +410,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 				for counter, words_array := range words_list_int[sub_verification+1:] {
 					for counter1, word := range words_array {
 						if word == word_found {
-							APU_GlobalUtilsInt.DelEleInSlice(&words_list_int[sub_verification+1+counter], counter1)
+							APU_GlobalUtilsInt.DelElemInSlice(&words_list_int[sub_verification+1+counter], counter1)
 
 							break
 						}
@@ -506,13 +506,13 @@ Naming convention:
 	- list: conditions_continue;
 	- sub-list: condition
 	- sub-sub-list: sub-condition
-	- string(s) of the sub-sub-list: string(s) of the sub-condition
+	- string(s) of the sub-sub-list: string(s) or word(s) of the sub-condition
 	- -----
 	- list: conditions_not_continue
 	- sub-list: main condition
 	- sub-sub-list: condition
 	- sub-sub-sub-list: sub-condition
-	- string(s) of the sub-sub-sub-list: string(s) of the sub-condition
+	- string(s) of the sub-sub-sub-list: string(s) or word(s) of the sub-condition
 
 ----------------
 

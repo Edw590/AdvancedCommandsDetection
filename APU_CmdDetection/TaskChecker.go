@@ -53,8 +53,8 @@ func GenerateListAllCmds() string {
 	return ret_var[:len(ret_var)-len(CMDS_SEPARATOR)]
 }
 
-
 const UNKNOWN_ERR string = "3234_UNKNOWN_ERR - "
+
 /*
 CmdsDetector is the function to be called to process tasks in a given sentence of words.
 
@@ -90,7 +90,6 @@ func CmdsDetector(sentence_str string, allowed_cmds string) string {
 	return ret_var
 }
 
-
 const CMDS_SEPARATOR string = ", " // Leave the space (mess because of a char being a uint8 and not a string)
 /*
 CmdsDetectorInternal is the actual function that will do what's written on CmdsDetector() - continue reading there.
@@ -108,8 +107,14 @@ func CmdsDetectorInternal(sentence_str string, allowed_cmds_str string) string {
 		allowed_cmds = append(allowed_cmds, number)
 	}
 
+	// Replace all the "it"s on the sentence.
+	ReplaceIts(&sentence, sentence_str)
+	// THE sentence_str IS OUTDATED AS OF THIS LINE!!!!!
+
+	// Get all the commands on the sentence.
 	var sentence_cmds []float32 = sentenceCmdsChecker(sentence, allowed_cmds)
 
+	// Filter the sentence of special commands (like "don't"/"do not") and do the necessary for each special command.
 	taskFilter(&sentence_cmds)
 
 	var ret_var string = ""
@@ -124,6 +129,7 @@ func CmdsDetectorInternal(sentence_str string, allowed_cmds_str string) string {
 		ret_var = ret_var[:len(ret_var)-len(CMDS_SEPARATOR)]
 	}
 
+	// Remove consecutively repeated commands
 	//ret_var = removeRepeatedCmds(ret_var) - let's see if the verification function can handle it without this...
 
 	log.Println(ret_var)
@@ -162,7 +168,7 @@ func removeRepeatedCmds(ret_var string) string {
 
 	var ret_var_list_len = len(ret_var_list) // Optimization
 	for counter := 0; counter < ret_var_list_len; counter++ {
-		if counter != ret_var_list_len - 1 {
+		if counter != ret_var_list_len-1 {
 			if ret_var_list[counter+1] == ret_var_list[counter] {
 				ret_var_list[counter] = MARK_TERMINATION_STR
 			}
@@ -183,7 +189,7 @@ func removeRepeatedCmds(ret_var string) string {
 	return ret_var
 }
 
-
+// ATTENTION - none of these constants below can collide with the WARN_-started constants on CmdsListP1!!!
 //const spec_cmd_dont_instead_CONST float32 = -1.1
 //const spec_cmd_stop_CONST float32 = -2
 //const spec_cmd_forget_CONST float32 = -3
@@ -196,7 +202,8 @@ sentenceCmdsChecker checks a sentence for commands whose indexes are listed in a
 
 > Params:
 
-- sentence – a 1D array of words on which the verification will be executed
+- sentence – a 1D array of words on which the verification will be executed (basically it's sentence_str required by
+CmdsDetector() splitted by spaces in a 1D array.
 
 - allowed_cmds – same as in CmdsDetector() but here it's in an array of integers and not as a string
 
@@ -208,14 +215,14 @@ sentenceCmdsChecker checks a sentence for commands whose indexes are listed in a
 func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 	var ret_var []float32 = nil
 
-	var sentence_len int = len(sentence)
-	for main_counter, main_word := range sentence {
+	var sentence_len int = len(sentence) // Optimization
+	for sentence_counter, sentence_word := range sentence {
 
-		if main_word == "don't" || main_word == "dont" || main_word == "do" {
+		if sentence_word == "don't" || sentence_word == "dont" || sentence_word == "do" {
 			var carry_on bool = false
-			// This below checks (in the 2nd part) if the next element exists or not in the 'sentence'
-			if main_word == "do" && main_counter + 1 != sentence_len - 1 {
-				if sentence[main_counter+1] == "not" {
+			// This below, checks (in the 2nd part) if the next element exists or not in the 'sentence'.
+			if sentence_word == "do" && sentence_counter+1 != sentence_len-1 {
+				if sentence[sentence_counter+1] == "not" {
 					carry_on = true
 				}
 			} else {
@@ -224,20 +231,23 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 			if carry_on {
 				ret_var = append(ret_var, spec_cmd_dont_CONST)
 			}
+		} else if sentence_word == WHATS_IT {
+			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
+			ret_var = append(ret_var, float32(float))
 		} else {
 			for _, cmd_index := range allowed_cmds {
-				for _, word := range main_words_GL[cmd_index] {
-					if word == main_word {
+				for _, main_word := range main_words_GL[cmd_index] {
+					if main_word == sentence_word {
 						/*if cmd_index != 6 {
 							// For testing
 							continue
 						}*/
 
 						log.Println("==============")
-						log.Println(word)
+						log.Println(sentence_word)
 						log.Println(cmd_index)
 
-						var results_WordsVerificationDADi [][]string = wordsVerificationDADi(sentence, main_counter,
+						var results_WordsVerificationDADi [][]string = wordsVerificationDADi(sentence, sentence_counter,
 							main_words_GL[cmd_index], words_list_GL[cmd_index], left_intervs_GL[cmd_index],
 							right_intervs_GL[cmd_index], init_indexes_sub_verifs_GL[cmd_index],
 							exclude_word_found_GL[cmd_index], return_last_match_GL[cmd_index],
@@ -248,36 +258,46 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 						log.Println("-----------")
 						log.Println(results_WordsVerificationDADi)
 
-						if checkResultsWordsVerifDADi(words_list_GL[cmd_index], main_word,
-								results_WordsVerificationDADi, conditions_continue_GL[cmd_index],
-								conditions_not_continue_GL[cmd_index]) {
+						if checkResultsWordsVerifDADi(words_list_GL[cmd_index], sentence_word,
+							results_WordsVerificationDADi, conditions_continue_GL[cmd_index],
+							conditions_not_continue_GL[cmd_index]) {
 							log.Println("LLLLLLL")
 							var sub_cond_match_found bool = false
-							for _, sub_condition := range conditions_return_GL[cmd_index] {
+							for _, condition := range conditions_return_GL[cmd_index] {
 								//log.Println("++++++++++++")
-								if len(sub_condition) == 1 {
-									float, _ := strconv.ParseFloat(sub_condition[0][0], 32)
+								if len(condition) == 1 {
+									// Then it's check nothing of the results and just return immediately.
+									float, _ := strconv.ParseFloat(condition[0][0], 32)
 									ret_var = append(ret_var, float32(float))
 
 									break
 								} else {
-									var parameters_matched bool = true
-									var sub_condition_len = len(sub_condition)
-									for _, parameter := range sub_condition[:sub_condition_len-1] {
-										results_index, _ := strconv.Atoi(parameter[0])
+									var all_sub_conds_matched bool = true
+									var condition_len = len(condition) // Optimization
+									for _, sub_cond := range condition[:condition_len-1] {
+										// Here it's sub_condition_len-1 because the last one is the return constant.
+
+										// Get the index of the results' sub-array to check.
+										sub_cond_index_to_chk, _ := strconv.Atoi(sub_cond[0])
+										// If any word matches on the sub-condition, go check the next sub-condition.
 										var word_match bool = false
 										//log.Println("-------")
-										for _, word_1 := range parameter[1:] {
+										for _, sub_cond_word := range sub_cond[1:] {
+											// [1:] because sub_cond[0] is the index. The rest are word to check.
+
 											//log.Println(word_1)
-											if results_index == -1 {
-												if word == word_1 {
+											if sub_cond_index_to_chk == -1 {
+												// If the index of the results to check is -1, that means it's to check
+												// the 'sentence_word' instead (the word that activated the command
+												// detection).
+												if sentence_word == sub_cond_word {
 													word_match = true
 
 													break
 												}
 											} else {
 												//log.Println(results_WordsVerificationDADi[results_index][0])
-												if results_WordsVerificationDADi[results_index][0] == word_1 {
+												if results_WordsVerificationDADi[sub_cond_index_to_chk][0] == sub_cond_word {
 													//log.Println("KKKKKKKKKKKKK")
 													word_match = true
 
@@ -285,13 +305,18 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 												}
 											}
 										}
-										parameters_matched = parameters_matched && word_match
-										if !parameters_matched {
+										all_sub_conds_matched = all_sub_conds_matched && word_match
+										if !all_sub_conds_matched {
+											// If any sub-condition had no match, forget about that condition and go
+											// check the next one.
 											break
 										}
 									}
-									if parameters_matched {
-										float, _ := strconv.ParseFloat(sub_condition[sub_condition_len-1][0], 32)
+									if all_sub_conds_matched {
+										// In the end of a condition check, if all its sub-conditions found a match,
+										// return the constant on the only index of the last sub-condition of the
+										// condition.
+										float, _ := strconv.ParseFloat(condition[condition_len-1][0], 32)
 										ret_var = append(ret_var, float32(float))
 
 										sub_cond_match_found = true
@@ -353,7 +378,7 @@ func taskFilter(sentence_cmds *[]float32) {
 			(*sentence_cmds)[counter] = MARK_TERMINATION_FLOAT32
 
 			//log.Println("1 -", *sentence_cmds)
-			if counter != len(*sentence_cmds) - 1 {
+			if counter != len(*sentence_cmds)-1 {
 				// If the next index is within the maximum index (which means, if the next number exists)...
 
 				var next_number float32 = (*sentence_cmds)[counter+1]
@@ -389,7 +414,7 @@ func taskFilter(sentence_cmds *[]float32) {
 						// it. do 26 and do 25. no don't do 25. do 24."
 						delete_number_before_dont = true
 					}
-				}// else if next_number < 0 { // If it's not, assume the below case.
+				} // else if next_number < 0 { // If it's not, assume the below case.
 				// Case: "do this, no don't do it don't do it. do that". Delete only the current "don't" until
 				// there's only one (done above), which will be the one used to decide what to delete.
 			} else {
@@ -399,7 +424,7 @@ func taskFilter(sentence_cmds *[]float32) {
 			}
 
 			if delete_number_before_dont {
-				if counter - 1 >= 0 {
+				if counter-1 >= 0 {
 					(*sentence_cmds)[counter-1] = MARK_TERMINATION_FLOAT32
 					//log.Println("4 -", *sentence_cmds)
 				}
@@ -413,7 +438,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	for counter := 0; counter < len(*sentence_cmds); counter++ {
 		// Don't forget (again) the length is checked every time on the loop
 		if (*sentence_cmds)[counter] == MARK_TERMINATION_FLOAT32 {
-			APU_GlobalUtilsInt.DelEleInSlice(sentence_cmds, counter)
+			APU_GlobalUtilsInt.DelElemInSlice(sentence_cmds, counter)
 			counter--
 		}
 	}

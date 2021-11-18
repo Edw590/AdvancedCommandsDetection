@@ -41,7 +41,7 @@ package APU_CmdDetection
 // The CMD_-started constants have a number which is the index of the command place in all the arrays below this.
 // --- WARNING ---
 // The value 0 is reserved for function-related processing!!! (Want to know for what? Read the comment about
-// MARK_TERMINATION_FLOAT32 on TaskChecker)
+// MARK_TERMINATION_FLOAT32 on TaskChecker) Also, all negative values are also reserved for special commands.
 //
 // Note: all RET_-started constants must be a float32 in a string which starts by the number on the corresponding
 // CMD_-started constant and must advance by increments of 0.1 and continues like if it were an integer > 1 (1.9,
@@ -135,11 +135,17 @@ const RET_17 string = "17.1"
 const CMD_MAKE_CALL string = "18"
 const RET_18 string = "18.1"
 
-
 // HIGHEST_CMD_INT is a constant which has an always-updated value of the highest CMD_-started constant. This can be
 // used to build an array of integers from 1 to this value to use with CmdsDetector(), and it will always have all the possible
 // commands allowed for detection.
 const HIGHEST_CMD_INT int = 18
+
+// Special WARN_-started commands returned by the CmdsDetector() - must not collide to spec_-started constants on
+// TaskChecker!!!
+
+// WARN_WHATS_IT is the constant that signals that an "it" was said but there seems to be nothing that it refers to, so
+// the assistant warns it didn't understand the meaning of the "it".
+const WARN_WHATS_IT string = "-2"
 
 ////////////////////////////////////////////////////////////////////////////////////
 // ATTENTION: keep the format of the below arrays as it is. Each index must correspond to the value of the CMD_-started
@@ -152,30 +158,30 @@ const HIGHEST_CMD_INT int = 18
 
 var main_words_GL = [...][]string{
 	{}, // Ignored
-	{"stop","pause","continue","play","resume","next","previous"}, // 1
-	{"what","what's","whats","tell"}, // 2
-	{"what","what's","whats","tell"}, // 3
-	{"turn", "get"}, // 4
-	{"turn", "get"}, // 5
-	{"turn", "get"}, // 6
-	{"answer","pick"}, // 7
-	{"turn", "get"}, // 8
-	{"end","stop","terminate"}, // 9
-	{"turn", "get"}, // 10
-	{"turn", "get"}, // 11
-	{"how","how's","what","what's","whats","tell"}, // 12
-	{"shut","shutdown","power","turn"}, // 13
-	{"reboot","restart"}, // 14
-	{"take"}, // 15
-	{"record"}, // 16
-	{"say","what"}, // 17
-	{"make"}, // 18
+	{"stop", "pause", "continue", "play", "resume", "next", "previous"}, // 1
+	{"what", "what's", "whats", "tell"},                                 // 2
+	{"what", "what's", "whats", "tell"},                                 // 3
+	{"turn", "get"},                                                     // 4
+	{"turn", "get"},                                                     // 5
+	{"turn", "get"},                                                     // 6
+	{"answer", "pick"},                                                  // 7
+	{"turn", "get"},                                                     // 8
+	{"end", "stop", "terminate"},                                        // 9
+	{"turn", "get"},                                                     // 10
+	{"turn", "get"},                                                     // 11
+	{"how", "how's", "what", "what's", "whats", "tell"},                 // 12
+	{"shut", "shutdown", "power", "turn"},                               // 13
+	{"reboot", "restart"},                                               // 14
+	{"take"},                                                            // 15
+	{"record"},                                                          // 16
+	{"say", "what"},                                                     // 17
+	{"make"},                                                            // 18
 }
 
 var words_list_GL = [...][][]string{
 	{}, // Ignored
 	{ // 1
-		{"media","song","songs","music","musics","video","videos"},
+		{"media", "song", "songs", "music", "musics", "video", "videos"},
 	},
 	{ // 2
 		{"time"},
@@ -184,59 +190,59 @@ var words_list_GL = [...][][]string{
 		{"date"},
 	},
 	{ // 4
-		{"on","off","wifi","wi-fi"},
-		{"on","off","wifi","wi-fi"},
+		{"on", "off", "wifi", "wi-fi"},
+		{"on", "off", "wifi", "wi-fi"},
 	},
 	{ // 5
-		{"on","off","data","connection","mobile"},
-		{"data","connection","mobile"},
-		{"on","off","data","connection","mobile"},
-		{"on","off","connection"},
+		{"on", "off", "data", "connection", "mobile"},
+		{"data", "connection", "mobile"},
+		{"on", "off", "data", "connection", "mobile"},
+		{"on", "off", "connection"},
 	},
 	{ // 6
-		{"on","off","bluetooth"},
-		{"on","off","bluetooth"},
+		{"on", "off", "bluetooth"},
+		{"on", "off", "bluetooth"},
 	},
 	{ // 7
 		{"call"},
 	},
 	{ // 8
-		{"on","off","lantern","flashlight","flash"},
-		{"on","off","lantern","flashlight","flash"},
+		{"on", "off", "lantern", "flashlight", "flash"},
+		{"on", "off", "lantern", "flashlight", "flash"},
 	},
 	{ // 9
 		{"call"},
 	},
 	{ // 10
-		{"on","off"},
-		{"speaker","speakers"},
+		{"on", "off"},
+		{"speaker", "speakers"},
 	},
 	{ // 11
-		{"on","off","mode","airplane"},
-		{"mode","airplane"},
-		{"on","off","mode"},
+		{"on", "off", "mode", "airplane"},
+		{"mode", "airplane"},
+		{"on", "off", "mode"},
 	},
 	{ // 12
-		{"is","battery","percentage","status","state"},
-		{"battery","percentage","status","state"},
+		{"is", "battery", "percentage", "status", "state"},
+		{"battery", "percentage", "status", "state"},
 	},
 	{ // 13
-		{"off","down","phone"},
-		{"off","down","phone"},
+		{"off", "down", "phone"},
+		{"off", "down", "phone"},
 	},
 	{ // 14
 		{"phone"},
 	},
 	{ // 15
-		{"frontal","front","rear"},
-		{"selfie","picture","photo","photograph"},
+		{"frontal", "front", "rear"},
+		{"selfie", "picture", "photo", "photograph"},
 	},
 	{ // 16
-		{"frontal","front","rear"},
-		{"video","camera","audio","sound"},
+		{"frontal", "front", "rear"},
+		{"video", "camera", "audio", "sound"},
 	},
 	{ // 17
-		{"again","said","say"},
+		{"again", "said", "say"},
 	},
 	{ // 18
 		{"call"},

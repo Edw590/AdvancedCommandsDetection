@@ -23,5 +23,3 @@ with "turn on the wifi", on which it thinks "turn" is a name and not a verb - wo
 
 Use NLP to exclude other adjectives from the words_list if the only one was said already, for example? (Or a verb or
 whatever) Of course, works only (as said) when there is only and only 1 adjective to form the command.
-
-Besides that, use it to know what a "it" means... Last name said? "the wifi turn it on"
