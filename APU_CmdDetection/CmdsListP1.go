@@ -136,8 +136,8 @@ const CMD_MAKE_CALL string = "18"
 const RET_18 string = "18.1"
 
 // HIGHEST_CMD_INT is a constant which has an always-updated value of the highest CMD_-started constant. This can be
-// used to build an array of integers from 1 to this value to use with CmdsDetector(), and it will always have all the possible
-// commands allowed for detection.
+// used to build an slice of integers from 1 to this value to use with CmdsDetector(), and it will always have all the
+// possible commands allowed for detection.
 const HIGHEST_CMD_INT int = 18
 
 // Special WARN_-started commands returned by the CmdsDetector() - must not collide to spec_-started constants on
@@ -148,10 +148,10 @@ const HIGHEST_CMD_INT int = 18
 const WARN_WHATS_IT string = "-2"
 
 ////////////////////////////////////////////////////////////////////////////////////
-// ATTENTION: keep the format of the below arrays as it is. Each index must correspond to the value of the CMD_-started
-// constant corresponding to the array index contents in question.
+// ATTENTION: keep the format of the below slices as it is. Each index must correspond to the value of the CMD_-started
+// constant corresponding to the slice index contents in question.
 //
-// ----- NEVER EVER REMOVE AN ELEMENT FROM THE ARRAYS UNLESS IT'S THE LAST ONE!!! -----
+// ----- NEVER EVER REMOVE AN ELEMENT FROM THE SLICES UNLESS IT'S THE LAST ONE!!! -----
 // If it's to deactivate one of the elements, delete everything from it and put a // to do without the space in the
 // front to be seen well that that index is not being used (if it's to be used again, it's a notification on the IDE
 // warning about unused slots, so it's good to be there).
@@ -159,23 +159,23 @@ const WARN_WHATS_IT string = "-2"
 var main_words_GL = [...][]string{
 	{}, // Ignored
 	{"stop", "pause", "continue", "play", "resume", "next", "previous"}, // 1
-	{"what", "what's", "whats", "tell"},                                 // 2
-	{"what", "what's", "whats", "tell"},                                 // 3
-	{"turn", "get"},                                                     // 4
-	{"turn", "get"},                                                     // 5
-	{"turn", "get"},                                                     // 6
-	{"answer", "pick"},                                                  // 7
-	{"turn", "get"},                                                     // 8
-	{"end", "stop", "terminate"},                                        // 9
-	{"turn", "get"},                                                     // 10
-	{"turn", "get"},                                                     // 11
-	{"how", "how's", "what", "what's", "whats", "tell"},                 // 12
-	{"shut", "shutdown", "power", "turn"},                               // 13
-	{"reboot", "restart"},                                               // 14
-	{"take"},                                                            // 15
-	{"record"},                                                          // 16
-	{"say", "what"},                                                     // 17
-	{"make"},                                                            // 18
+	{"what's", "tell"},           // 2
+	{"what's", "tell"},           // 3
+	{"turn", "get"},              // 4
+	{"turn", "get"},              // 5
+	{"turn", "get"},              // 6
+	{"answer", "pick"},           // 7
+	{"turn", "get"},              // 8
+	{"end", "stop", "terminate"}, // 9
+	{"turn", "get"},              // 10
+	{"turn", "get"},              // 11
+	{"how's", "what's", "tell"},  // 12
+	{"shutdown", "power"},        // 13
+	{"reboot", "restart"},        // 14
+	{"take"},                     // 15
+	{"record"},                   // 16
+	{"say", "what"},              // 17
+	{"make"},                     // 18
 }
 
 var words_list_GL = [...][][]string{
@@ -223,7 +223,6 @@ var words_list_GL = [...][][]string{
 		{"on", "off", "mode"},
 	},
 	{ // 12
-		{"is", "battery", "percentage", "status", "state"},
 		{"battery", "percentage", "status", "state"},
 	},
 	{ // 13

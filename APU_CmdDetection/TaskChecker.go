@@ -100,6 +100,8 @@ panic instead (no protection here), so always call the other one.
 Note: if you find this function exported, know it's just for testing from the main package. Do not use it in production.
 */
 func CmdsDetectorInternal(sentence_str string, allowed_cmds_str string) string {
+	sentence_str = sentenceCorrection(sentence_str)
+
 	var sentence []string = strings.Split(sentence_str, " ")
 	var allowed_cmds []int = nil
 	for _, cmd_index := range strings.Split(allowed_cmds_str, CMDS_SEPARATOR) {
@@ -107,11 +109,16 @@ func CmdsDetectorInternal(sentence_str string, allowed_cmds_str string) string {
 		allowed_cmds = append(allowed_cmds, number)
 	}
 
-	// Replace all the "it"s on the sentence.
-	ReplaceIts(&sentence, sentence_str)
-	// THE sentence_str IS OUTDATED AS OF THIS LINE!!!!!
+	// Prepare the sentence for the NLP analysis.
+	sentence_str = sentenceNLPPreparation(&sentence, true)
+	// Analyze the sentence with NLP help and, for example, replace all the "it"s on the sentence with their meaning.
+	NLPAnalyzer(&sentence, sentence_str)
+	// Prepare the sentence for the NLP analysis.
+	sentence_str = sentenceNLPPreparation(&sentence, false)
 
-	// Get all the commands on the sentence.
+	log.Println(sentence)
+
+	// Get all the commands present on the sentence (according to the allowed_cmds).
 	var sentence_cmds []float32 = sentenceCmdsChecker(sentence, allowed_cmds)
 
 	// Filter the sentence of special commands (like "don't"/"do not") and do the necessary for each special command.
@@ -159,7 +166,7 @@ wordsVerificationDADi() can do the job better. In that case might be better (for
 another function call.
 
 (As a curiosity, the overall CmdsDetector() function is now capable of knowing what to do in the example above, without
-this function being executed at all! KEEP THE RIGHT SEARCH INTERVAL IN 3 AND THE LEFT ONE IN 0 AS DEFAULT!!!!!)
+this function being executed at all!!!)
 */
 func removeRepeatedCmds(ret_var string) string {
 	var ret_var_list []string = strings.Split(ret_var, CMDS_SEPARATOR)
@@ -196,16 +203,16 @@ func removeRepeatedCmds(ret_var string) string {
 const spec_cmd_dont_CONST float32 = -1
 
 /*
-sentenceCmdsChecker checks a sentence for commands whose indexes are listed in an array of numbers.
+sentenceCmdsChecker checks a sentence for commands whose indexes are listed in an slice of numbers.
 
 -----------------------------------------------------------
 
 > Params:
 
-- sentence – a 1D array of words on which the verification will be executed (basically it's sentence_str required by
-CmdsDetector() splitted by spaces in a 1D array.
+- sentence – a 1D slice of words on which the verification will be executed (basically it's sentence_str required by
+CmdsDetector() splitted by spaces in a 1D slice.
 
-- allowed_cmds – same as in CmdsDetector() but here it's in an array of integers and not as a string
+- allowed_cmds – same as in CmdsDetector() but here it's in an slice of integers and not as a string
 
 
 > Returns:
@@ -215,22 +222,10 @@ CmdsDetector() splitted by spaces in a 1D array.
 func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 	var ret_var []float32 = nil
 
-	var sentence_len int = len(sentence) // Optimization
 	for sentence_counter, sentence_word := range sentence {
 
-		if sentence_word == "don't" || sentence_word == "dont" || sentence_word == "do" {
-			var carry_on bool = false
-			// This below, checks (in the 2nd part) if the next element exists or not in the 'sentence'.
-			if sentence_word == "do" && sentence_counter+1 != sentence_len-1 {
-				if sentence[sentence_counter+1] == "not" {
-					carry_on = true
-				}
-			} else {
-				carry_on = true
-			}
-			if carry_on {
-				ret_var = append(ret_var, spec_cmd_dont_CONST)
-			}
+		if sentence_word == "don't" {
+			ret_var = append(ret_var, spec_cmd_dont_CONST)
 		} else if sentence_word == WHATS_IT {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			ret_var = append(ret_var, float32(float))
@@ -238,8 +233,8 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 			for _, cmd_index := range allowed_cmds {
 				for _, main_word := range main_words_GL[cmd_index] {
 					if main_word == sentence_word {
-						/*if cmd_index != 6 {
-							// For testing
+						/*if cmd_index != 11 {
+							// Uncomment for testing purposes
 							continue
 						}*/
 
@@ -251,9 +246,9 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 							main_words_GL[cmd_index], words_list_GL[cmd_index], left_intervs_GL[cmd_index],
 							right_intervs_GL[cmd_index], init_indexes_sub_verifs_GL[cmd_index],
 							exclude_word_found_GL[cmd_index], return_last_match_GL[cmd_index],
-							ignore_repets_main_words_GL[cmd_index], ignore_repets_original_word_GL[cmd_index],
+							ignore_repets_main_words_GL[cmd_index], ignore_repets_cmds_GL[cmd_index],
 							order_words_list_GL[cmd_index], stop_first_not_found_GL[cmd_index],
-							exclude_original_words_GL[cmd_index], continue_with_words_array_number_GL[cmd_index])
+							exclude_original_words_GL[cmd_index], continue_with_words_slice_number_GL[cmd_index])
 
 						log.Println("-----------")
 						log.Println(results_WordsVerificationDADi)
@@ -277,7 +272,7 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 									for _, sub_cond := range condition[:condition_len-1] {
 										// Here it's sub_condition_len-1 because the last one is the return constant.
 
-										// Get the index of the results' sub-array to check.
+										// Get the index of the results' sub-slice to check.
 										sub_cond_index_to_chk, _ := strconv.Atoi(sub_cond[0])
 										// If any word matches on the sub-condition, go check the next sub-condition.
 										var word_match bool = false
@@ -342,7 +337,7 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 taskFilter filters a sentence of commands depending on special commands present on it.
 
 For example, "turn on the lights and play some music. no, don't turn on the lights" --> the special command here is
-"don't", this function will only leave on the array the music command.
+"don't", this function will only leave on the slice the music command.
 
 -----------------------------------------------------------
 
@@ -364,7 +359,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	log.Println("==============================================")
 	log.Println("*sentence_cmds -->", *sentence_cmds)
 
-	// RESTRICTED VALUE ON THE sentence_cmds ARRAY - Used to mark elements for deletion on the 2 arrays. This way
+	// RESTRICTED VALUE ON THE sentence_cmds SLICE - Used to mark elements for deletion on the 2 slices. This way
 	// they're deleted only in the end and on the main loop it doesn't get confusing about what indexes have been
 	// deleted already and stuff.
 	var MARK_TERMINATION_FLOAT32 float32 = 0
@@ -414,9 +409,11 @@ func taskFilter(sentence_cmds *[]float32) {
 						// it. do 26 and do 25. no don't do 25. do 24."
 						delete_number_before_dont = true
 					}
-				} // else if next_number < 0 { // If it's not, assume the below case.
-				// Case: "do this, no don't do it don't do it. do that". Delete only the current "don't" until
-				// there's only one (done above), which will be the one used to decide what to delete.
+				}
+				// Else, if it's not a positive number, assume the below case.
+				// Case: "do this, no don't do it, don't do it. do that". Delete only the current "don't" as was done
+				// above and keep doing it (the loop will automatically) until there's only one, which will be the one
+				// used to decide what to delete (done above).
 			} else {
 				// If there's no more elements, there can be previous ones. So delete the previous number to the "don't".
 				// Which would be a "do [1]. no, never mind, don't do it".
@@ -424,7 +421,8 @@ func taskFilter(sentence_cmds *[]float32) {
 			}
 
 			if delete_number_before_dont {
-				if counter-1 >= 0 {
+				// Do it only if there's a normal command before. If it's for example WARN_WHATS_IT, don't delete it.
+				if counter-1 >= 0 && (*sentence_cmds)[counter-1] > 0 {
 					(*sentence_cmds)[counter-1] = MARK_TERMINATION_FLOAT32
 					//log.Println("4 -", *sentence_cmds)
 				}

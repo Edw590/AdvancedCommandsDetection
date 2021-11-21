@@ -98,6 +98,8 @@ Example with conditional evaluation (possibly the only way in Go):
 	} else {
 		test = func2()
 	}
+
+Use type assertion to get the correct return type
 */
 func Tern(statement bool, true_return interface{}, false_return interface{}) interface{} {
 	if statement {
@@ -172,7 +174,7 @@ worries and the function copies all values normally. If the slice is multidimens
 "Outer" is in caps because there's this example:
 	var example [][]int = [][]int{{1}, {2}, {3}}
 This function will copy the values of the outer slice only - which are pointer to the inner slices. If ANY value of the
-inner slices is changed, it will be reflected on the original array, because both the original and the copy, point to
+inner slices is changed, it will be reflected on the original slice, because both the original and the copy, point to
 the same inner slices. Only the outer slices are different - so one can add an inner slice to the copy and it will not
 show up on the original, and change values on that new inner slice - as long as the values of the original inner slices
 are not changed.
@@ -197,7 +199,7 @@ func CopyOuterSlice(slice interface{}) interface{} {
 }
 
 /*
-CopySliceArray copies all the values from slice/array to a new slice/array, with the length and capacity of the
+CopySlice copies all the values from slice/array to a new slice/array, with the length and capacity of the
 original, provided both slices/arrays are of the exact same type (that includes the length of each dimension with
 arrays).
 
@@ -217,7 +219,7 @@ from multidimensional slices/arrays.
 
 - nothing
 */
-func CopySliceArray(destination interface{}, source interface{}) {
+func CopySlice(destination interface{}, source interface{}) {
 	var buf *bytes.Buffer = new(bytes.Buffer)
 	var err error = gob.NewEncoder(buf).Encode(source)
 	if err != nil {

@@ -30,7 +30,7 @@ package APU_CmdDetection
 // front to be seen well that that index is not being used (if it's to be used again, it's a notification on the IDE
 // warning about unused slots, so it's good to be there).
 
-var left_intervs_GL = [...][][]string{
+var left_intervs_GL = [...]map[string]string{
 	{}, // Ignored
 	{}, // 1
 	{}, // 2
@@ -52,7 +52,7 @@ var left_intervs_GL = [...][][]string{
 	{}, // 18
 }
 
-var right_intervs_GL = [...][][]string{
+var right_intervs_GL = [...]map[string]string{
 	{}, // Ignored
 	{}, // 1
 	{}, // 2
@@ -74,7 +74,7 @@ var right_intervs_GL = [...][][]string{
 	{}, // 18
 }
 
-var init_indexes_sub_verifs_GL = [...][][]string{
+var init_indexes_sub_verifs_GL = [...]map[string]string{
 	{}, // Ignored
 	{}, // 1
 	{}, // 2
@@ -97,7 +97,7 @@ var init_indexes_sub_verifs_GL = [...][][]string{
 }
 
 var exclude_word_found_GL = [...][]int{
-	{}, // Ignored
+	{},                   // Ignored
 	{ALL_SUB_VERIFS_INT}, // 1
 	{ALL_SUB_VERIFS_INT}, // 2
 	{ALL_SUB_VERIFS_INT}, // 3
@@ -142,27 +142,27 @@ var return_last_match_GL = [...]bool{
 
 var ignore_repets_main_words_GL = [...]bool{
 	false, // Ignored
-	true, // 1
-	true, // 2
-	true, // 3
-	true, // 4
-	true, // 5
-	true, // 6
-	true, // 7
-	true, // 8
-	true, // 9
-	true, // 10
-	true, // 11
-	true, // 12
-	true, // 13
-	true, // 14
-	true, // 15
-	true, // 16
-	true, // 17
-	true, // 18
+	true,  // 1
+	true,  // 2
+	true,  // 3
+	true,  // 4
+	true,  // 5
+	true,  // 6
+	true,  // 7
+	true,  // 8
+	true,  // 9
+	true,  // 10
+	true,  // 11
+	true,  // 12
+	true,  // 13
+	true,  // 14
+	true,  // 15
+	true,  // 16
+	true,  // 17
+	true,  // 18
 }
 
-var ignore_repets_original_word_GL = [...]bool{
+var ignore_repets_cmds_GL = [...]bool{
 	false, // Ignored
 	false, // 1
 	false, // 2
@@ -230,28 +230,28 @@ var stop_first_not_found_GL = [...]bool{
 
 var exclude_original_words_GL = [...]bool{
 	false, // Ignored
-	true, // 1
-	true, // 2
-	true, // 3
-	true, // 4
-	true, // 5
-	true, // 6
-	true, // 7
-	true, // 8
-	true, // 9
-	true, // 10
-	true, // 11
-	true, // 12
-	true, // 13
-	true, // 14
-	true, // 15
-	true, // 16
-	true, // 17
-	true, // 18
+	true,  // 1
+	true,  // 2
+	true,  // 3
+	true,  // 4
+	true,  // 5
+	true,  // 6
+	true,  // 7
+	true,  // 8
+	true,  // 9
+	true,  // 10
+	true,  // 11
+	true,  // 12
+	true,  // 13
+	true,  // 14
+	true,  // 15
+	true,  // 16
+	true,  // 17
+	true,  // 18
 }
 
-var continue_with_words_array_number_GL = [...]int{
-	0, // Ignored
+var continue_with_words_slice_number_GL = [...]int{
+	0,  // Ignored
 	-1, // 1
 	-1, // 2
 	-1, // 3

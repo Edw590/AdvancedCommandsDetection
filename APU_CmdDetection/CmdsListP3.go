@@ -30,50 +30,50 @@ package APU_CmdDetection
 // front to be seen well that that index is not being used (if it's to be used again, it's a notification on the IDE
 // warning about unused slots, so it's good to be there).
 
+//
+// Various of the empty conditions have a pair on the no continuation conditions - take a look before deleting anything!
+//
 var conditions_continue_GL = [...][][][]string{
 	{}, // Ignored
 	{}, // 1
 	{}, // 2
 	{}, // 3
 	{ // 4
-		{{}, {"on", "off", "wifi", "wi-fi"}, {"on", "off", "wifi", "wi-fi"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 5
-		{{}, {"on", "off", "mobile", "data", "connection"}, {"mobile", "data", "connection"}, {"on", "off", "mobile", "data", "connection"}, {"on", "off", "connection"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 6
-		{{}, {"on", "off", "bluetooth"}, {"on", "off", "bluetooth"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{}, // 7
 	{ // 8
-		{{}, {"flashlight", "lantern", "on", "off"}, {"flashlight", "lantern", "on", "off"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{}, // 9
 	{ // 10
-		{{}, {"on", "off", "speaker", "speakers"}, {"on", "off", "speaker", "speakers"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 11
-		{{}, {"on", "off", "airplane"}, {"mode", "airplane"}, {"on", "off", "mode"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 12
-		{{"how"}, {"is"}, {"battery"}},
-		{{"how's", "tell"}, {"battery"}, {}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 13
-		{{"power", "turn"}, {"off", "down", "phone"}, {"off", "down", "phone"}},
-		{{"shut"}, {"down", "phone"}, {"down", "phone"}},
-		{{"shutdown"}, {"phone"}, {}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{}, // 14
 	{ // 15
-		// This is here cecause only one of the words on the 2nd sub-list of the words_list is mandatory ("take a
+		// This is here because only one of the words on the 2nd sub-list of the words_list is mandatory ("take a
 		// picture"). No word of the first sub-list is mandatory.
-		{{}, {}, {"selfie", "picture", "photo", "photograph"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 16
 		// Because only one of the words on the 2nd sub-list of the words_list is mandatory ("record the audio").
 		// No word of the first sub-list is mandatory.
-		{{}, {}, {"video", "camera", "audio", "sound"}},
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 17
 		{{"say"}, {"again"}},
@@ -124,7 +124,7 @@ var conditions_not_continue_GL = [...][][][][]string{
 	{}, // 14
 	{}, // 15
 	{ // 16
-		// Can't record frontal or rear audios xD.
+		// But one can't record frontal or rear audios xD.
 		{
 			{{}, {"frontal", "front", "rear"}, {"audio", "sound"}},
 		},
@@ -141,7 +141,7 @@ var conditions_not_continue_GL = [...][][][][]string{
 }
 
 /*
-Each sub-array ("condition") contains a set of conditions that can come in the results. Each array in the sub-array
+Each sub-slice ("condition") contains a set of conditions that can come in the results. Each slice in the sub-slice
 ("sub-condition") in question is related to an index of the results of the wordsVerificationDADi() function call.
 
 Naming convention: same as with the continuation conditions (read on checkResultsWordsVerifDADi()).
@@ -150,19 +150,19 @@ Naming convention: same as with the continuation conditions (read on checkResult
 
 > Format of the conditions:
 
-- Last index – a 1-element array containing the RET_-started constant to return in affirmative case of the result on
-that sub-array happening
+- Last index – a 1-element slice containing the RET_-started constant to return in affirmative case of the result on
+that sub-slice happening
 
 - All other indexes – see below (they are all the same - the only one different is the last one)
 
 NOTES:
 
 - If there are no results to check (like just in case the function detected the words, everything is fine), use only
-the last part (means, for example, put an array with RET_2 alone on the only index of the sub-array).
+the last part (means, for example, put an slice with RET_2 alone on the only index of the sub-slice).
 
 - If for example
 it's needed to check 2 conditions and return one thing, and in case those 2 don't apply but *any* other applies, return
-something else, put those 2 conditions on 2 separate arrays and then one below those 2.
+something else, put those 2 conditions on 2 separate slices and then one below those 2.
 Example of this:
 		{{"0", "thing1"}, {RET_0_OPTION1}},
 		{{"1", "thing2"}, {RET_0_OPTION1}},
@@ -180,7 +180,7 @@ function).
 
 - All other indexes ("parameters") – words that the word on the specified index can have in order for the result to be a
 success. If the results include an index which is not present on these indexes mentioned here, the word on it will be
-ignored. The order of these arrays will be respected, and if one of them gives a positive result, the others will not be
+ignored. The order of these slices will be respected, and if one of them gives a positive result, the others will not be
 considered.
 
 */
@@ -265,7 +265,7 @@ var conditions_return_GL = [...][][][]string{
 		// Based on the conditions of no continuation, the line below works for a frontal video, as "audio" or "sound"
 		// will not be on the other indexes - check the conditions.
 		{{"0", "frontal", "front"}, {RET_16_VIDEO_FRONTAL}},
-		{{RET_16_VIDEO_REAR}}, // Either is "frontal" or "front", or doesn't matter and it's rear.
+		{{RET_16_VIDEO_REAR}}, // It's either "frontal" or "front", or doesn't matter, and it's a rear one.
 	},
 	{ // 17
 		{{RET_17}},
