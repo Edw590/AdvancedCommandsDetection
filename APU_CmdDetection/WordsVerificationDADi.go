@@ -58,6 +58,8 @@ idea might be to automate the decision of some parameters, if possible.
 
 - INDEX_ODD – for 'left_intervs', 'right_intervs': same as for INDEX_EVEN but for odd indexes
 
+- DEFAULT_INDEX – for 'left_intervs', 'right_intervs': used to indicate it's to use the default index
+
 - IS_DIGIT – for 'words_list': used to indicate the "word" is any digit and not really a word
 
 - INDEX_WORD_FOUND - for 'init_indexes_sub_verifs': used to indicate that it's to use the index of the last found
@@ -204,33 +206,36 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 		// Internal function to choose the correct interval value based on the given intervals slices, the default value,
 		// and the sub-verification number.
 		chooseCustomIntervals := func(intervs_map map[string]string, sub_verif_number int, default_interv int) int {
+			var interv_str string = ""
 			// Check for an index corresponding to this specific sub-verification.
-			if interv_str, ok := intervs_map[strconv.Itoa(sub_verif_number)]; ok {
-				interv, _ := strconv.Atoi(interv_str)
-
-				return interv
+			if interv, ok := intervs_map[strconv.Itoa(sub_verif_number)]; ok {
+				interv_str = interv
 			} else {
 				// Check for an index corresponding to either even or odd sub-verifications.
 				var string_to_find string = INDEX_ODD
 				if sub_verif_number%2 == 0 {
 					string_to_find = INDEX_EVEN
 				}
-				if interv_str, ok := intervs_map[string_to_find]; ok {
-					interv, _ := strconv.Atoi(interv_str)
-
-					return interv
+				if interv, ok := intervs_map[string_to_find]; ok {
+					interv_str = interv
 				} else {
 					// Check for an ALL_SUB_VERIFS index.
-					if interv_str, ok := intervs_map[ALL_SUB_VERIFS_STR]; ok {
-						interv, _ := strconv.Atoi(interv_str)
-
-						return interv
+					if interv, ok := intervs_map[ALL_SUB_VERIFS_STR]; ok {
+						interv_str = interv
 					} else {
 						// If nothing found of the above, return the default value.
 
 						return default_interv
 					}
 				}
+			}
+
+			if interv_str == DEFAULT_INDEX {
+				return default_interv
+			} else {
+				interv, _ := strconv.Atoi(interv_str)
+
+				return interv
 			}
 		}
 
