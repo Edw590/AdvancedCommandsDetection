@@ -56,17 +56,18 @@ func main() {
 	var sentence_str string = "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and the wifi please"
 	//var sentence_str string = "turn on wifi and and the airplane mode and the flashlight"
 
-	//var sentence_str string = "shutdown turn it on that's mom's turn on the wifi and and the airplane mode get it it on no don't turn it on turn airplane mode off and the wifi please"
-	//var sentence_str string = "what's the time and the date please"
-	//var sentence_str string = "the airplane mode turn it freaking on"
-
-	log.Println("To do: " + APU_CmdDetection.CmdsDetectorInternal(sentence_str, all_allowed_cmds))
-
 	// todo None of these below work decently... Fix them.
 
-	//log.Println("To do: " + APU_CmdDetection.CmdsDetector("what's the time and the date please", all_allowed_cmds))
-	//log.Println("To do: " + APU_CmdDetection.CmdsDetector("the wifi turn it on", all_allowed_cmds))
+	//var sentence_str string = "turn airplane mode off and the wifi please"
+	//var sentence_str string = "the video stop it and then play it again"
+	// This above needs a change in the NLPAnalyzer...
+	// The 1st "it" is "video", so it's replaced when the sentence_counter gets to "it". At that time, the "and"
+	// function has "stop" stored as a verb, but the counter is on the "it" place. When "video" is deleted after being
+	// replaced and the "and" checker goes to check what's on the current word, what's on its place is "video", but
+	// I think it thinks it's "it" - so it's stored too as a "non-name" --> wrong!
+	// Reset the counters every time or something.
 
+	log.Println("To do: " + APU_CmdDetection.CmdsDetectorInternal(sentence_str, all_allowed_cmds))
 	log.Println("")
 	log.Println("\\\\-->3234_END<--//")
 }

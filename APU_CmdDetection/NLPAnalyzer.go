@@ -57,9 +57,10 @@ var nlp_second_last_to_last_non_allowed_tag [][]string
 // Note: I took the tags below from an online P.O.S. tagger (https://parts-of-speech.info) in sentences that would make
 // it obvious what each word is (name, verb, adjective...).
 var nlp_static_word_tags map[string]string = map[string]string{
-	"turn": "VB",
-	"do":   "VBP",
-	"mode": "NN",
+	"turn":   "VB",
+	"do":     "VBP",
+	"mode":   "NN",
+	"record": "VB", // For the commands, it's always a verb (recognized as name in "record the audio").
 }
 
 //////////////////////////
@@ -102,9 +103,6 @@ func NLPAnalyzer(sentence *[]string, sentence_str string) {
 	nlp_doc, _ := prose.NewDocument(sentence_str)
 
 	var tokens []prose.Token = nlp_doc.Tokens()
-
-	log.Println("-----------------")
-	log.Println(tokens)
 
 	// len(tokens) on the condition so it's checked every time what is the length and there's no need to decrement it or
 	// increment it manually depending on the modifications to the tokens' slice.
@@ -327,7 +325,8 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 		nlp_last_was_an_and = false
 		var current_tag string = (*tokens)[nlp_token_counter].Tag
 		if strings.HasPrefix(current_tag, "VB") || strings.HasPrefix(current_tag, "PR") ||
-			strings.HasPrefix(current_tag, "RP") || strings.HasPrefix(current_tag, "IN") {
+			strings.HasPrefix(current_tag, "RP") || strings.HasPrefix(current_tag, "IN") ||
+			strings.HasPrefix(current_tag, "W") {
 			if strings.HasPrefix(current_tag, "VB") {
 				nlp_verbs_passed++
 			}

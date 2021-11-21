@@ -136,11 +136,11 @@ const CMD_MAKE_CALL string = "18"
 const RET_18 string = "18.1"
 
 // HIGHEST_CMD_INT is a constant which has an always-updated value of the highest CMD_-started constant. This can be
-// used to build an slice of integers from 1 to this value to use with CmdsDetector(), and it will always have all the
+// used to build a slice of integers from 1 to this value to use with CmdsDetector(), and it will always have all the
 // possible commands allowed for detection.
 const HIGHEST_CMD_INT int = 18
 
-// Special WARN_-started commands returned by the CmdsDetector() - must not collide to spec_-started constants on
+// Special WARN_-started commands returned by the CmdsDetector() - must not collide with spec_-started constants on
 // TaskChecker!!!
 
 // WARN_WHATS_IT is the constant that signals that an "it" was said but there seems to be nothing that it refers to, so

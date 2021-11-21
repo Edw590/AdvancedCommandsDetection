@@ -24,6 +24,14 @@ understands that the command is to {TURN_OFF, something}... --> do this
 Another example: "turn wifi on and the airplane mode and the flashlight" - only the Wi-Fi is detected there. Only works
 if "on" is before "wifi" (which is expected, by the current implementation).
 
+And yet another example: "take a frontal and rear picture", which becomes "take a frontal take rear picture" - because
+picture is a name, which is not included with the "and" replace function. "take a frontal picture and a rear one"
+doesn't work either. ---> It needs to know it's taking a picture here **to then be informed of its type**! <---
+What I just wrote is a core idea of the supposed implementation!!!
+Currently, for that issue to work, it must be said "take a frontal picture and a rear picture".
+Also, "rear one", rear is an adjective, so "one" refers to that adjective, which is referring to "picture", hence "one"
+refers to "picture" - try to use this.
+
 
 # NLP + wordsVerificationDADi()
 
@@ -36,3 +44,8 @@ next non-name (since we're looking for a name), "wifi" must be there. And so on.
 # General
 
 "turn on the wifi, the airplane mode and the flashlight" --> ????? There are no commas on speech recognizers...
+
+"stop and play the video" - with the repeated commands check enabled on the verification function, this won't work...
+See if it can be linked with the {TURN_OFF, something} idea. Though, "turn off... turn on the wifi"...
+The "and" as an important role on this issue. Without it, might be a correction of what was just said (like the last
+example of the Wi-Fi).

@@ -66,14 +66,14 @@ var conditions_continue_GL = [...][][][]string{
 	},
 	{}, // 14
 	{ // 15
-		// This is here because only one of the words on the 2nd sub-list of the words_list is mandatory ("take a
+		// Different here because only one of the words on the 2nd sub-list of the words_list is mandatory ("take a
 		// picture"). No word of the first sub-list is mandatory.
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
+		{{A_WORD_IN_LIST}, {}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 16
-		// Because only one of the words on the 2nd sub-list of the words_list is mandatory ("record the audio").
-		// No word of the first sub-list is mandatory.
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
+		// And again, different here because only one of the words on the 2nd sub-list of the 'words_list' is mandatory
+		// ("record the audio"). No word of the first sub-list is mandatory.
+		{{A_WORD_IN_LIST}, {}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
 	{ // 17
 		{{"say"}, {"again"}},
