@@ -214,7 +214,7 @@ var conditions_return_GL = [...][][][]string{
 	},
 	{ // 6
 		{{"0", "on"}, {RET_6_ON}},
-		{{"2", "on"}, {RET_6_ON}},
+		{{"1", "on"}, {RET_6_ON}},
 
 		{{RET_6_OFF}},
 	},
@@ -253,8 +253,8 @@ var conditions_return_GL = [...][][][]string{
 	{ // 15
 		// If done right, the conditions below in the order they are in, should be equivalent to the old conditions:
 		// results[0][0] == "frontal" || results[0][0] == "front" || (results[1][0] == "selfie" && results[0][0]!="rear")
-		{{"0", "rear"}, {RET_15_REAR}},
 		{{"0", "frontal", "front"}, {RET_15_FRONTAL}},
+		{{"0", "rear"}, {RET_15_REAR}},
 		{{"1", "selfie"}, {RET_15_FRONTAL}},
 
 		{{RET_15_REAR}}, // All the above, or "else", this

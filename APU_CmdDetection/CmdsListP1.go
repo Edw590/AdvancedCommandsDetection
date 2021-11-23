@@ -102,8 +102,8 @@ const CMD_TOGGLE_AIRPLANE_MODE string = "11"
 const RET_11_ON string = "11.1"
 const RET_11_OFF string = "11.2"
 
-// CMD_ASK_BATTERY_PERCENTAGE is the command to request the battery percentage
-const CMD_ASK_BATTERY_PERCENTAGE string = "12"
+// CMD_ASK_BATTERY_PERCENT is the command to request the battery percentage
+const CMD_ASK_BATTERY_PERCENT string = "12"
 const RET_12 string = "12.1"
 
 // CMD_SHUT_DOWN_PHONE is the command to shut down a phone
@@ -159,8 +159,8 @@ const WARN_WHATS_IT string = "-2"
 var main_words_GL = [...][]string{
 	{}, // Ignored
 	{"stop", "pause", "continue", "play", "resume", "next", "previous"}, // 1
-	{"what's", "tell"},           // 2
-	{"what's", "tell"},           // 3
+	{"what's", "tell", "say"},    // 2
+	{"what's", "tell", "say"},    // 3
 	{"turn", "get"},              // 4
 	{"turn", "get"},              // 5
 	{"turn", "get"},              // 6
