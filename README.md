@@ -19,10 +19,10 @@ This project is a part of a bigger project, consisting of the following:
 - [LEGION - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
 
 ## Background
-This is a module which is supposed to connect the assistant in different platforms. Something is coded in Go and does not need to be coded specifically in Java, then for iOS, for example, Objective C, then C++ or C (Windows/Linux), or Python (Raspberry Pi), or any other. This should compile to all needed architectures and be present as a global utilities library.
+This is a module which is supposed to connect the assistant in different platforms. Something is coded in Go and does not need to be coded specifically in Java for Android, then for iOS, for example, Objective C, then C++ or C (Windows/Linux), or Python (Raspberry Pi), or any other. This should compile to all needed architectures and be present as a global utilities library.
 
 ## Current sub-modules
-- **Commands Detector** --> A string is given to the main function of the detector and the output is a list of detected commands on the given string. For example (give it without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present), "turn on wifi and get the airplane mode on. no, don't turn the wifi on. turn off airplane mode and turn the wifi on". This should output an order to (in order of given commands), turn on the airplane mode, then turn it off, and finally turn on the Wi-Fi. And it does: "11.1, 11.2, 4.1", which means the same, according to the way the function works.
+- **Commands Detection** --> Outputs a list of detected commands in a given sentence of words. For example, give it (without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present), "turn it on. turn on the wifi, and and the airplane mode, get it it on. no, don't turn it on. turn off airplane mode and also the wifi, please.". This should output orders to (in order of given commands), request an explanation of the first "it" (which has no meaning), turn on the Wi-Fi, then turn off the airplane mode, and also the Wi-Fi. And it does: "-2, 4.1, 11.2, 4.2", which means the same, according to the way the function works.
 
 ## For developers
 ### - To compile the module
