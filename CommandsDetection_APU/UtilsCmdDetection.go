@@ -19,12 +19,30 @@
  * under the License.
  */
 
-// Package APU_GlobalUtils contains constants useful inside and outside this Go module
-package APU_GlobalUtils
+package CommandsDetection_APU
 
-// VERSION is the constant to check to know the version of the compiled Go module. The format is
-// "yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])".
-const VERSION string = "2021-11-22 -- 22:53:37.928782 (Hora padrão de GMT)"
+import "strconv"
 
-// ASSISTANT_NAME is the constant which has the assistant name used in the entire Go module.
-const ASSISTANT_NAME string = "LEGION"
+/*
+GenerateListAllCmds generates a string with a list of all the available commands specified on each CMD_-started
+constant. This string can be used directly with Main().
+
+-----------------------------------------------------------
+
+> Params:
+
+- none
+
+
+> Returns:
+
+- a string with all the available commands separated by CMDS_SEPARATOR
+*/
+func GenerateListAllCmds() string {
+	var ret_var string = ""
+	for counter := 1; counter < HIGHEST_CMD_INT; counter++ {
+		ret_var += strconv.Itoa(counter) + CMDS_SEPARATOR
+	}
+
+	return ret_var[:len(ret_var)-len(CMDS_SEPARATOR)]
+}

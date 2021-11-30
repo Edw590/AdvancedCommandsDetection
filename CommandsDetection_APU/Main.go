@@ -19,44 +19,20 @@
  * under the License.
  */
 
-package APU_CmdDetection
+package CommandsDetection_APU
 
 import (
-	"Assist_Platforms_Unifier/APU_GlobalUtilsInt"
+	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
 )
 
-/*
-GenerateListAllCmds generates a string with a list of all the available commands specified on each of the CMD_-started
-constants. This string can be used directly with CmdsDetector().
-
------------------------------------------------------------
-
-> Params:
-
-- none
-
-
-> Returns:
-
-- a string with all the available commands separated by CMDS_SEPARATOR
-*/
-func GenerateListAllCmds() string {
-	var ret_var string = ""
-	for counter := 1; counter < HIGHEST_CMD_INT; counter++ {
-		ret_var += strconv.Itoa(counter) + CMDS_SEPARATOR
-	}
-
-	return ret_var[:len(ret_var)-len(CMDS_SEPARATOR)]
-}
-
-const UNKNOWN_ERR string = "3234_UNKNOWN_ERR - "
+const ERR_CMD_DETECT string = "3234_ERR_CMD_DETECT - "
 
 /*
-CmdsDetector is the function to be called to process tasks in a given sentence of words.
+Main is the function to call to request a detection of commands in a given sentence of words.
 
 -----------------------------------------------------------
 
@@ -65,25 +41,26 @@ CmdsDetector is the function to be called to process tasks in a given sentence o
 - sentence_str – a sentence of words, for example coming directly from speech recognition
 
 - allowed_cmds  a string containing a list of the CMD_-started constants of all the commands that are allowed to be
-returned if found on the 'sentence', separated by CMDS_SEPARATOR
+returned if found on the 'sentence', separated by CMDS_SEPARATOR - if all commands are wanted for detection, consider
+using the return of GenerateListAllCmds()
 
 
 > Returns:
 
 - a list of the detected commands in the form
 	[CMD1][separator][CMD2][separator][CMD3]
-being CMDS_SEPARATOR the separator; in case there were no detected commands, an empty string; in case there was an
-unknown error, a string beginning with UNKNOWN_ERR.
+with CMDS_SEPARATOR as the separator; if the function detected no commands, an empty string; if any error occurred, a
+string beginning with ERR_CMD_DETECT.
 */
-func CmdsDetector(sentence_str string, allowed_cmds string) string {
+func Main(sentence_str string, allowed_cmds string) string {
 	var ret_var string = ""
 
-	APU_GlobalUtilsInt.Tcf{
+	GlobalUtilsInt_APU.Tcf{
 		Try: func() {
-			ret_var = CmdsDetectorInternal(sentence_str, allowed_cmds)
+			ret_var = MainInternal(sentence_str, allowed_cmds)
 		},
-		Catch: func(e APU_GlobalUtilsInt.Exception) {
-			ret_var = UNKNOWN_ERR + fmt.Sprint(e)
+		Catch: func(e GlobalUtilsInt_APU.Exception) {
+			ret_var = ERR_CMD_DETECT + fmt.Sprint(e)
 		},
 	}.Do()
 
@@ -92,14 +69,14 @@ func CmdsDetector(sentence_str string, allowed_cmds string) string {
 
 const CMDS_SEPARATOR string = ", " // Leave the space (mess because of a char being a uint8 and not a string)
 /*
-CmdsDetectorInternal is the actual function that will do what's written on CmdsDetector() - continue reading there.
+MainInternal is the actual function that will do what's written on Main() - continue reading there.
 
-There is just one exception, which is this one doesn't return any error code in case anything goes wrong - it will
-panic instead (no protection here), so always call the other one.
+There is just one exception, which is this one doesn't return any error code if anything goes wrong - it will panic
+instead (no protection here), so always call the other one in production code.
 
-Note: if you find this function exported, know it's just for testing from the main package. Do not use it in production.
+Note: if you find this function exported, know it's just for testing from the main package. Do NOT use it in production.
 */
-func CmdsDetectorInternal(sentence_str string, allowed_cmds_str string) string {
+func MainInternal(sentence_str string, allowed_cmds_str string) string {
 	sentence_str = sentenceCorrection(sentence_str)
 
 	var sentence []string = strings.Split(sentence_str, " ")
@@ -112,14 +89,14 @@ func CmdsDetectorInternal(sentence_str string, allowed_cmds_str string) string {
 	// Prepare the sentence for the NLP analysis.
 	sentence_str = sentenceNLPPreparation(&sentence, true)
 	// Analyze the sentence with NLP help and, for example, replace all the "it"s on the sentence with their meaning.
-	NLPAnalyzer(&sentence, sentence_str)
+	nlpAnalyzer(&sentence, sentence_str)
 	// Prepare the sentence for the NLP analysis.
 	sentence_str = sentenceNLPPreparation(&sentence, false)
 
 	log.Println(sentence)
 
 	// Get all the commands present on the sentence (according to the allowed_cmds).
-	var sentence_cmds []float32 = sentenceCmdsChecker(sentence, allowed_cmds)
+	var sentence_cmds []float32 = sentenceCmdsDetector(sentence, allowed_cmds)
 
 	// Filter the sentence of special commands (like "don't"/"do not") and do the necessary for each special command.
 	taskFilter(&sentence_cmds)
@@ -149,25 +126,25 @@ func CmdsDetectorInternal(sentence_str string, allowed_cmds_str string) string {
 removeRepeatedCmds removes immediately repeated commands from the commands verification ([1, 3, 3, 4, 3, 4] will become
 [1, 3, 4, 3, 4], for example).
 
-The idea of this function is to kind of fix the problem of wrongly detected repeated commands.
+This function attempts to kind of fix the problem of wrongly detected repeated commands.
 
 For example, with the command (punctuation added for better understanding - remove it to test):
 "turn on wifi and get the airplane mode on. no, don't turn the wifi on. turn off airplane mode and turn the wifi on.",
-the result is the following:
+the command detection returns:
 	"3234_wifi(),on \\// 3234_wifi(),on \\// 3234_wifi(),on \\// 3234_wifi(),on \\// 3234_wifi(),on \\//
 	3234_airplane_mode(),on \\// 3234_airplane_mode(),on \\// 3234_wifi(),on \\// 3234_wifi(),on \\// 3234_wifi(),on
 	\\// ".
 Awfully wrong. This function improves that to "3234_wifi(),on \\// 3234_airplane_mode(),on \\// 3234_wifi(),on".
-The first command is wrong, the but idea here is to delete all the repeated elements (which improved MUCH in this
+The first command is still wrong, the but idea here is to delete all the repeated elements (which improved MUCH in this
 case).
 
 Though, this also poses the problem of deleting purposefully repeated commands... Will be used until the
 wordsVerificationDADi() can do the job better. In that case might be better (for now) to say the repeated commands in
 another function call.
 
-(As a curiosity, the overall CmdsDetector() function is now capable of knowing what to do in the example above, without
-this function being executed at all!!! A thanks to this might be due to the new parameter on the wordsVerificationDADi()
-that ignores possibly repeated commands!)
+(As a curiosity, the overall Main() function can now know what to do in the example above, without needing to execute
+at all!!! A thanks to this might be due to the new parameter on the wordsVerificationDADi() that ignores possibly
+repeated commands!)
 */
 func removeRepeatedCmds(ret_var string) string {
 	var ret_var_list []string = strings.Split(ret_var, CMDS_SEPARATOR)
@@ -204,30 +181,30 @@ func removeRepeatedCmds(ret_var string) string {
 const spec_cmd_dont_CONST float32 = -1
 
 /*
-sentenceCmdsChecker checks a sentence for commands whose indexes are listed in an slice of numbers.
+sentenceCmdsDetector detects commands (whose indexes are listed in a slice of numbers) in a sentence of words.
 
 -----------------------------------------------------------
 
 > Params:
 
 - sentence – a 1D slice of words on which the verification will be executed (basically it's sentence_str required by
-CmdsDetector() splitted by spaces in a 1D slice.
+Main() split by spaces in a 1D slice).
 
-- allowed_cmds – same as in CmdsDetector() but here it's in an slice of integers and not as a string
+- allowed_cmds – same as in Main() but here it's in a slice of integers and not as a string
 
 
 > Returns:
 
 - a slice on which each index is a command found in the 'sentence', represented by one of its RET_-started constant
 */
-func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
+func sentenceCmdsDetector(sentence []string, allowed_cmds []int) []float32 {
 	var ret_var []float32 = nil
 
 	for sentence_counter, sentence_word := range sentence {
 
-		if sentence_word == "don't" {
+		if "don't" == sentence_word {
 			ret_var = append(ret_var, spec_cmd_dont_CONST)
-		} else if sentence_word == WHATS_IT {
+		} else if WHATS_IT == sentence_word {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			ret_var = append(ret_var, float32(float))
 		} else {
@@ -262,7 +239,7 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 								var sub_cond_match_found bool = false
 								for _, condition := range conditions_return_GL[cmd_index] {
 									//log.Println("++++++++++++")
-									if len(condition) == 1 {
+									if 1 == len(condition) {
 										// Then it's check nothing of the results and just return immediately.
 										float, _ := strconv.ParseFloat(condition[0][0], 32)
 										ret_var = append(ret_var, float32(float))
@@ -283,7 +260,7 @@ func sentenceCmdsChecker(sentence []string, allowed_cmds []int) []float32 {
 												// [1:] because sub_cond[0] is the index. The rest are word to check.
 
 												//log.Println(word_1)
-												if sub_cond_index_to_chk == -1 {
+												if -1 == sub_cond_index_to_chk {
 													// If the index of the results to check is -1, that means it's to check
 													// the 'sentence_word' instead (the word that activated the command
 													// detection).
@@ -346,7 +323,7 @@ For example, "turn on the lights and play some music. no, don't turn on the ligh
 
 > Params:
 
-- sentence_cmds – same as in sentenceCmdsChecker()
+- sentence_cmds – same as in sentenceCmdsDetector()
 
 
 > Returns:
@@ -368,7 +345,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	const MARK_TERMINATION_FLOAT32 float32 = 0
 
 	for counter, number := range *sentence_cmds {
-		if number == spec_cmd_dont_CONST {
+		if spec_cmd_dont_CONST == number {
 
 			var delete_number_before_dont bool = false
 
@@ -438,8 +415,8 @@ func taskFilter(sentence_cmds *[]float32) {
 	// Delete all elements marked for deletion
 	for counter := 0; counter < len(*sentence_cmds); counter++ {
 		// Don't forget (again) the length is checked every time on the loop
-		if (*sentence_cmds)[counter] == MARK_TERMINATION_FLOAT32 {
-			APU_GlobalUtilsInt.DelElemInSlice(sentence_cmds, counter)
+		if MARK_TERMINATION_FLOAT32 == (*sentence_cmds)[counter] {
+			GlobalUtilsInt_APU.DelElemInSlice(sentence_cmds, counter)
 			counter--
 		}
 	}

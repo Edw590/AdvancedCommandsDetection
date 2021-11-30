@@ -31,7 +31,7 @@ DATE_TIME = str(datetime.datetime.now().strftime("%Y-%m-%d -- %H:%M:%S.%f"))
 # reports it. That one is correct (at least on Windows).
 FINAL_LINE = '{} "{} ({})"\n'.format(LINE_BEGINNING, DATE_TIME, LOCAL_TIMEZONE)
 
-with open("APU_GlobalUtils/GL_CONSTS.go", "r", encoding="UTF-8") as file:
+with open("GlobalUtils_APU/GL_CONSTS.go", "r", encoding="UTF-8") as file:
 	lines = file.readlines()
 
 #print(lines)
@@ -42,5 +42,5 @@ for counter, line in enumerate(lines):
 		#print(lines[counter])
 		break
 
-with open("APU_GlobalUtils/GL_CONSTS.go", "w", encoding="UTF-8") as file:
+with open("GlobalUtils_APU/GL_CONSTS.go", "w", encoding="UTF-8") as file:
 	file.writelines(lines)

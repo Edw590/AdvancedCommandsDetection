@@ -20,7 +20,7 @@
  */
 
 /*
-Package APU_CmdDetection contains constants to be used outside the package for commands recognition.
+Package CommandsDetection_APU contains constants to be used outside the package for commands recognition.
 
 All the possible recognizable commands are in this package. All constants started by CMD_ are to be sent to the
 recognition function. All the constants started by RET_ are returned from the function to indicate the recognized
@@ -33,7 +33,7 @@ Format of RET_-started constants: RET_ + value of the corresponding CMD_-started
 the recognized command more specifically, if needed. For example, RET_0_ON means it was detected a command to turn the
 flashlight on.
 */
-package APU_CmdDetection
+package CommandsDetection_APU
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Constants of the various commands in the arrays below and in the other parts
@@ -136,7 +136,7 @@ const CMD_MAKE_CALL string = "18"
 const RET_18 string = "18.1"
 
 // HIGHEST_CMD_INT is a constant which has an always-updated value of the highest CMD_-started constant. This can be
-// used to build a slice of integers from 1 to this value to use with CmdsDetector(), and it will always have all the
+// used to build a slice of integers from 1 to this value to use with Main(), and it will always have all the
 // possible commands allowed for detection.
 const HIGHEST_CMD_INT int = 18
 

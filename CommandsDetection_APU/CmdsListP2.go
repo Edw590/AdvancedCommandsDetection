@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package APU_CmdDetection
+package CommandsDetection_APU
 
 ////////////////////////////////////////////////////////////////////////////////////
 // ATTENTION: keep the format of the below arrays as it is. Each index must correspond to the value of the CMD_-started

@@ -19,8 +19,7 @@
  * under the License.
  */
 
-// Package APU_GlobalUtilsInt contains general useful utilities internal to this Go module
-package APU_GlobalUtilsInt
+package GlobalUtilsInt_APU
 
 import (
 	"bytes"
@@ -76,10 +75,10 @@ Tcf {
 ///////////////////////////////////////
 
 /*
-Tern is an (inefficient) implementation of the Ternary Operator, not present in Go.
+Tern behaves like the ternary operator (not present in Go) - though, inefficiently.
 
-NOTICE: it does NOT offer conditional evaluation and requires a type assertion, so it is inefficient (0.27 ns vs 18.8
-ns).
+NOTICE: it does NOT offer conditional evaluation and requires a type assertion, so that would explain its inefficiency
+(0.27 ns original vs 18.8 ns this implementation).
 
 Example of use:
 	func Abs(n int) int {
@@ -110,7 +109,7 @@ func Tern(statement bool, true_return interface{}, false_return interface{}) int
 }
 
 /*
-DelElemInSlice removes an element from a Slice of any type by index.
+DelElemInSlice removes an element from a slice by its index.
 
 Credits to https://stackoverflow.com/a/56591107/8228163 (optimized here).
 
@@ -168,16 +167,16 @@ func AddElemSlice(slice interface{}, element interface{}, index int) {
 /*
 CopyOuterSlice copies all the values from an OUTER slice to a new slice, with the length and capacity of the original.
 
-Note: the below described won't have any effect if the slice to copy is a 1D slice - in that case, there are exactly no
-worries and the function copies all values normally. If the slice is multidimensional, then read what's below.
+Note: the below described won't have any effect if the slice to copy has only one dimension - in that case, don't worry
+at all as the function will copy all values normally. If the slice has more dimensions, read the below explanation.
 
-"Outer" is in caps because there's this example:
+I wrote “Outer“ in caps because of this example:
 	var example [][]int = [][]int{{1}, {2}, {3}}
-This function will copy the values of the outer slice only - which are pointer to the inner slices. If ANY value of the
-inner slices is changed, it will be reflected on the original slice, because both the original and the copy, point to
-the same inner slices. Only the outer slices are different - so one can add an inner slice to the copy and it will not
+This function will copy the values of the outer slice only - which are pointers to the inner slices. If ANY value of the
+inner slices gets changed, on the original slice that shall happen too, because both the original and the copy point to
+the same inner slices. Only the outer slices differ - so one can add an inner slice to the copy, and it will not
 show up on the original, and change values on that new inner slice - as long as the values of the original inner slices
-are not changed.
+don't change.
 
 -----------------------------------------------------------
 
@@ -199,11 +198,10 @@ func CopyOuterSlice(slice interface{}) interface{} {
 }
 
 /*
-CopySlice copies all the values from slice/array to a new slice/array, with the length and capacity of the
-original, provided both slices/arrays are of the exact same type (that includes the length of each dimension with
-arrays).
+CopySlice copies all the values from slice/array to a new slice/array, with the length and capacity of the original,
+provided both slices/arrays have the same type (that includes the length of each dimension with arrays).
 
-NOTE: this function is slow, according to what was told to me. Don't use unless it's really needed to copy all values
+NOTE: this function is slow, according to what someone told me. Don't use unless you really needed to copy all values
 from multidimensional slices/arrays.
 
 -----------------------------------------------------------

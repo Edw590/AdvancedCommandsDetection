@@ -1,4 +1,4 @@
-# wordsVerificationDADi()
+## wordsVerificationDADi()
 
 - Put the assistant calculating some parameters for the function.
 
@@ -10,7 +10,7 @@ Based on the content of some function slices, it would adjust other parameters a
 manually and hardcode it.
 
 
-# NLP
+## NLP
 
 - Also, ONLY USE NLP WHEN IT IS REALLY NEEDED! If not REALLY needed, use the function without its help (it may fail, like
 with "turn on the wifi", on which it thinks "turn" is a name and not a verb - works in a bigger sentence though).
@@ -33,7 +33,7 @@ Also, "rear one", rear is an adjective, so "one" refers to that adjective, which
 refers to "picture" - try to use this.
 
 
-# NLP + wordsVerificationDADi()
+## NLP + wordsVerificationDADi()
 
 - Re-implement the verification function to *also* use NLP: "turn on the wifi" --> "verb [no idea] name" or "verb name
 [no idea]". Then it checks if the words on the 'words_list' are in the intervals of words that it found. For example,
@@ -41,11 +41,16 @@ a verb is at index 12. Then from index 13 until the next name, there must be an 
 next non-name (since we're looking for a name), "wifi" must be there. And so on.
 
 
-# General
+## General
 
-"turn on the wifi, the airplane mode and the flashlight" --> ????? There are no commas on speech recognizers...
+- "turn on the wifi, the airplane mode and the flashlight" --> ????? There are no commas on speech recognizers...
 
-"stop and play the video" - with the repeated commands check enabled on the verification function, this won't work...
+- "stop and play the video" - with the repeated commands check enabled on the verification function, this won't work...
 See if it can be linked with the {TURN_OFF, something} idea. Though, "turn off... turn on the wifi"...
 The "and" as an important role on this issue. Without it, might be a correction of what was just said (like the last
 example of the Wi-Fi).
+
+
+## Commands list
+
+- Stop the recordings is missing...

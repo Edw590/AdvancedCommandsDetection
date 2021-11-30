@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package APU_CmdDetection
+package CommandsDetection_APU
 
 import (
 	"strings"
@@ -34,7 +34,7 @@ also to be easier to list the commands (less word variations), and finally to ch
 one knows "do not" doesn't happen and doesn't need to worry about checking that, only "don't", which is easier - only
 one word, and in a "foreach word" loop is much easier).
 
-This function should be the first thing to be called on CmdsDetectorInternal() to normalize the sentence for the entire
+This function should be the first thing to be called on MainInternal() to normalize the sentence for the entire
 library.
 
 For example, it finds all occurrences of "what is" and replaces them by "what's". It also corrects "whats" to "what's",
@@ -46,7 +46,7 @@ To see all it does, take a look at the function (easy reading).
 
 > Params:
 
-- sentence_str – same as in CmdsDetector()
+- sentence_str – same as in Main()
 
 
 > Returns:
@@ -59,9 +59,9 @@ func sentenceCorrection(sentence_str string) string {
 
 	// NOTE ABOUT THIS FUNCTION VS THE FUNCTION BELOW
 	// This one normalizes everything for the entire library. This way one doesn't need to worry, for example, about
-	// checking "don't" or "do not" --> sentence[counter]=="do" && sentence[counter+1]=="not" - complication.
+	// checking "don't" or "do not" --> ("do" == sentence[counter] && "not" == sentence[counter+1]) - complication.
 	// The one below makes some adjustments for the NLP analyzer to better understand and correct the sentence (have
-	// "what" and "'s" on different tags is not helpful when the sentence doesn't divide those, nor should it).
+	// "what" and "'s" on different tags is unhelpful when the sentence doesn't divide those, nor should it).
 
 	//
 	// SYNCHRONIZE THIS WITH THE FUNCTION BELOW!!!
@@ -85,8 +85,8 @@ func sentenceCorrection(sentence_str string) string {
 	sentence_str = strings.Replace(sentence_str, "do not", "don't", -1)
 	sentence_str = strings.Replace(sentence_str, "dont", "don't", -1)
 
-	// This may be incorrect in some cases, but the recognizers may not be able to distinguish, so one must treat them
-	// as equal anyways. So this is to make it easier to detect (only one word). Now only "shutdown" may be present.
+	// This may be incorrect sometimes, but the recognizers may not be able to distinguish, so one must treat them as
+	// equal anyways. So this is to make it easier to detect (only one word). Now only "shutdown" may be present.
 	sentence_str = strings.Replace(sentence_str, "shut down", "shutdown", -1)
 
 	return sentence_str
@@ -100,7 +100,7 @@ analyzed by the command detector.
 
 > Params:
 
-- sentence – a pointer to the header of the created 'sentence' slice on the beginning of CmdsDetectorInternal()
+- sentence – a pointer to the header of the created 'sentence' slice on the beginning of MainInternal()
 
 - before_sending – true if this function is being called before the NLP analyzer, false if it's being called after the
 NLP analyzer
@@ -108,8 +108,7 @@ NLP analyzer
 
 > Returns:
 
-- a string being the 'sentence' elements joined with a space between each (equivalent to 'sentence_str' on
-CmdsDetector()).
+- a string with the 'sentence' elements joined with a space between each (equivalent to 'sentence_str' on Main()).
 */
 func sentenceNLPPreparation(sentence *[]string, before_sending bool) string {
 	var sentence_str string = strings.Join(*sentence, " ")

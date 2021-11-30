@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package APU_CmdDetection
+package CommandsDetection_APU
 
 ////////////////////////////////////////////////////////////////////////////////////
 // ATTENTION: keep the format of the below arrays as it is. Each index must correspond to the value of the CMD_-started
@@ -252,7 +252,7 @@ var conditions_return_GL = [...][][][]string{
 	},
 	{ // 15
 		// If done right, the conditions below in the order they are in, should be equivalent to the old conditions:
-		// results[0][0] == "frontal" || results[0][0] == "front" || (results[1][0] == "selfie" && results[0][0]!="rear")
+		// "frontal" == results[0][0] || "front" == results[0][0] || ("selfie" == results[1][0] && "rear" != results[0][0])
 		{{"0", "frontal", "front"}, {RET_15_FRONTAL}},
 		{{"0", "rear"}, {RET_15_REAR}},
 		{{"1", "selfie"}, {RET_15_FRONTAL}},

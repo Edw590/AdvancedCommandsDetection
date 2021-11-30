@@ -19,10 +19,10 @@
  * under the License.
  */
 
-package APU_CmdDetection
+package CommandsDetection_APU
 
 import (
-	"Assist_Platforms_Unifier/APU_GlobalUtilsInt"
+	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
 	"log"
 	"strconv"
 	"strings"
@@ -44,9 +44,9 @@ const WVD_ERR_3 string = "-3"
 /*
 wordsVerificationDADi iterates a sentence and searches for keywords provided on a list and returns the words it found.
 
-The search is done through intervals of words, so other words can be in between the keywords and the function will still
-find the correct words. Aside from that various parameters can be set to adjust the behavior of the function. A good
-idea might be to automate the decision of some parameters, if possible.
+The function searches through intervals of words, so other words can be between the keywords, and the function will
+still find the correct words. Aside from that, various parameters can be set to adjust the behavior of the function. A
+good idea might be to automate the decision of some parameters, if possible.
 
 -----CONSTANTS-----
 
@@ -58,11 +58,11 @@ idea might be to automate the decision of some parameters, if possible.
 
 - INDEX_ODD – for 'left_intervs', 'right_intervs': same as for INDEX_EVEN but for odd indexes
 
-- DEFAULT_INDEX – for 'left_intervs', 'right_intervs': used to indicate it's to use the default index
+- DEFAULT_INDEX – for 'left_intervs', 'right_intervs': used to indicate the function to use the default index
 
-- IS_DIGIT – for 'words_list': used to indicate the "word" is any digit and not really a word
+- IS_DIGIT – for 'words_list': used to indicate the "word" is a digit and not really a word
 
-- INDEX_WORD_FOUND - for 'init_indexes_sub_verifs': used to indicate that it's to use the index of the last found
+- INDEX_WORD_FOUND - for 'init_indexes_sub_verifs': used to indicate the function to use the index of the last found
 word
 
 - INDEX_DEFAULT for 'init_indexes_sub_verifs': used to indicate it's to use the default index calculation
@@ -70,9 +70,9 @@ word
 - NONE – for the returning value: used on the 1st index of each slice to indicate that the word that should
 be on that index was not found
 
-- WVD_ERR_1 – for the returning value: used to indicate the function found repeated words and the verification was
-stopped (which can only happen if 'ignore_repets_main_words' and/or 'ignore_repets_cmds' are set to true). In
-this case, NONE will be returned as the found word on all sub-slices and this constant as index.
+- WVD_ERR_1 – for the returning value: used to indicate the function found repeated words, and the verification stopped
+(which can only happen if 'ignore_repets_main_words' and/or 'ignore_repets_cmds' are set to true). In this case, NONE
+will be returned as the found word on all sub-slices and this constant as index.
 
 - WVD_ERR_2 – for the returning value: used to indicate the function stopped the verification because a word was not
 found (which can only happen with 'stop_first_not_found' set to true). In this case, NONE will be returned as the found
@@ -88,12 +88,12 @@ as the found word on all sub-slices and this constant as index.
 
 > Params:
 
-- sentence – same as in sentenceCmdsChecker()
+- sentence – same as in sentenceCmdsDetector()
 
 - sentence_index – index on the sentence where to start the search
 
-- main_words – 1D slice with the words that activated the command detection. Example: the command can be "set the alarm"
-or "new alarm" --> 'main_words' is {"set", "new"}
+- main_words – 1D slice with the words that activated the command detection. Example: for commands pair
+"set the alarm"/"new alarm", 'main_words' is {"set", "new"}
 
 - words_list – a 2D slice on which each slice contains words to be checked on the 'sentence' on the sub-verification
 corresponding to the index of such slice. Example:
@@ -111,7 +111,7 @@ this feature.
 
 - right_intervs – same as for 'left_intervs', but for the right side. Default is 3.
 
-- init_indexes_sub_verifs – a map in which each key X is the number of the sub-verification and the value is the index
+- init_indexes_sub_verifs – a map in which each key X is the number of the sub-verification, and the value is the index
 on which to begin the specified sub-verification. Note: the 1st sub-verification (number 0) always starts on index 0, so
 attempts to change that sub-verification initial index will be ignored. The value can also be one of the constants. In
 case it's INDEX_WORD_FOUND, one can put a + or a - and a number to add or subtract said number to the index of the word
@@ -173,10 +173,10 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 	// Make a copy of the 'words_list', so it doesn't get modified by this function as the copy will be. Must be a real
 	// copy (elements from sub-slices will be removed/added), so CopySlice().
 	var words_list_int [][]string = nil
-	APU_GlobalUtilsInt.CopySlice(&words_list_int, words_list)
+	GlobalUtilsInt_APU.CopySlice(&words_list_int, words_list)
 	// And make a copy of the original words to use in the repeated words check. CopyOuterSlice() suffices, as it's just
 	// to copy each value of the slice (which are pointers - no problem with that as the contents won't be modified).
-	var original_words []string = APU_GlobalUtilsInt.CopyOuterSlice(main_words).([]string)
+	var original_words []string = GlobalUtilsInt_APU.CopyOuterSlice(main_words).([]string)
 
 	// If it's to exclude all the original words from the 'words_list_int', do it here, before the sub-verifications
 	// starts.
@@ -185,7 +185,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 			for counter, words_slice := range words_list_int {
 				for counter1, word := range words_slice {
 					if word == main_word {
-						APU_GlobalUtilsInt.DelElemInSlice(&words_list_int[counter], counter1)
+						GlobalUtilsInt_APU.DelElemInSlice(&words_list_int[counter], counter1)
 
 						break
 					}
@@ -213,7 +213,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 			} else {
 				// Check for an index corresponding to either even or odd sub-verifications.
 				var string_to_find string = INDEX_ODD
-				if sub_verif_number%2 == 0 {
+				if 0 == sub_verif_number%2 {
 					string_to_find = INDEX_EVEN
 				}
 				if interv, ok := intervs_map[string_to_find]; ok {
@@ -230,7 +230,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 				}
 			}
 
-			if interv_str == DEFAULT_INDEX {
+			if DEFAULT_INDEX == interv_str {
 				return default_interv
 			} else {
 				interv, _ := strconv.Atoi(interv_str)
@@ -251,11 +251,6 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 
 		var sentence_len int = len(sentence)
 
-		/*if sub_verif_number == 0 {
-			log.Println(init_index_internal)
-			log.Println(init_word_repeated)
-		}*/
-
 		var word_found string = NONE
 		var index_word_found int = init_index_int // Can't be a negative number as those are reserved for error codes...
 
@@ -272,7 +267,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 			switch word {
 			case IS_DIGIT:
 				{
-					if _, err := strconv.Atoi(sentence[index]); err == nil {
+					if _, err := strconv.Atoi(sentence[index]); nil == err {
 						word_found = sentence[index]
 						index_word_found = index
 						if !return_last_match {
@@ -336,7 +331,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 
 		// If it's to stop the verification at the first word not found (no match), stop the verification and put on the
 		// return slice, every word as NONE and with an error index.
-		if stop_first_not_found && word_found == NONE {
+		if stop_first_not_found && NONE == word_found {
 			ret_var = nil
 			for counter := 0; counter < len(words_list_int); counter++ {
 				ret_var = append(ret_var, []string{NONE, WVD_ERR_2})
@@ -416,7 +411,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 		// In case it's to continue searching with one of the words slices in the 'words_list_int', add it to the
 		// 'words_list_int' to simulate it having already one more to continue the search - this in case there is no
 		// more slices in the 'words_list_int' for next sub-verifications.
-		if len(words_list_int[sub_verification:]) == 1 && continue_with_words_slice_number != -1 {
+		if 1 == len(words_list_int[sub_verification:]) && continue_with_words_slice_number != -1 {
 			words_list_int = append(words_list_int, words_list_int[continue_with_words_slice_number])
 			words_list_length++ // Also increment the length of the list
 		}
@@ -427,7 +422,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 			// If it's to exclude from the 'words_list_int' the word found in this sub-verification, check to see if
 			// it's the ALL_SUB_VERIFS_INT command, or if it's for a specific sub-verification.
 			var exclude_word_found_now bool = false
-			if exclude_found_word[0] == ALL_SUB_VERIFS_INT {
+			if ALL_SUB_VERIFS_INT == exclude_found_word[0] {
 				exclude_word_found_now = true
 			} else {
 				for _, number := range exclude_found_word {
@@ -448,7 +443,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 				for counter, words_slice := range words_list_int[sub_verification+1:] {
 					for counter1, word := range words_slice {
 						if word == word_found {
-							APU_GlobalUtilsInt.DelElemInSlice(&words_list_int[sub_verification+1+counter], counter1)
+							GlobalUtilsInt_APU.DelElemInSlice(&words_list_int[sub_verification+1+counter], counter1)
 
 							break
 						}
@@ -482,7 +477,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 			}
 			// Now check if the index is a number or a special command.
 			if strings.Contains(init_index_next_sub_verif, INDEX_WORD_FOUND) {
-				if init_index_next_sub_verif == INDEX_WORD_FOUND {
+				if INDEX_WORD_FOUND == init_index_next_sub_verif {
 					init_index_next_sub_verif = strconv.Itoa(index_word_found)
 				} else if strings.Contains(init_index_next_sub_verif, "+") {
 					number, _ := strconv.Atoi(strings.Split(init_index_next_sub_verif, "+")[1])
@@ -491,7 +486,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 					number, _ := strconv.Atoi(strings.Split(init_index_next_sub_verif, "-")[1])
 					init_index_next_sub_verif = strconv.Itoa(index_word_found - number)
 				}
-			} else if strings.Contains(init_index_next_sub_verif, INDEX_DEFAULT) || init_index_next_sub_verif == "" {
+			} else if strings.Contains(init_index_next_sub_verif, INDEX_DEFAULT) || "" == init_index_next_sub_verif {
 				// If no index was specified or the default one was specified, calculate the next initial index by
 				// calculating an average and summing 0.5.
 				// If it was index 3, it's now 3.5, which is 3 when converted to int. If it was 3.5, it's now 4.
@@ -656,8 +651,8 @@ func checkResultsWordsVerifDADi(words_list [][]string, main_word string, results
 		// The variable below is a copy of the results of the verification function with the main word added in the
 		// index 0, so the conditions can be checked by their index (0 corresponding to the main word and 1 to the first
 		// word of the results).
-		var modified_results_verifDADi [][]string = APU_GlobalUtilsInt.CopyOuterSlice(results_wordsVerificationDADi).([][]string) // Will only add a new slice to the outer slice, so no problem in using CopyOuterSlice().
-		APU_GlobalUtilsInt.AddElemSlice(&modified_results_verifDADi, []string{main_word, "-1"}, 0)
+		var modified_results_verifDADi [][]string = GlobalUtilsInt_APU.CopyOuterSlice(results_wordsVerificationDADi).([][]string) // Will only add a new slice to the outer slice, so no problem in using CopyOuterSlice().
+		GlobalUtilsInt_APU.AddElemSlice(&modified_results_verifDADi, []string{main_word, "-1"}, 0)
 
 		var modified_results_verifDADi_len int = len(modified_results_verifDADi) // Optimization
 
@@ -738,17 +733,17 @@ func checkResultsWordsVerifDADi(words_list [][]string, main_word string, results
 				//log.Println("++++++")
 				//log.Println(sub_cond_index)
 				var any_word_match = false // To check if any word in the sub-condition matches the result's word.
-				if len(sub_cond) == 0 {
+				if 0 == len(sub_cond) {
 					// If there is nothing in the sub-condition, it doesn't matter and allow anything, including NONE.
 					any_word_match = true
 				} else {
-					if len(sub_cond) == 1 {
-						if sub_cond_index == 0 {
+					if 1 == len(sub_cond) {
+						if 0 == sub_cond_index {
 							// No need to check if it's a word on the list with the main word - of course it's on the list,
 							// or the command wouldn't have been detected in the first place.
 							any_word_match = true
 						} else {
-							if sub_cond[0] == A_WORD_IN_LIST {
+							if A_WORD_IN_LIST == sub_cond[0] {
 								for _, sub_cond_word := range words_list[sub_cond_index-1] {
 									// (-1 above because 1 on sub_cond is 0 in words_list)
 									if modified_results_verifDADi[sub_cond_index][0] == sub_cond_word {

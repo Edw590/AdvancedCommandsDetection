@@ -22,8 +22,8 @@
 package main
 
 import (
-	"Assist_Platforms_Unifier/APU_CmdDetection"
-	"Assist_Platforms_Unifier/APU_GlobalUtils"
+	"Assist_Platforms_Unifier/CommandsDetection_APU"
+	"Assist_Platforms_Unifier/GlobalUtils_APU"
 	"log"
 	"os"
 )
@@ -31,20 +31,20 @@ import (
 const ERR_NOT_ENOUGH_ARGS string = "3234_ERR_NOT_ENOUGH_ARGS"
 
 func main() {
-	log.Println(APU_GlobalUtils.ASSISTANT_NAME + "'s Platform Unifier module.")
+	log.Println(GlobalUtils_APU.ASSISTANT_NAME + "'s Platform Unifier module.")
 	log.Println("---")
 	log.Println("")
-	log.Println("Version of the module: " + APU_GlobalUtils.VERSION)
+	log.Println("Version of the module: " + GlobalUtils_APU.VERSION)
 	log.Println("")
 	log.Println("//-->3234_BEGINNING<--\\\\")
 	log.Println("")
 
-	var all_allowed_cmds string = APU_CmdDetection.GenerateListAllCmds()
+	var all_allowed_cmds string = CommandsDetection_APU.GenerateListAllCmds()
 	log.Println(all_allowed_cmds)
 
 	arguments := os.Args
 	if len(arguments) > 1 {
-		log.Println("To do: " + APU_CmdDetection.CmdsDetector(os.Args[1], all_allowed_cmds))
+		log.Println("To do: " + CommandsDetection_APU.Main(os.Args[1], all_allowed_cmds))
 	} else {
 		log.Println(ERR_NOT_ENOUGH_ARGS)
 		//os.Exit(0) // Comment to dev mode (run stuff written below)
@@ -53,12 +53,12 @@ func main() {
 	// Tests of good functioning of the commands detector.
 	//var sentence_str string = "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"
 	//var sentence_str string = "turn on turn wifi on please"
-	var sentence_str string = "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and the wifi please"
+	//var sentence_str string = "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please"
 	//var sentence_str string = "turn on wifi and and the airplane mode and the flashlight"
 
 	// todo None of these below work decently... Fix them.
 
-	//var sentence_str string = "turn airplane mode off and the wifi please"
+	var sentence_str string = "turn airplane mode off and the wifi please"
 	//var sentence_str string = "the video stop it and then play it again"
 	// This above needs a change in the NLPAnalyzer...
 	// The 1st "it" is "video", so it's replaced when the sentence_counter gets to "it". At that time, the "and"
@@ -67,7 +67,7 @@ func main() {
 	// I think it thinks it's "it" - so it's stored too as a "non-name" --> wrong!
 	// Reset the counters every time or something.
 
-	log.Println("To do: " + APU_CmdDetection.CmdsDetectorInternal(sentence_str, all_allowed_cmds))
+	log.Println("To do: " + CommandsDetection_APU.MainInternal(sentence_str, all_allowed_cmds))
 	log.Println("")
 	log.Println("\\\\-->3234_END<--//")
 }
