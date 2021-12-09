@@ -22,10 +22,19 @@
 package GlobalUtilsInt_APU
 
 import (
+	"Assist_Platforms_Unifier/GlobalUtils_APU"
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"reflect"
 )
+
+// MOD_RET_ERR_PREFIX is the prefix to be used to define a constant at the submodule level, which shall be a return
+// string with an error description on it. A unique string with the submodule name on it (can be abbreviated) must be
+// appended to it, followed by " - ". For example, "CMD_DETECT_ - " for the Commands Detection submodule. A result
+// example might be
+// 		"3234_ERR_GO_CMD_DETECT - APU error 1: Some description here"
+const MOD_RET_ERR_PREFIX = "3234_ERR_GO_"
 
 ///////////////////////////////////////
 // Try / Catch / Finally
@@ -227,4 +236,27 @@ func CopySlice(destination interface{}, source interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+/*
+PanicInt calls the built-in panic() function, but with a string with the standard format to this module.
+
+The format is:
+	GlobalUtils_APU.APU_ERR_PREFIX + err_code + ": " + description
+
+-----------------------------------------------------------
+
+> Params:
+
+- err_code – a unique error identifier for the submodule that calls the function
+
+- description – a description of the error
+
+
+> Returns:
+
+- nothing
+*/
+func PanicInt(err_code float32, description string) {
+	panic(GlobalUtils_APU.APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)
 }

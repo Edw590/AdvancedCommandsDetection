@@ -3,7 +3,7 @@
 ## Table of Contents
 - [Notice](#notice)
 - [Background](#background)
-- [Current sub-modules](#current-sub-modules)
+- [Current submodules](#current-submodules)
 - [For developers](#for-developers)
 - - [To compile the module](#--to-compile-the-module)
 - [About](#about)
@@ -21,7 +21,7 @@ This project is a part of a bigger project, consisting of the following:
 ## Background
 This is a module which is supposed to connect the assistant in different platforms. Something is coded in Go and does not need to be coded specifically in Java for Android, then for iOS, for example, Objective C, then C++ or C (Windows/Linux), or Python (Raspberry Pi), or any other. This should compile to all needed architectures and be present as a global utilities library.
 
-## Current sub-modules
+## Current submodules
 - **Commands Detection** --> Outputs a list of detected commands in a given sentence of words. For example, give it (without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present), "turn it on. turn on the wifi, and and the airplane mode, get it it on. no, don't turn it on. turn off airplane mode and also the wifi, please.". This should output orders to (in order of given commands), request an explanation of the first "it" (which has no meaning), turn on the Wi-Fi, then turn off the airplane mode, and also the Wi-Fi. And it does: "-2, 4.1, 11.2, 4.2", which means the same, according to the way the function works.
 
 ## For developers
@@ -31,7 +31,7 @@ This is a module which is supposed to connect the assistant in different platfor
 
 And a small explanation of the module structure:
 - Each main package has its name beginning with "APU_". The reason is on Android, without that, appears, for example "CmdDetection" only. And that comes from where? No idea. No indication. So "APU_CmdDetection" seems better to differentiate where the class came from (APU comes from Assist_Plaforms_Unifier - the name of the project).
-- Each sub-module is inside a package. Like the Commands Detector module, which is inside APU_CmdDetection.
+- Each submodule is inside a package. Like the Commands Detector module, which is inside APU_CmdDetection.
 - There are packages which end in "Int". That means Internal - not to be exported like the packages which don't end in Int. With Gomobile it's possible to choose which packages are exported. The others will be compiled but will not be exported. So that's the idea of those Int-ended packages.
 - There's also a Python program which updates the VERSION constant each the module is compiled for Android. That way forgetting to update the version doesn't happen.
 - As this module is compiled for Android with Gomobile, it's limited to the supported types by go/build: https://pkg.go.dev/golang.org/x/mobile/cmd/gobind#hdr-Type_restrictions, so all the exported elements must follow those rules (some, as for example if a slice is exported, no error is thrown, so doesn't seem to be bad to export those to be accessible across packages - won't be accessible on Android though).

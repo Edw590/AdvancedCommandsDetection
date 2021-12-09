@@ -19,7 +19,7 @@
 
 # coding=utf-8
 """
-This file updates this Go module VERSION variable each time it's ran.
+This file updates this module's VERSION variable each time it's ran.
 """
 import datetime
 

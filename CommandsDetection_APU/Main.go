@@ -19,6 +19,7 @@
  * under the License.
  */
 
+// Package CommandsDetection_APU is the submodule that detects commands in a given string of words
 package CommandsDetection_APU
 
 import (
@@ -29,7 +30,7 @@ import (
 	"strings"
 )
 
-const ERR_CMD_DETECT string = "3234_ERR_CMD_DETECT - "
+const ERR_CMD_DETECT string = GlobalUtilsInt_APU.MOD_RET_ERR_PREFIX + "CMD_DETECT - "
 
 /*
 Main is the function to call to request a detection of commands in a given sentence of words.
@@ -40,7 +41,7 @@ Main is the function to call to request a detection of commands in a given sente
 
 - sentence_str – a sentence of words, for example coming directly from speech recognition
 
-- allowed_cmds  a string containing a list of the CMD_-started constants of all the commands that are allowed to be
+- allowed_cmds – a string containing a list of the CMD_-started constants of all the commands that are allowed to be
 returned if found on the 'sentence', separated by CMDS_SEPARATOR - if all commands are wanted for detection, consider
 using the return of GenerateListAllCmds()
 
@@ -50,10 +51,11 @@ using the return of GenerateListAllCmds()
 - a list of the detected commands in the form
 	[CMD1][separator][CMD2][separator][CMD3]
 with CMDS_SEPARATOR as the separator; if the function detected no commands, an empty string; if any error occurred, a
-string beginning with ERR_CMD_DETECT.
+string beginning with ERR_CMD_DETECT, followed either by GlobalUtils_APU.APU_ERR_PREFIX and its requirements, or a Go
+error
 */
 func Main(sentence_str string, allowed_cmds string) string {
-	var ret_var string = ""
+	var ret_var string
 
 	GlobalUtilsInt_APU.Tcf{
 		Try: func() {
@@ -67,7 +69,8 @@ func Main(sentence_str string, allowed_cmds string) string {
 	return ret_var
 }
 
-const CMDS_SEPARATOR string = ", " // Leave the space (mess because of a char being a uint8 and not a string)
+const CMDS_SEPARATOR string = ", "
+
 /*
 MainInternal is the actual function that will do what's written on Main() - continue reading there.
 
@@ -103,7 +106,7 @@ func MainInternal(sentence_str string, allowed_cmds_str string) string {
 
 	var ret_var string = ""
 	for _, command := range sentence_cmds {
-		ret_var += fmt.Sprintf("%g", command) + CMDS_SEPARATOR
+		ret_var += fmt.Sprint(command) + CMDS_SEPARATOR
 	}
 
 	log.Println("::::::::::::::::::::::::::::::::::")
@@ -209,98 +212,107 @@ func sentenceCmdsDetector(sentence []string, allowed_cmds []int) []float32 {
 			ret_var = append(ret_var, float32(float))
 		} else {
 			for _, cmd_index := range allowed_cmds {
-				if cmd_index > 0 { // Just to prevent it trying to go to the 0 indexes (and negative ones, btw).
-					for _, main_word := range main_words_GL[cmd_index] {
-						if main_word == sentence_word {
-							/*if cmd_index != 11 {
-								// Uncomment for testing purposes
-								continue
-							}*/
+				if cmd_index <= 0 {
+					// Can't detect non-positive command identifiers. Those are reserved identifiers. So panic to warn
+					// about wrong usage.
+					GlobalUtilsInt_APU.PanicInt(1, "Non-positive command identifier sent for detection")
+				} else if cmd_index > HIGHEST_CMD_INT {
+					// Aside from getting the function to do additional tasks for nothing, there's nothing bad in
+					// sending a command that is not on the list. But probably is bad practice to put commands from 1 to
+					// 100 just to support all future commands - so panic.
+					GlobalUtilsInt_APU.PanicInt(1, "Command identifier above highest value sent for detection")
+				}
 
-							log.Println("==============")
-							log.Println(sentence_word)
-							log.Println(cmd_index)
+				for _, main_word := range main_words_GL[cmd_index] {
+					if main_word == sentence_word {
+						/*if cmd_index != 11 {
+							// Uncomment for testing purposes
+							continue
+						}*/
 
-							var results_WordsVerificationDADi [][]string = wordsVerificationDADi(sentence, sentence_counter,
-								main_words_GL[cmd_index], words_list_GL[cmd_index], left_intervs_GL[cmd_index],
-								right_intervs_GL[cmd_index], init_indexes_sub_verifs_GL[cmd_index],
-								exclude_word_found_GL[cmd_index], return_last_match_GL[cmd_index],
-								ignore_repets_main_words_GL[cmd_index], ignore_repets_cmds_GL[cmd_index],
-								order_words_list_GL[cmd_index], stop_first_not_found_GL[cmd_index],
-								exclude_original_words_GL[cmd_index], continue_with_words_slice_number_GL[cmd_index])
+						log.Println("==============")
+						log.Println(sentence_word)
+						log.Println(cmd_index)
 
-							log.Println("-----------")
-							log.Println(results_WordsVerificationDADi)
+						var results_WordsVerificationDADi [][]string = wordsVerificationDADi(sentence, sentence_counter,
+							main_words_GL[cmd_index], words_list_GL[cmd_index], left_intervs_GL[cmd_index],
+							right_intervs_GL[cmd_index], init_indexes_sub_verifs_GL[cmd_index],
+							exclude_word_found_GL[cmd_index], return_last_match_GL[cmd_index],
+							ignore_repets_main_words_GL[cmd_index], ignore_repets_cmds_GL[cmd_index],
+							order_words_list_GL[cmd_index], stop_first_not_found_GL[cmd_index],
+							exclude_original_words_GL[cmd_index], continue_with_words_slice_number_GL[cmd_index])
 
-							if checkResultsWordsVerifDADi(words_list_GL[cmd_index], sentence_word,
-								results_WordsVerificationDADi, conditions_continue_GL[cmd_index],
-								conditions_not_continue_GL[cmd_index]) {
-								log.Println("LLLLLLL")
-								var sub_cond_match_found bool = false
-								for _, condition := range conditions_return_GL[cmd_index] {
-									//log.Println("++++++++++++")
-									if 1 == len(condition) {
-										// Then it's check nothing of the results and just return immediately.
-										float, _ := strconv.ParseFloat(condition[0][0], 32)
-										ret_var = append(ret_var, float32(float))
+						log.Println("-----------")
+						log.Println(results_WordsVerificationDADi)
 
-										break
-									} else {
-										var all_sub_conds_matched bool = true
-										var condition_len = len(condition) // Optimization
-										for _, sub_cond := range condition[:condition_len-1] {
-											// Here it's sub_condition_len-1 because the last one is the return constant.
+						if checkResultsWordsVerifDADi(words_list_GL[cmd_index], sentence_word,
+							results_WordsVerificationDADi, conditions_continue_GL[cmd_index],
+							conditions_not_continue_GL[cmd_index]) {
+							log.Println("LLLLLLL")
+							var sub_cond_match_found bool = false
+							for _, condition := range conditions_return_GL[cmd_index] {
+								//log.Println("++++++++++++")
+								if 1 == len(condition) {
+									// Then it's check nothing of the results and just return immediately.
+									float, _ := strconv.ParseFloat(condition[0][0], 32)
+									ret_var = append(ret_var, float32(float))
 
-											// Get the index of the results' sub-slice to check.
-											sub_cond_index_to_chk, _ := strconv.Atoi(sub_cond[0])
-											// If any word matches on the sub-condition, go check the next sub-condition.
-											var word_match bool = false
-											//log.Println("-------")
-											for _, sub_cond_word := range sub_cond[1:] {
-												// [1:] because sub_cond[0] is the index. The rest are word to check.
+									break
+								} else {
+									var all_sub_conds_matched bool = true
+									var condition_len = len(condition) // Optimization
+									for _, sub_cond := range condition[:condition_len-1] {
+										// Here it's sub_condition_len-1 because the last one is the return constant.
 
-												//log.Println(word_1)
-												if -1 == sub_cond_index_to_chk {
-													// If the index of the results to check is -1, that means it's to check
-													// the 'sentence_word' instead (the word that activated the command
-													// detection).
-													if sentence_word == sub_cond_word {
-														word_match = true
+										// Get the index of the results' sub-slice to check.
+										sub_cond_index_to_chk, _ := strconv.Atoi(sub_cond[0])
+										// If any word matches on the sub-condition, go check the next sub-condition.
+										var word_match bool = false
+										//log.Println("-------")
+										for _, sub_cond_word := range sub_cond[1:] {
+											// [1:] because sub_cond[0] is the index. The rest are word to check.
 
-														break
-													}
-												} else {
-													//log.Println(results_WordsVerificationDADi[results_index][0])
-													if results_WordsVerificationDADi[sub_cond_index_to_chk][0] == sub_cond_word {
-														//log.Println("KKKKKKKKKKKKK")
-														word_match = true
+											//log.Println(word_1)
+											if -1 == sub_cond_index_to_chk {
+												// If the index of the results to check is -1, that means it's to check
+												// the 'sentence_word' instead (the word that activated the command
+												// detection).
+												if sentence_word == sub_cond_word {
+													word_match = true
 
-														break
-													}
+													break
+												}
+											} else {
+												//log.Println(results_WordsVerificationDADi[results_index][0])
+												if results_WordsVerificationDADi[sub_cond_index_to_chk][0] == sub_cond_word {
+													//log.Println("KKKKKKKKKKKKK")
+													word_match = true
+
+													break
 												}
 											}
-											all_sub_conds_matched = all_sub_conds_matched && word_match
-											if !all_sub_conds_matched {
-												// If any sub-condition had no match, forget about that condition and go
-												// check the next one.
-												break
-											}
 										}
-										if all_sub_conds_matched {
-											// In the end of a condition check, if all its sub-conditions found a match,
-											// return the constant on the only index of the last sub-condition of the
-											// condition.
-											float, _ := strconv.ParseFloat(condition[condition_len-1][0], 32)
-											ret_var = append(ret_var, float32(float))
+										all_sub_conds_matched = all_sub_conds_matched && word_match
+										if !all_sub_conds_matched {
+											// If any sub-condition had no match, forget about that condition and go
+											// check the next one.
+											break
+										}
+									}
+									if all_sub_conds_matched {
+										// In the end of a condition check, if all its sub-conditions found a match,
+										// return the constant on the only index of the last sub-condition of the
+										// condition.
+										float, _ := strconv.ParseFloat(condition[condition_len-1][0], 32)
+										ret_var = append(ret_var, float32(float))
 
-											sub_cond_match_found = true
-										}
+										sub_cond_match_found = true
 									}
-									if sub_cond_match_found {
-										log.Println("QQQQQQQ")
-										log.Println(ret_var)
-										break
-									}
+								}
+								if sub_cond_match_found {
+									log.Println("QQQQQQQ")
+									log.Println(ret_var)
+									break
 								}
 							}
 						}

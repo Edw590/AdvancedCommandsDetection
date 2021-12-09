@@ -19,12 +19,19 @@
  * under the License.
  */
 
-// Package GlobalUtils_APU contains constants useful inside and outside this Go module
+// Package GlobalUtils_APU contains constants useful inside and outside this module
 package GlobalUtils_APU
 
-// VERSION is the constant to check to know the version of the compiled Go module. The format is
-// "yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])".
-const VERSION string = "2021-11-23 -- 20:53:03.312981 (Hora padrão de GMT)"
+// VERSION is the constant to check to know the version of the compiled module. The format is
+// 		"yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])"
+const VERSION string = "2021-12-06 -- 22:02:04.192837 (Hora padrão de GMT)"
 
-// ASSISTANT_NAME is the constant which has the assistant name used in the entire Go module.
+// ASSISTANT_NAME is the constant that has the assistant name used in the entire module.
 const ASSISTANT_NAME string = "LEGION"
+
+// APU_ERR_PREFIX is the prefix to be used after MOD_RET_ERR_PREFIX and its additions to return a custom error (that is,
+// an error that is not from third-party/Go libraries). A string must be appended with the format "X: Y", in which X is
+// a unique error identifier (float - 1 or 1.1) for the submodule, and Y is an error description. A result example
+// might be
+// 		"APU error 1: Some description here"
+const APU_ERR_PREFIX = "APU error "
