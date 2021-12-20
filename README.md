@@ -1,4 +1,4 @@
-# LEGION - A real assistant [Platforms Unifier]
+# V.I.S.O.R. - A real assistant [Platforms Unifier]
 
 ## Table of Contents
 - [Notice](#notice)
@@ -15,8 +15,8 @@
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
-- [LEGION - A real assistant [Android/Client]](https://github.com/DADi590/LEGION---A-real-assistant--Android-Client)
-- [LEGION - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
+- [V.I.S.O.R. - A real assistant [Android/Client]](https://github.com/DADi590/LEGION---A-real-assistant--Android-Client)
+- [V.I.S.O.R. - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
 
 ## Background
 This is a module which is supposed to connect the assistant in different platforms. Something is coded in Go and does not need to be coded specifically in Java for Android, then for iOS, for example, Objective C, then C++ or C (Windows/Linux), or Python (Raspberry Pi), or any other. This should compile to all needed architectures and be present as a global utilities library.
@@ -48,8 +48,8 @@ This project is licensed under Apache 2.0 License - http://www.apache.org/licens
 
 ## Support
 If you have any questions, try the options below:
-- Create an Issue here: https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier/issues
-- Create a Discussion here: https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier/discussions
+- Create an Issue here: https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier/issues
+- Create a Discussion here: https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier/discussions
 
 ## Final notes
 Any new ideas are welcomed! (I just may or may not implement them that fast - student)

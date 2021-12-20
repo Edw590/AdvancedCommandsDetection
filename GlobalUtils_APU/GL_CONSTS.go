@@ -27,7 +27,7 @@ package GlobalUtils_APU
 const VERSION string = "2021-12-06 -- 22:02:04.192837 (Hora padrão de GMT)"
 
 // ASSISTANT_NAME is the constant that has the assistant name used in the entire module.
-const ASSISTANT_NAME string = "LEGION"
+const ASSISTANT_NAME string = "V.I.S.O.R."
 
 // APU_ERR_PREFIX is the prefix to be used after MOD_RET_ERR_PREFIX and its additions to return a custom error (that is,
 // an error that is not from third-party/Go libraries). A string must be appended with the format "X: Y", in which X is

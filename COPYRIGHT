@@ -34,7 +34,7 @@ Licensed under: MIT License
 Library name: Go support for Mobile devices
 URL: https://pkg.go.dev/golang.org/x/mobile
 Copyright (c): 2009 The Go Authors. All rights reserved.
-Licensed under: 3-clause BSD License
+Licensed under: 3-Clause BSD License
 
 Specific 3rd clause for this library:
 "Neither the name of Google Inc. nor the names of its
@@ -45,7 +45,7 @@ Specific 3rd clause for this library:
 Library name: Gonum
 URL: https://pkg.go.dev/gonum.org/v1/gonum
 Copyright (c): 2013 The Gonum Authors. All rights reserved.
-Licensed under: 3-clause BSD License
+Licensed under: 3-Clause BSD License
 
 Specific 3rd clause for this library:
 "Neither the name of the Gonum project nor the names of its authors and
@@ -78,7 +78,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
---- 3-clause BSD License ---
+--- 3-Clause BSD License ---
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
