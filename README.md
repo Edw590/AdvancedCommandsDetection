@@ -1,5 +1,7 @@
 # V.I.S.O.R. - A real assistant [Platforms Unifier]
 
+Secondary project name: Assist_Platforms_Unifier
+
 ## Table of Contents
 - [Notice](#notice)
 - [Background](#background)
