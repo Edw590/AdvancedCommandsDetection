@@ -67,7 +67,9 @@ var right_intervs_GL = [...]map[string]string{
 	{}, // 11
 	{}, // 12
 	{}, // 13
-	{}, // 14
+	{ // 14
+		"1": "4", // "reboot the phone |into the amazing| safe mode" (some adjective someone might say?)
+	},
 	{}, // 15
 	{}, // 16
 	{}, // 17

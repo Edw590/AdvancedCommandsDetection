@@ -64,7 +64,9 @@ var conditions_continue_GL = [...][][][]string{
 	{ // 13
 		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
-	{}, // 14
+	{
+		{{A_WORD_IN_LIST}, {}, {}},
+	}, // 14
 	{ // 15
 		// Different here because only one of the words on the 2nd sub-list of the words_list is mandatory ("take a
 		// picture"). No word of the first sub-list is mandatory.
@@ -248,7 +250,9 @@ var conditions_return_GL = [...][][][]string{
 		{{RET_13}},
 	},
 	{ // 14
-		{{RET_14}},
+		{{"1", "safe"}, {"2", "mode"}, {RET_14_SAFE_MODE}},
+
+		{{RET_14_NORMAL}},
 	},
 	{ // 15
 		// If done right, the conditions below in the order they are in, should be equivalent to the old conditions:

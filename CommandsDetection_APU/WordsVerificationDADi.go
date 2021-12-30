@@ -115,11 +115,8 @@ this feature.
 on which to begin the specified sub-verification. Note: the 1st sub-verification (number 0) always starts on index 0, so
 attempts to change that sub-verification initial index will be ignored. The value can also be one of the constants. In
 case it's INDEX_WORD_FOUND, one can put a + or a - and a number to add or subtract said number to the index of the word
-found. Example: { INDEX_WORD_FOUND + "+1"}. The default index calculation is an average between the index of the word
-found and the initial index, with 0.5 added. It's just a way of increasing the index sometimes. Sometimes not - random.
-The idea of increasing a bit is to increase the search interval that bit, but not as much as to put on the new index,
-the index of the word found. It's a middle term, but with more weight on the right. Use a nil or empty slice to
-disregard this feature.
+found. Example: { INDEX_WORD_FOUND + "+1"}. The default index is the index of the word found in the sub-verification.
+Use a nil or empty slice to disregard this feature.
 
 - exclude_found_word – 1D slice in which each element is a number of a sub-verification on which to exclude the word
 found from the subsequent sub-verifications. One of the constants can also be used but only in the first index, and in
@@ -162,10 +159,11 @@ NONE will be used and on the index will be a non-negative index - discard that i
 could there be an index)
 */
 func wordsVerificationDADi(sentence []string, sentence_index int, main_words []string, words_list [][]string,
-	left_intervs map[string]string, right_intervs map[string]string, init_indexes_sub_verifs map[string]string,
-	exclude_found_word []int, return_last_match bool, ignore_repets_main_words bool,
-	ignore_repets_cmds bool, order_words_list bool, stop_first_not_found bool,
-	exclude_original_words bool, continue_with_words_slice_number int) [][]string {
+	left_intervs map[string]string, right_intervs map[string]string,
+	init_indexes_sub_verifs map[string]string, exclude_found_word []int, return_last_match bool,
+	ignore_repets_main_words bool, ignore_repets_cmds bool, order_words_list bool,
+	stop_first_not_found bool, exclude_original_words bool,
+	continue_with_words_slice_number int) [][]string {
 	// Note: this function was created recursive and is now a loop for easier debugging.
 
 	var ret_var [][]string = nil
@@ -493,8 +491,13 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 				// It's just a way of increasing the index sometimes. Sometimes not - random. The idea of increasing a
 				// bit is to increase the search interval that bit. But not as much as to put the new index, the index
 				// of the word found. Like a middle term, but with more weight on the right.
-				init_index_next_sub_verif = strconv.Itoa(int(
-					(float32(init_index_int)+float32(index_word_found))/float32(2) + float32(0.5)))
+				//init_index_next_sub_verif = strconv.Itoa(int(
+				//	(float32(init_index_int) + float32(index_word_found))/float32(2) + float32(0.5)))
+
+				// UPDATE: I've just got it back to the older and first way --> the index of the word found.
+				// I believe the way above was because there existed no way of knowing what a "it" means - which is not
+				// true anymore.
+				init_index_next_sub_verif = strconv.Itoa(index_word_found)
 			}
 
 			//log.Println("init_index_next_sub_verif_str -", init_index_next_sub_verif_str)

@@ -51,15 +51,14 @@ func main() {
 	}
 	log.Println("")
 	// Tests of good functioning of the commands detector.
-	//var sentence_str string = "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"
-	//var sentence_str string = "turn on turn wifi on please"
-	//var sentence_str string = "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please"
-	//var sentence_str string = "turn on wifi and and the airplane mode and the flashlight"
+	//var sentence_str string = "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on" // 11.1, 11.2, 4.1
+	//var sentence_str string = "turn on turn wifi on please" // 4.1
+	//var sentence_str string = "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please" // -2, 4.1, 11.2, 4.2
+	//var sentence_str string = "turn on wifi and and the airplane mode and the flashlight" // 4.1, 11.1, 8.1
 
 	// todo None of these below work decently... Fix them.
 
-	var sentence_str string = "turn airplane mode off and the wifi please"
-	//var sentence_str string = "the video stop it and then play it again"
+	var sentence_str string = "the video stop it and then play it again"
 	// This above needs a change in the NLPAnalyzer...
 	// The 1st "it" is "video", so it's replaced when the sentence_counter gets to "it". At that time, the "and"
 	// function has "stop" stored as a verb, but the counter is on the "it" place. When "video" is deleted after being

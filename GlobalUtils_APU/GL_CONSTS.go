@@ -24,7 +24,7 @@ package GlobalUtils_APU
 
 // VERSION is the constant to check to know the version of the compiled module. The format is
 // 		"yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])"
-const VERSION string = "2021-12-06 -- 22:02:04.192837 (Hora padrão de GMT)"
+const VERSION string = "2021-12-30 -- 00:34:20.094325 (Hora padrão de GMT)"
 
 // ASSISTANT_NAME is the constant that has the assistant name used in the entire module.
 const ASSISTANT_NAME string = "V.I.S.O.R."

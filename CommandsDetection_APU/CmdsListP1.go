@@ -106,13 +106,14 @@ const RET_11_OFF string = "11.2"
 const CMD_ASK_BATTERY_PERCENT string = "12"
 const RET_12 string = "12.1"
 
-// CMD_SHUT_DOWN_PHONE is the command to shut down a phone
-const CMD_SHUT_DOWN_PHONE string = "13"
+// CMD_SHUT_DOWN_DEVICE is the command to shut down a device
+const CMD_SHUT_DOWN_DEVICE string = "13"
 const RET_13 string = "13.1"
 
-// CMD_REBOOT_PHONE is the command to reboot a phone
-const CMD_REBOOT_PHONE string = "14"
-const RET_14 string = "14.1"
+// CMD_REBOOT_DEVICE is the command to reboot a device, either normally, or into safe mode
+const CMD_REBOOT_DEVICE string = "14"
+const RET_14_NORMAL string = "14.1"
+const RET_14_SAFE_MODE string = "14.2"
 
 // CMD_TAKE_PHOTO is the command to take a rear or frontal photo. If neither rear nor frontal is specified, the default
 // is RET_15_REAR.
@@ -226,11 +227,13 @@ var words_list_GL = [...][][]string{
 		{"battery", "percentage", "status", "state"},
 	},
 	{ // 13
-		{"off", "down", "phone"},
-		{"off", "down", "phone"},
+		{"off", "down", "phone", "tablet", "device", "computer", "pc"},
+		{"off", "down", "phone", "tablet", "device", "computer", "pc"},
 	},
 	{ // 14
-		{"phone"},
+		{"phone", "tablet", "device", "computer", "pc"},
+		{"safe"},
+		{"mode"},
 	},
 	{ // 15
 		{"frontal", "front", "rear"},
