@@ -1,5 +1,7 @@
 # V.I.S.O.R. - A real assistant [Platforms Unifier]
 
+Secondary project name: Assist_Platforms_Unifier
+
 ## Table of Contents
 - [Notice](#notice)
 - [Background](#background)
@@ -15,14 +17,14 @@
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
-- [V.I.S.O.R. - A real assistant [Android/Client]](https://github.com/DADi590/LEGION---A-real-assistant--Android-Client)
-- [V.I.S.O.R. - A real assistant [Platforms Unifier]](https://github.com/DADi590/LEGION---A-real-assistant--Platforms-Unifier)
+- [V.I.S.O.R. - A real assistant [Android/Client]](https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Android-Client)
+- [V.I.S.O.R. - A real assistant [Platforms Unifier]](https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier)
 
 ## Background
 This is a module which is supposed to connect the assistant in different platforms. Something is coded in Go and does not need to be coded specifically in Java for Android, then for iOS, for example, Objective C, then C++ or C (Windows/Linux), or Python (Raspberry Pi), or any other. This should compile to all needed architectures and be present as a global utilities library.
 
 ## Current submodules
-- **Commands Detection** --> Outputs a list of detected commands in a given sentence of words. For example, give it (without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present), "turn it on. turn on the wifi, and and the airplane mode, get it it on. no, don't turn it on. turn off airplane mode and also the wifi, please.". This should output orders to (in order of given commands), request an explanation of the first "it" (which has no meaning), turn on the Wi-Fi, then turn off the airplane mode, and also the Wi-Fi. And it does: "-2, 4.1, 11.2, 4.2", which means the same, according to the way the function works.
+- **Commands Detection** --> Outputs a list of detected commands in a given sentence of words. For example, give it (without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present), "turn it on. turn on the wifi, and and the airplane mode, get it it on. no, don't turn it on. turn off airplane mode and also the wifi, please.". This should output orders to (in order of given commands), request an explanation of the first "it" (which has no meaning), turn on the Wi-Fi, then turn off the airplane mode, and also the Wi-Fi. And it does: "-2, 4.1, 11.2, 4.2", which means the same, according to the way the submodule works.
 
 ## For developers
 ### - To compile the module
@@ -30,7 +32,7 @@ This is a module which is supposed to connect the assistant in different platfor
 - To compile for Android and create an AAR package, have a look on the Build_AAR_Android.bat file and execute the command inside it. If you use the file, make sure to change the ANDROID_HOME variable. For some reason, I can't use relative paths here, so I used an absolute one (must be doing something wrong).
 
 And a small explanation of the module structure:
-- Each main package has its name beginning with "APU_". The reason is on Android, without that, appears, for example "CmdDetection" only. And that comes from where? No idea. No indication. So "APU_CmdDetection" seems better to differentiate where the class came from (APU comes from Assist_Plaforms_Unifier - the name of the project).
+- Each main package has its name ending with "\_APU". The reason is on Android, without that, appears, for example "CmdDetection" only. And that comes from where? No idea. No indication. So "CmdDetection_APU" seems better to differentiate where the class came from (APU comes from Assist_Plaforms_Unifier - the name of the project).
 - Each submodule is inside a package. Like the Commands Detector module, which is inside APU_CmdDetection.
 - There are packages which end in "Int". That means Internal - not to be exported like the packages which don't end in Int. With Gomobile it's possible to choose which packages are exported. The others will be compiled but will not be exported. So that's the idea of those Int-ended packages.
 - There's also a Python program which updates the VERSION constant each the module is compiled for Android. That way forgetting to update the version doesn't happen.
