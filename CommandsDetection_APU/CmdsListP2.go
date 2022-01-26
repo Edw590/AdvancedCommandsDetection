@@ -1,22 +1,17 @@
 /*
  * Copyright 2021 DADi590
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package CommandsDetection_APU
@@ -50,6 +45,8 @@ var left_intervs_GL = [...]map[string]string{
 	{}, // 16
 	{}, // 17
 	{}, // 18
+	{}, // 19
+	{}, // 20
 }
 
 var right_intervs_GL = [...]map[string]string{
@@ -74,6 +71,8 @@ var right_intervs_GL = [...]map[string]string{
 	{}, // 16
 	{}, // 17
 	{}, // 18
+	{}, // 19
+	{}, // 20
 }
 
 var init_indexes_sub_verifs_GL = [...]map[string]string{
@@ -96,6 +95,8 @@ var init_indexes_sub_verifs_GL = [...]map[string]string{
 	{}, // 16
 	{}, // 17
 	{}, // 18
+	{}, // 19
+	{}, // 20
 }
 
 var exclude_word_found_GL = [...][]int{
@@ -118,6 +119,8 @@ var exclude_word_found_GL = [...][]int{
 	{ALL_SUB_VERIFS_INT}, // 16
 	{ALL_SUB_VERIFS_INT}, // 17
 	{ALL_SUB_VERIFS_INT}, // 18
+	{ALL_SUB_VERIFS_INT}, // 19
+	{ALL_SUB_VERIFS_INT}, // 20
 }
 
 var return_last_match_GL = [...]bool{
@@ -140,6 +143,8 @@ var return_last_match_GL = [...]bool{
 	false, // 16
 	false, // 17
 	false, // 18
+	false, // 19
+	false, // 20
 }
 
 var ignore_repets_main_words_GL = [...]bool{
@@ -162,6 +167,8 @@ var ignore_repets_main_words_GL = [...]bool{
 	true,  // 16
 	true,  // 17
 	true,  // 18
+	true,  // 19
+	true,  // 20
 }
 
 var ignore_repets_cmds_GL = [...]bool{
@@ -184,6 +191,8 @@ var ignore_repets_cmds_GL = [...]bool{
 	false, // 16
 	false, // 17
 	false, // 18
+	false, // 19
+	false, // 20
 }
 
 var order_words_list_GL = [...]bool{
@@ -206,6 +215,8 @@ var order_words_list_GL = [...]bool{
 	false, // 16
 	false, // 17
 	false, // 18
+	false, // 19
+	false, // 20
 }
 
 var stop_first_not_found_GL = [...]bool{
@@ -228,6 +239,8 @@ var stop_first_not_found_GL = [...]bool{
 	false, // 16
 	false, // 17
 	false, // 18
+	false, // 19
+	false, // 20
 }
 
 var exclude_original_words_GL = [...]bool{
@@ -250,6 +263,8 @@ var exclude_original_words_GL = [...]bool{
 	true,  // 16
 	true,  // 17
 	true,  // 18
+	true,  // 19
+	true,  // 20
 }
 
 var continue_with_words_slice_number_GL = [...]int{
@@ -272,4 +287,6 @@ var continue_with_words_slice_number_GL = [...]int{
 	-1, // 16
 	-1, // 17
 	-1, // 18
+	-1, // 19
+	-1, // 20
 }

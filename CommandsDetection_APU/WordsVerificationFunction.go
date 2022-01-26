@@ -1,31 +1,27 @@
 /*
  * Copyright 2021 DADi590
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package CommandsDetection_APU
 
 import (
-	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
 	"log"
 	"strconv"
 	"strings"
+
+	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
 )
 
 const DEFAULT_INDEX string = "3234_DEFAULT_INDEX"
@@ -42,7 +38,7 @@ const WVD_ERR_2 string = "-2"
 const WVD_ERR_3 string = "-3"
 
 /*
-wordsVerificationDADi iterates a sentence and searches for keywords provided on a list and returns the words it found.
+wordsVerificationFunction iterates a sentence and searches for keywords provided on a list and returns the words it found.
 
 The function searches through intervals of words, so other words can be between the keywords, and the function will
 still find the correct words. Aside from that, various parameters can be set to adjust the behavior of the function. A
@@ -158,13 +154,15 @@ the 2nd index, the index on which the word was found (or one of the error consta
 NONE will be used and on the index will be a non-negative index - discard that index, it's wrong (no word found, how
 could there be an index)
 */
-func wordsVerificationDADi(sentence []string, sentence_index int, main_words []string, words_list [][]string,
+func wordsVerificationFunction(sentence []string, sentence_index int, main_words []string, words_list [][]string,
 	left_intervs map[string]string, right_intervs map[string]string,
 	init_indexes_sub_verifs map[string]string, exclude_found_word []int, return_last_match bool,
 	ignore_repets_main_words bool, ignore_repets_cmds bool, order_words_list bool,
 	stop_first_not_found bool, exclude_original_words bool,
 	continue_with_words_slice_number int) [][]string {
-	// Note: this function was created recursive and is now a loop for easier debugging.
+	// Note: this function was created recursive (not exactly sure why I found it easier to do as recursive, but now I
+	// don't find it that easy...) and is now a loop for easier debugging. Useful to know because I didn't rewrite all
+	// the comments that explained the function when it was recursive.
 
 	var ret_var [][]string = nil
 
@@ -214,11 +212,11 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 				if 0 == sub_verif_number%2 {
 					string_to_find = INDEX_EVEN
 				}
-				if interv, ok := intervs_map[string_to_find]; ok {
+				if interv, ok = intervs_map[string_to_find]; ok {
 					interv_str = interv
 				} else {
 					// Check for an ALL_SUB_VERIFS index.
-					if interv, ok := intervs_map[ALL_SUB_VERIFS_STR]; ok {
+					if interv, ok = intervs_map[ALL_SUB_VERIFS_STR]; ok {
 						interv_str = interv
 					} else {
 						// If nothing found of the above, return the default value.
@@ -469,7 +467,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 				init_index_next_sub_verif = next_index
 			} else {
 				// If no index was specified specifically for the current sub-verification, check with ALL_SUB_VERIFS_STR.
-				if next_index, ok := init_indexes_sub_verifs[ALL_SUB_VERIFS_STR]; ok {
+				if next_index, ok = init_indexes_sub_verifs[ALL_SUB_VERIFS_STR]; ok {
 					init_index_next_sub_verif = next_index
 				}
 			}
@@ -520,7 +518,7 @@ func wordsVerificationDADi(sentence []string, sentence_index int, main_words []s
 const A_WORD_IN_LIST string = "3234_ANY_WORD_IN_LIST"
 
 /*
-checkResultsWordsVerifDADi checks if the results coming from the wordsVerificationDADi() function are acceptable or not,
+checkResultsWordsVerifFunc checks if the results coming from the wordsVerificationFunction() function are acceptable or not,
 depending on the given parameters.
 
 If there are conditions (described below), those will be checked. If not (leave 'conditions_continue' nil or empty),
@@ -564,7 +562,9 @@ This can be paired with a no continuation condition if wanted.
 
 Another option is to put { A_WORD_IN_LIST} various times (as many as the length of 'words_list' - or more, but those in
 excess will be ignored) to do exactly what's described below of putting an empty slice --> except this way you can also
-use a no continuation condition, unlike using an empty continuation condition slice.
+use a no continuation condition, unlike using an empty continuation condition slice. Btw, if put on the 1st index of the
+condition, it will be ignored safely (the main word is on the list of course, or the command wouldn't have been detected
+in the first place).
 
 To allow ALL possible combinations of ANY words (the 'conditions_not_continue' will be IGNORED), put the
 'conditions_continue' empty on the function call and that will make this function check if all the words on the results
@@ -610,11 +610,11 @@ continuation conditions but *none* is verified (returns true).
 
 > Params:
 
-- words_list – same as in wordsVerificationDADi() (the same that was sent to that function)
+- words_list – same as in wordsVerificationFunction() (the same that was sent to that function)
 
 - main_word – the word that triggered the command detection (in "turn the flashlight on", would be "turn")
 
-- results_wordsVerificationDADi – the output of wordsVerificationDADi()
+- results_wordsVerificationDADi – the output of wordsVerificationFunction()
 
 - conditions_continue – a 3D slice with a set of conditions on which the results are acceptable. Empty to allow
 any combination of words on the results to say they are acceptable (as long as the words on the results are inside the
@@ -628,7 +628,7 @@ acceptable. See the format above.
 
 - true if the results are acceptable for the given parameters, false otherwise
 */
-func checkResultsWordsVerifDADi(words_list [][]string, main_word string, results_wordsVerificationDADi [][]string,
+func checkResultsWordsVerifFunc(words_list [][]string, main_word string, results_wordsVerificationDADi [][]string,
 	conditions_continue [][][]string, conditions_not_continue [][][][]string) bool {
 	//log.Println("-------------------------------")
 	//log.Println(words_list)
@@ -740,18 +740,16 @@ func checkResultsWordsVerifDADi(words_list [][]string, main_word string, results
 					// If there is nothing in the sub-condition, it doesn't matter and allow anything, including NONE.
 					any_word_match = true
 				} else {
-					if 1 == len(sub_cond) {
+					if A_WORD_IN_LIST == sub_cond[0] {
 						if 0 == sub_cond_index {
 							// No need to check if it's a word on the list with the main word - of course it's on the list,
 							// or the command wouldn't have been detected in the first place.
 							any_word_match = true
 						} else {
-							if A_WORD_IN_LIST == sub_cond[0] {
-								for _, sub_cond_word := range words_list[sub_cond_index-1] {
-									// (-1 above because 1 on sub_cond is 0 in words_list)
-									if modified_results_verifDADi[sub_cond_index][0] == sub_cond_word {
-										any_word_match = true
-									}
+							for _, sub_cond_word := range words_list[sub_cond_index-1] {
+								// (-1 above because 1 on sub_cond is 0 in words_list)
+								if modified_results_verifDADi[sub_cond_index][0] == sub_cond_word {
+									any_word_match = true
 								}
 							}
 						}

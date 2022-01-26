@@ -1,22 +1,17 @@
 /*
  * Copyright 2021 DADi590
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package CommandsDetection_APU
@@ -58,11 +53,9 @@ var conditions_continue_GL = [...][][][]string{
 	{ // 11
 		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
 	},
-	{ // 12
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
+	{}, // 12
 	{ // 13
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
+		{{A_WORD_IN_LIST}, {}},
 	},
 	{
 		{{A_WORD_IN_LIST}, {}, {}},
@@ -82,6 +75,10 @@ var conditions_continue_GL = [...][][][]string{
 		{{"what"}, {"say", "said"}},
 	},
 	{}, // 18
+	{ // 19
+		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
+	},
+	{}, // 20
 }
 
 var conditions_not_continue_GL = [...][][][][]string{
@@ -140,13 +137,19 @@ var conditions_not_continue_GL = [...][][][][]string{
 		},
 	},
 	{}, // 18
+	{ // 19
+		{
+			{{}, {"off"}, {}, {"on"}}, {{}, {"on"}, {}, {"off"}},
+		},
+	},
+	{}, // 20
 }
 
 /*
 Each sub-slice ("condition") contains a set of conditions that can come in the results. Each slice in the sub-slice
-("sub-condition") in question is related to an index of the results of the wordsVerificationDADi() function call.
+("sub-condition") in question is related to an index of the results of the wordsVerificationFunction() function call.
 
-Naming convention: same as with the continuation conditions (read on checkResultsWordsVerifDADi()).
+Naming convention: same as with the continuation conditions (read on checkResultsWordsVerifFunc()).
 
 ---------------
 
@@ -176,7 +179,7 @@ results (this is equivalent to an "else" statement).
 
 > Format of each sub-condition:
 
-- 1st index – the index of the word on the results from the wordsVerificationDADi(). Use -1 to refer to the main word
+- 1st index – the index of the word on the results from the wordsVerificationFunction(). Use -1 to refer to the main word
 that started the command (for example for "set alarm", that word is "set", and will not be in the results from the
 function).
 
@@ -210,7 +213,6 @@ var conditions_return_GL = [...][][][]string{
 	{ // 5
 		{{"0", "on"}, {RET_5_ON}},
 		{{"2", "on"}, {RET_5_ON}},
-		{{"3", "on"}, {RET_5_ON}},
 
 		{{RET_5_OFF}},
 	},
@@ -251,6 +253,7 @@ var conditions_return_GL = [...][][][]string{
 	},
 	{ // 14
 		{{"1", "safe"}, {"2", "mode"}, {RET_14_SAFE_MODE}},
+		{{"1", "recovery"}, {RET_14_RECOVERY}},
 
 		{{RET_14_NORMAL}},
 	},
@@ -276,5 +279,14 @@ var conditions_return_GL = [...][][][]string{
 	},
 	{ // 18
 		{{RET_18}},
+	},
+	{ // 19
+		{{"0", "on"}, {RET_19_ON}},
+		{{"2", "on"}, {RET_19_ON}},
+
+		{{RET_19_OFF}},
+	},
+	{ // 20
+		{{RET_20}},
 	},
 }

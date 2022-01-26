@@ -1,22 +1,17 @@
 /*
  * Copyright 2021 DADi590
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -114,6 +109,7 @@ const RET_13 string = "13.1"
 const CMD_REBOOT_DEVICE string = "14"
 const RET_14_NORMAL string = "14.1"
 const RET_14_SAFE_MODE string = "14.2"
+const RET_14_RECOVERY string = "14.3"
 
 // CMD_TAKE_PHOTO is the command to take a rear or frontal photo. If neither rear nor frontal is specified, the default
 // is RET_15_REAR.
@@ -121,8 +117,8 @@ const CMD_TAKE_PHOTO string = "15"
 const RET_15_REAR string = "15.1"
 const RET_15_FRONTAL string = "15.2"
 
-// CMD_RECORD_MEDIA is the command to record media, like video or sound, and frontal or rear in case of video. Again,
-// in case neither rear nor frontal is specified for video recording, the default is RET_16_VIDEO_REAR.
+// CMD_RECORD_MEDIA is the command to record media, like video or sound, and frontal or rear in case of video. In case
+// neither rear nor frontal is specified for video recording, the default is RET_16_VIDEO_REAR.
 const CMD_RECORD_MEDIA string = "16"
 const RET_16_AUDIO string = "16.1"
 const RET_16_VIDEO_REAR string = "16.2"
@@ -136,10 +132,19 @@ const RET_17 string = "17.1"
 const CMD_MAKE_CALL string = "18"
 const RET_18 string = "18.1"
 
+// CMD_TOGGLE_POWER_SAVER_MODE is the command to request an activation of the device's Power/Battery Saver Mode
+const CMD_TOGGLE_POWER_SAVER_MODE string = "19"
+const RET_19_ON string = "19.1"
+const RET_19_OFF string = "19.2"
+
+// CMD_STOP_RECORD_MEDIA is the command to stop recording media, which is started by CMD_RECORD_MEDIA.
+const CMD_STOP_RECORD_MEDIA string = "20"
+const RET_20 string = "20.1"
+
 // HIGHEST_CMD_INT is a constant which has an always-updated value of the highest CMD_-started constant. This can be
 // used to build a slice of integers from 1 to this value to use with Main(), and it will always have all the
 // possible commands allowed for detection.
-const HIGHEST_CMD_INT int = 18
+const HIGHEST_CMD_INT int = 20
 
 // Special WARN_-started commands returned by the CmdsDetector() - must not collide with spec_-started constants on
 // TaskChecker!!!
@@ -153,9 +158,9 @@ const WARN_WHATS_IT string = "-2"
 // constant corresponding to the slice index contents in question.
 //
 // ----- NEVER EVER REMOVE AN ELEMENT FROM THE SLICES UNLESS IT'S THE LAST ONE!!! -----
-// If it's to deactivate one of the elements, delete everything from it and put a // to do without the space in the
-// front to be seen well that that index is not being used (if it's to be used again, it's a notification on the IDE
-// warning about unused slots, so it's good to be there).
+// If it's to deactivate one of the elements, delete everything from it and put a "// to_do" (without the _) without the
+// space in the front to be seen well that that index is not being used (if it's to be used again, it's a notification
+// on the IDE warning about unused slots, so it's good to be there).
 
 var main_words_GL = [...][]string{
 	{}, // Ignored
@@ -177,6 +182,8 @@ var main_words_GL = [...][]string{
 	{"record"},                   // 16
 	{"say", "what"},              // 17
 	{"make"},                     // 18
+	{"turn", "get"},              // 19
+	{"stop"},                     // 20
 }
 
 var words_list_GL = [...][][]string{
@@ -195,10 +202,9 @@ var words_list_GL = [...][][]string{
 		{"on", "off", "wifi", "wi-fi"},
 	},
 	{ // 5
-		{"on", "off", "data", "connection", "mobile"},
-		{"data", "connection", "mobile"},
-		{"on", "off", "data", "connection", "mobile"},
-		{"on", "off", "connection"},
+		{"on", "off", "data", "mobile"},
+		{"data", "mobile"},
+		{"on", "off", "data", "mobile"},
 	},
 	{ // 6
 		{"on", "off", "bluetooth"},
@@ -227,12 +233,12 @@ var words_list_GL = [...][][]string{
 		{"battery", "percentage", "status", "state"},
 	},
 	{ // 13
-		{"off", "down", "phone", "tablet", "device", "computer", "pc"},
-		{"off", "down", "phone", "tablet", "device", "computer", "pc"},
+		{"off", "down", "phone", "smartphone", "tablet", "device", "computer", "pc"},
+		{"off", "down", "phone", "smartphone", "tablet", "device", "computer", "pc"},
 	},
 	{ // 14
-		{"phone", "tablet", "device", "computer", "pc"},
-		{"safe"},
+		{"phone", "smartphone", "tablet", "device", "computer", "pc"},
+		{"safe", "recovery"},
 		{"mode"},
 	},
 	{ // 15
@@ -248,5 +254,13 @@ var words_list_GL = [...][][]string{
 	},
 	{ // 18
 		{"call"},
+	},
+	{ // 19
+		{"on", "off", "power", "battery"},
+		{"saver", "power", "battery"},
+		{"on", "off"},
+	},
+	{ // 20
+		{"recording", "record"},
 	},
 }

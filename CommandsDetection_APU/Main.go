@@ -1,33 +1,29 @@
 /*
  * Copyright 2021 DADi590
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 // Package CommandsDetection_APU is the submodule that detects commands in a given string of words
 package CommandsDetection_APU
 
 import (
-	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+
+	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
 )
 
 const ERR_CMD_DETECT string = GlobalUtilsInt_APU.MOD_RET_ERR_PREFIX + "CMD_DETECT - "
@@ -142,11 +138,11 @@ The first command is still wrong, the but idea here is to delete all the repeate
 case).
 
 Though, this also poses the problem of deleting purposefully repeated commands... Will be used until the
-wordsVerificationDADi() can do the job better. In that case might be better (for now) to say the repeated commands in
+wordsVerificationFunction() can do the job better. In that case might be better (for now) to say the repeated commands in
 another function call.
 
 (As a curiosity, the overall Main() function can now know what to do in the example above, without needing to execute
-at all!!! A thanks to this might be due to the new parameter on the wordsVerificationDADi() that ignores possibly
+at all!!! A thanks to this might be due to the new parameter on the wordsVerificationFunction() that ignores possibly
 repeated commands!)
 */
 func removeRepeatedCmds(ret_var string) string {
@@ -234,7 +230,7 @@ func sentenceCmdsDetector(sentence []string, allowed_cmds []int) []float32 {
 						log.Println(sentence_word)
 						log.Println(cmd_index)
 
-						var results_WordsVerificationDADi [][]string = wordsVerificationDADi(sentence, sentence_counter,
+						var results_WordsVerificationDADi [][]string = wordsVerificationFunction(sentence, sentence_counter,
 							main_words_GL[cmd_index], words_list_GL[cmd_index], left_intervs_GL[cmd_index],
 							right_intervs_GL[cmd_index], init_indexes_sub_verifs_GL[cmd_index],
 							exclude_word_found_GL[cmd_index], return_last_match_GL[cmd_index],
@@ -245,7 +241,7 @@ func sentenceCmdsDetector(sentence []string, allowed_cmds []int) []float32 {
 						log.Println("-----------")
 						log.Println(results_WordsVerificationDADi)
 
-						if checkResultsWordsVerifDADi(words_list_GL[cmd_index], sentence_word,
+						if checkResultsWordsVerifFunc(words_list_GL[cmd_index], sentence_word,
 							results_WordsVerificationDADi, conditions_continue_GL[cmd_index],
 							conditions_not_continue_GL[cmd_index]) {
 							log.Println("LLLLLLL")

@@ -1,40 +1,36 @@
 /*
  * Copyright 2021 DADi590
  *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package GlobalUtilsInt_APU
 
 import (
-	"Assist_Platforms_Unifier/GlobalUtils_APU"
 	"bytes"
 	"encoding/gob"
 	"fmt"
 	"reflect"
+
+	"Assist_Platforms_Unifier/GlobalUtils_APU"
 )
 
 // MOD_RET_ERR_PREFIX is the prefix to be used to define a constant at the submodule level, which shall be a return
 // string with an error description on it. A unique string with the submodule name on it (can be abbreviated) must be
-// appended to it, followed by " - ". For example, "CMD_DETECT_ - " for the Commands Detection submodule. A result
+// appended to it, followed by " - ". For example, "CMD_DETECT - " for the Commands Detection submodule. A result
 // example might be
-// 		"3234_ERR_GO_CMD_DETECT - APU error 1: Some description here"
-const MOD_RET_ERR_PREFIX = "3234_ERR_GO_"
+// 		"3234_ERR_GO_CMD_DETECT - Err 1: Some description here"
+const MOD_RET_ERR_PREFIX = "3234_APU_ERR_"
 
 ///////////////////////////////////////
 // Try / Catch / Finally
@@ -210,14 +206,14 @@ func CopyOuterSlice(slice interface{}) interface{} {
 CopySlice copies all the values from slice/array to a new slice/array, with the length and capacity of the original,
 provided both slices/arrays have the same type (that includes the length of each dimension with arrays).
 
-NOTE: this function is slow, according to what someone told me. Don't use unless you really needed to copy all values
+NOTE: this function is slow, according to what someone told me. Don't use unless you really need to copy all values
 from multidimensional slices/arrays.
 
 -----------------------------------------------------------
 
 > Params:
 
-- destination – a pointer to an empty destination slice/array
+- destination – a pointer to an empty destination slice header/array
 
 - source – the source slice/array
 
