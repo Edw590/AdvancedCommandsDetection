@@ -54,4 +54,4 @@ If you have any questions, try the options below:
 - Create a Discussion here: https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier/discussions
 
 ## Final notes
-Any new ideas are welcomed! (I just may or may not implement them that fast - student)
+Any new ideas and/or improvements are welcomed! (Just giving the idea and/or making a pull request)
