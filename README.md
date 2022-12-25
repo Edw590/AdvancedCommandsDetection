@@ -1,4 +1,5 @@
 # V.I.S.O.R. - A real assistant [Platforms Unifier]
+ Currently only the advanced(?) Command Detection module of my virtual assistant 
 
 Secondary project name: Assist_Platforms_Unifier
 
