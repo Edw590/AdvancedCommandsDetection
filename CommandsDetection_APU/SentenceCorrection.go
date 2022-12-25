@@ -43,12 +43,11 @@ To see all it does, take a look at the function (easy reading).
 
 - sentence_str – same as in Main()
 
-
 > Returns:
 
 - a string with everything replaced/corrected on it
 */
-func sentenceCorrection(sentence_str string) string {
+func sentenceCorrection(sentence_str string, sentence *[]string, before_nlp_analyzer bool) string {
 	// Hopefully the words to replace here cannot be joint with others, because this doesn't check what's before the
 	// first letter of each word... (could be part of the word before or after). Maybe it doesn't happen, to simplify.
 
@@ -62,27 +61,35 @@ func sentenceCorrection(sentence_str string) string {
 	// SYNCHRONIZE THIS WITH THE FUNCTION BELOW!!!
 	//
 
-	sentence_str = strings.Replace(sentence_str, "what is", "what's", -1)
-	sentence_str = strings.Replace(sentence_str, "whats", "what's", -1)
+	if before_nlp_analyzer {
+		sentence_str = strings.Replace(sentence_str, "what is", "what's", -1)
+		sentence_str = strings.Replace(sentence_str, "whats", "what's", -1)
 
-	sentence_str = strings.Replace(sentence_str, "who is", "who's", -1)
-	sentence_str = strings.Replace(sentence_str, "whos", "who's", -1)
+		sentence_str = strings.Replace(sentence_str, "who is", "who's", -1)
+		sentence_str = strings.Replace(sentence_str, "whos", "who's", -1)
 
-	sentence_str = strings.Replace(sentence_str, "how is", "how's", -1)
-	sentence_str = strings.Replace(sentence_str, "hows", "how's", -1)
+		sentence_str = strings.Replace(sentence_str, "how is", "how's", -1)
+		sentence_str = strings.Replace(sentence_str, "hows", "how's", -1)
 
-	sentence_str = strings.Replace(sentence_str, "that is", "that's", -1)
-	sentence_str = strings.Replace(sentence_str, "thats", "that's", -1)
+		sentence_str = strings.Replace(sentence_str, "that is", "that's", -1)
+		sentence_str = strings.Replace(sentence_str, "thats", "that's", -1)
 
-	sentence_str = strings.Replace(sentence_str, "there is", "there's", -1)
-	sentence_str = strings.Replace(sentence_str, "theres", "there's", -1)
+		sentence_str = strings.Replace(sentence_str, "there is", "there's", -1)
+		sentence_str = strings.Replace(sentence_str, "theres", "there's", -1)
 
-	sentence_str = strings.Replace(sentence_str, "do not", "don't", -1)
-	sentence_str = strings.Replace(sentence_str, "dont", "don't", -1)
+		sentence_str = strings.Replace(sentence_str, "do not", "don't", -1)
+		sentence_str = strings.Replace(sentence_str, "dont", "don't", -1)
+	} else {
+		// Do these only after the NLP analyzer. Removing dashes may be bad for it, who knows. Better to let them stay
+		// and remove only after it for the rest of the function analysis.
 
-	// This may be incorrect sometimes, but the recognizers may not be able to distinguish, so one must treat them as
-	// equal anyways. So this is to make it easier to detect (only one word). Now only "shutdown" may be present.
-	sentence_str = strings.Replace(sentence_str, "shut down", "shutdown", -1)
+		for i, word := range *sentence {
+			// No dashes ("wi-fi" == "wifi")
+			if strings.Contains(word, "-") {
+				(*sentence)[i] = strings.Replace(word, "-", "", -1)
+			}
+		}
+	}
 
 	return sentence_str
 }
@@ -99,14 +106,11 @@ analyzed by the command detector.
 
 - before_sending – true if this function is being called before the NLP analyzer, false if it's being called after it
 
-
 > Returns:
 
 - a string with the 'sentence' elements joined with a space between each (equivalent to 'sentence_str' on Main()).
 */
-func sentenceNLPPreparation(sentence *[]string, before_nlp_analyzer bool) string {
-	var sentence_str string = strings.Join(*sentence, " ")
-
+func sentenceNLPPreparation(sentence_str string, sentence *[]string, before_nlp_analyzer bool) string {
 	//
 	// SYNCHRONIZE THIS WITH THE FUNCTION ABOVE!!!
 	//
@@ -130,5 +134,6 @@ func sentenceNLPPreparation(sentence *[]string, before_nlp_analyzer bool) string
 	}
 
 	*sentence = strings.Split(sentence_str, " ")
+
 	return sentence_str
 }

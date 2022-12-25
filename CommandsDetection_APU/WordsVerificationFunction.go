@@ -21,21 +21,28 @@ import (
 	"strconv"
 	"strings"
 
-	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
+	"Assist_Platforms_Unifier/UtilsInt"
 )
 
-const DEFAULT_INDEX string = "3234_DEFAULT_INDEX"
-const ALL_SUB_VERIFS_STR string = "3234_ALL_SUB_VERIFS_STR"
+var mutually_exclusive_words = [...][]string{
+	{"on", "off"},
+	{"stop", "continue", "play", "resume", "next", "previous"},
+}
+
+const DEFAULT_INDEX string = ";1;"
+const ALL_SUB_VERIFS_STR string = ";2;"
 const ALL_SUB_VERIFS_INT int = -1
-const INDEX_EVEN string = "3234_INDEX_EVEN"
-const INDEX_ODD string = "3234_INDEX_ODD"
-const IS_DIGIT string = "3234_IS_DIGIT"
-const INDEX_WORD_FOUND string = "3234_INDEX_WORD_FOUND"
-const INDEX_DEFAULT string = "3234_INDEX_DEFAULT"
-const NONE string = "3234_NONE"
+const INDEX_EVEN string = ";3;"
+const INDEX_ODD string = ";4;"
+const IS_DIGIT string = ";5;"
+const INDEX_WORD_FOUND string = ";6;"
+const INDEX_DEFAULT string = ";7;"
+const NONE string = ";0;"
 const WVD_ERR_1 string = "-1"
 const WVD_ERR_2 string = "-2"
 const WVD_ERR_3 string = "-3"
+
+// todo "A good idea might be to automate the decision of some parameters, if possible."
 
 /*
 wordsVerificationFunction iterates a sentence and searches for keywords provided on a list and returns the words it found.
@@ -93,12 +100,15 @@ as the found word on all sub-slices and this constant as index.
 
 - words_list – a 2D slice on which each slice contains words to be checked on the 'sentence' on the sub-verification
 corresponding to the index of such slice. Example:
+
 	{{"word_1_1st_sub_verif", "word_2_1st_sub_verif"}, {"word_1_2nd_sub_verif"}}
 
 - left_intervs – a map in which each key is either a sub-verification number or one of the constants. This slice
 provides the word search intervals for the left of the found word for each sub-verification. Leave empty to apply the
 default value to all sub-verifications (default is 0). Example:
+
 	{"2":"1", ALL_SUB_VERIFS_STR:"3", "4": DEFAULT_INDEX}
+
 In this case, the normal will be to use 3, except on the sub-verification 2 (3rd) in which 1 will be used, on the
 number 4 (5th) the default index will be used. Selecting 3 for all sub-verifications, for example means it will check
 the 3 words before the found word for the next word on the 'words_list'. Also, if ALL_SUB_VERIFS_STR is not used and a
@@ -146,6 +156,11 @@ searching using the slice of index specified here. Use -1 to not use this parame
 'stop_first_not_found' to search more words on the same list until one is not found. For example to simulate key
 presses: "Control Control F1 F4 F3 ok done", and it will stop on "ok".
 
+- exclude_mutually_exclusive_words – exclude words that are mutually exclusive, like "on" and "off". Will never return
+results like "turn on off" instead of "turn on wifi" or "turn off wifi" (already happened - example: "turn on wifi turn
+off bluetooth", with the function detecting "off" before "wifi" because "off" was first on the 'words_list'). The
+function will delete all mutually exclusive words from the list in case one is found - but will only delete the
+remaining words, not the one it found (that's only done with 'exclude_found_word')
 
 > Returns:
 
@@ -159,7 +174,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, main_words
 	init_indexes_sub_verifs map[string]string, exclude_found_word []int, return_last_match bool,
 	ignore_repets_main_words bool, ignore_repets_cmds bool, order_words_list bool,
 	stop_first_not_found bool, exclude_original_words bool,
-	continue_with_words_slice_number int) [][]string {
+	continue_with_words_slice_number int, exclude_mutually_exclusive_words bool) [][]string {
 	// Note: this function was created recursive (not exactly sure why I found it easier to do as recursive, but now I
 	// don't find it that easy...) and is now a loop for easier debugging. Useful to know because I didn't rewrite all
 	// the comments that explained the function when it was recursive.
@@ -169,10 +184,10 @@ func wordsVerificationFunction(sentence []string, sentence_index int, main_words
 	// Make a copy of the 'words_list', so it doesn't get modified by this function as the copy will be. Must be a real
 	// copy (elements from sub-slices will be removed/added), so CopySlice().
 	var words_list_int [][]string = nil
-	GlobalUtilsInt_APU.CopySlice(&words_list_int, words_list)
+	UtilsInt.CopySlice(&words_list_int, words_list)
 	// And make a copy of the original words to use in the repeated words check. CopyOuterSlice() suffices, as it's just
 	// to copy each value of the slice (which are pointers - no problem with that as the contents won't be modified).
-	var original_words []string = GlobalUtilsInt_APU.CopyOuterSlice(main_words).([]string)
+	var original_words []string = UtilsInt.CopyOuterSlice(main_words).([]string)
 
 	// If it's to exclude all the original words from the 'words_list_int', do it here, before the sub-verifications
 	// starts.
@@ -181,7 +196,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, main_words
 			for counter, words_slice := range words_list_int {
 				for counter1, word := range words_slice {
 					if word == main_word {
-						GlobalUtilsInt_APU.DelElemInSlice(&words_list_int[counter], counter1)
+						UtilsInt.DelElemInSlice(&words_list_int[counter], counter1)
 
 						break
 					}
@@ -209,7 +224,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, main_words
 			} else {
 				// Check for an index corresponding to either even or odd sub-verifications.
 				var string_to_find string = INDEX_ODD
-				if 0 == sub_verif_number%2 {
+				if 0 == (sub_verif_number % 2) {
 					string_to_find = INDEX_EVEN
 				}
 				if interv, ok = intervs_map[string_to_find]; ok {
@@ -327,7 +342,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, main_words
 
 		// If it's to stop the verification at the first word not found (no match), stop the verification and put on the
 		// return slice, every word as NONE and with an error index.
-		if stop_first_not_found && NONE == word_found {
+		if stop_first_not_found && (NONE == word_found) {
 			ret_var = nil
 			for counter := 0; counter < len(words_list_int); counter++ {
 				ret_var = append(ret_var, []string{NONE, WVD_ERR_2})
@@ -432,16 +447,51 @@ func wordsVerificationFunction(sentence []string, sentence_index int, main_words
 			//log.Println("7---")
 			//log.Println(words_list_int[sub_verification+1:])
 			// Here, actually exclude the word from the next sub-verifications.
-			if exclude_word_found_now && len(words_list_int[sub_verification:]) > 1 {
+			if exclude_word_found_now && (len(words_list_int[sub_verification:]) > 1) {
 				//log.Println("7.1---")
 				//log.Println(words_list_int[sub_verification:])
 				//log.Println(words_list_int[sub_verification+1:])
 				for counter, words_slice := range words_list_int[sub_verification+1:] {
 					for counter1, word := range words_slice {
 						if word == word_found {
-							GlobalUtilsInt_APU.DelElemInSlice(&words_list_int[sub_verification+1+counter], counter1)
+							UtilsInt.DelElemInSlice(&words_list_int[sub_verification+1+counter], counter1)
 
 							break
+						}
+					}
+				}
+			}
+		}
+
+		if exclude_mutually_exclusive_words {
+			var idx_array_mut_excl_words int = -1
+			var idx_excl_found_word int = -1
+			for i, word_slice := range mutually_exclusive_words {
+				for j, word := range word_slice {
+					if word == word_found {
+						idx_array_mut_excl_words = i
+						idx_excl_found_word = j
+
+						goto end_of_loops
+					}
+				}
+			}
+		end_of_loops:
+			if (-1 != idx_array_mut_excl_words) && (len(words_list_int[sub_verification:]) > 1) {
+				for counter, words_slice := range words_list_int[sub_verification+1:] {
+					for i, mut_excl_word := range mutually_exclusive_words[idx_array_mut_excl_words] {
+						if i == idx_excl_found_word {
+							// Skip the iteration if it's the found word
+							continue
+						}
+						for counter1, word := range words_slice {
+							if word == mut_excl_word {
+								// Delete if it's one of the mutually exclusive words, but don't count the found word
+								// (that's with 'exclude_found_word' only).
+								UtilsInt.DelElemInSlice(&words_list_int[sub_verification+1+counter], counter1)
+
+								break
+							}
 						}
 					}
 				}
@@ -515,14 +565,14 @@ func wordsVerificationFunction(sentence []string, sentence_index int, main_words
 	return ret_var
 }
 
-const A_WORD_IN_LIST string = "3234_ANY_WORD_IN_LIST"
+const A_WORD_IN_LIST string = ";8;"
 
 /*
-checkResultsWordsVerifFunc checks if the results coming from the wordsVerificationFunction() function are acceptable or not,
-depending on the given parameters.
+checkResultsWordsVerifFunc checks if the results coming from the wordsVerificationFunction() function are acceptable or
+not, depending on the given conditions of continuation and no continuation.
 
 If there are conditions (described below), those will be checked. If not (leave 'conditions_continue' nil or empty),
-the functions checks if ALL the words on the results are on the 'words_list' (NONE as a "detected" word on the results
+the function checks if ALL the words on the results are on the 'words_list' (NONE as a "detected" word on the results
 would exclude that - example for "reboot phone", but "phone" was not found: {{"reboot", 2},{ NONE, 3}} --> this will
 make this function return false, as not all the results' words are on the 'words_list').
 
@@ -530,28 +580,32 @@ If the results of the verification return all words as NONE, this function will 
 false immediately at the beginning before doing anything else.
 
 Naming convention:
-	- list: conditions_continue;
-	- sub-list: condition
-	- sub-sub-list: sub-condition
-	- string(s) of the sub-sub-list: string(s) or word(s) of the sub-condition
-	- -----
-	- list: conditions_not_continue
-	- sub-list: main condition
-	- sub-sub-list: condition
-	- sub-sub-sub-list: sub-condition
-	- string(s) of the sub-sub-sub-list: string(s) or word(s) of the sub-condition
+  - list: conditions_continue;
+  - sub-list: condition
+  - sub-sub-list: sub-condition
+  - string(s) of the sub-sub-list: string(s) or word(s) of the sub-condition
+  - -----
+  - list: conditions_not_continue
+  - sub-list: main condition
+  - sub-sub-list: condition
+  - sub-sub-sub-list: sub-condition
+  - string(s) of the sub-sub-sub-list: string(s) or word(s) of the sub-condition
 
 ----------------
 
 Format of the 'conditions_continue':
+
 	var conditions_continue [][][]string = [][][]string{
 		{{"turn"}, {"on","off"}, {"flashlight","lantern"}},
 		{{"flashlight","lantern"}, {"on","off"}, {}},
 	}
+
 Here, {"flashlight","lantern"} are the main words. The rest is what comes in the results of the verification.
 
 On the example above, for the 1st sub-condition, on the results of the verification must be, for example,
+
 	{{"on",index},{"[doesn't matter here]", index}},
+
 and "flashlight" or "lantern" must have been the main word. On the 2nd index of the example above, the main word must
 have been "turn", then can be "on" or "off", and then can be "flashlight" or "lantern" (all parts of the results matter
 in this case).
@@ -575,6 +629,7 @@ put too.
 ----------------
 
 Format of the 'conditions_not_continue':
+
 	var conditions_not_continue [][][][]string = [][][][]string{
 		{},
 		{  {{}, {"off"}, {"on"}},  {{}, {"on"}, {"off"}}  },
@@ -623,7 +678,6 @@ any combination of words on the results to say they are acceptable (as long as t
 - conditions_not_continue – a 4D slice with a set of conditions on which each condition of continuation is not
 acceptable. See the format above.
 
-
 > Returns:
 
 - true if the results are acceptable for the given parameters, false otherwise
@@ -654,8 +708,8 @@ func checkResultsWordsVerifFunc(words_list [][]string, main_word string, results
 		// The variable below is a copy of the results of the verification function with the main word added in the
 		// index 0, so the conditions can be checked by their index (0 corresponding to the main word and 1 to the first
 		// word of the results).
-		var modified_results_verifDADi [][]string = GlobalUtilsInt_APU.CopyOuterSlice(results_wordsVerificationDADi).([][]string) // Will only add a new slice to the outer slice, so no problem in using CopyOuterSlice().
-		GlobalUtilsInt_APU.AddElemSlice(&modified_results_verifDADi, []string{main_word, "-1"}, 0)
+		var modified_results_verifDADi [][]string = UtilsInt.CopyOuterSlice(results_wordsVerificationDADi).([][]string) // Will only add a new slice to the outer slice, so no problem in using CopyOuterSlice().
+		UtilsInt.AddElemSlice(&modified_results_verifDADi, []string{main_word, "-1"}, 0)
 
 		var modified_results_verifDADi_len int = len(modified_results_verifDADi) // Optimization
 
@@ -812,4 +866,105 @@ func checkResultsWordsVerifFunc(words_list [][]string, main_word string, results
 
 		return all_match
 	}
+}
+
+/*
+*
+computeVerifFuncResultsMeaning computes the meaning of the results that come out of wordsVerificationFunction()
+according to the given return conditions.
+
+-----------------------------------------------------------
+
+> Params:
+
+- sentence_word – the word that activated the current command detection
+
+- main_word – the word that triggered the command detection (in "turn the flashlight on", would be "turn")
+
+- results_wordsVerificationDADi – the output of wordsVerificationFunction()
+
+- conditions_continue – a 3D slice with a set of conditions on which the results are acceptable. Empty to allow
+any combination of words on the results to say they are acceptable (as long as the words on the results are inside the
+'words_list' set). See the format above.
+
+- conditions_not_continue – a 4D slice with a set of conditions on which each condition of continuation is not
+acceptable. See the format above.
+
+> Returns:
+
+- a slice on which each index is a command found in the 'sentence', represented by one of its RET_-started constant
+*/
+func computeVerifFuncResultsMeaning(sentence_word string, results_WordsVerificationDADi [][]string,
+	conditions_return [][][]string) []float32 {
+	log.Println("LLLLLLL")
+
+	var detected_cmds []float32 = nil
+	var sub_cond_match_found bool = false
+	for _, condition := range conditions_return {
+		//log.Println("++++++++++++")
+		if 1 == len(condition) {
+			// Then it's check nothing of the results and just return immediately.
+			float, _ := strconv.ParseFloat(condition[0][0], 32)
+			detected_cmds = append(detected_cmds, float32(float))
+
+			break
+		} else {
+			var all_sub_conds_matched bool = true
+			var condition_len = len(condition) // Optimization
+			for _, sub_cond := range condition[:condition_len-1] {
+				// Here it's sub_condition_len-1 because the last one is the return constant.
+
+				// Get the index of the results' sub-slice to check.
+				sub_cond_index_to_chk, _ := strconv.Atoi(sub_cond[0])
+				// If any word matches on the sub-condition, go check the next sub-condition.
+				var word_match bool = false
+				//log.Println("-------")
+				for _, sub_cond_word := range sub_cond[1:] {
+					// [1:] because sub_cond[0] is the index. The rest are word to check.
+
+					//log.Println(word_1)
+					if -1 == sub_cond_index_to_chk {
+						// If the index of the results to check is -1, that means it's to check
+						// the 'sentence_word' instead (the word that activated the command
+						// detection).
+						if sentence_word == sub_cond_word {
+							word_match = true
+
+							break
+						}
+					} else {
+						//log.Println(results_WordsVerificationDADi[results_index][0])
+						if results_WordsVerificationDADi[sub_cond_index_to_chk][0] == sub_cond_word {
+							//log.Println("KKKKKKKKKKKKK")
+							word_match = true
+
+							break
+						}
+					}
+				}
+				all_sub_conds_matched = all_sub_conds_matched && word_match
+				if !all_sub_conds_matched {
+					// If any sub-condition had no match, forget about that condition and go
+					// check the next one.
+					break
+				}
+			}
+			if all_sub_conds_matched {
+				// In the end of a condition check, if all its sub-conditions found a match,
+				// return the constant on the only index of the last sub-condition of the
+				// condition.
+				float, _ := strconv.ParseFloat(condition[condition_len-1][0], 32)
+				detected_cmds = append(detected_cmds, float32(float))
+
+				sub_cond_match_found = true
+			}
+		}
+		if sub_cond_match_found {
+			log.Println("QQQQQQQ")
+			log.Println(detected_cmds)
+			break
+		}
+	}
+
+	return detected_cmds
 }

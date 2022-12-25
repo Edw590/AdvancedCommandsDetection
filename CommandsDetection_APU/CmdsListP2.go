@@ -21,9 +21,9 @@ package CommandsDetection_APU
 // constant corresponding to the array index contents in question.
 //
 // ----- NEVER EVER REMOVE AN ELEMENT FROM THE ARRAYS UNLESS IT'S THE LAST ONE!!! -----
-// If it's to deactivate one of the elements, delete everything from it and put a // to do without the space in the
-// front to be seen well that that index is not being used (if it's to be used again, it's a notification on the IDE
-// warning about unused slots, so it's good to be there).
+// If it's to deactivate one of the elements, delete everything from it and put a // "to do" without the space to be
+// seen well that that index is not being used (if it's to be used again, it's a notification on the IDE warning about
+// unused slots, so it's good to be there).
 
 var left_intervs_GL = [...]map[string]string{
 	{}, // Ignored
@@ -289,4 +289,28 @@ var continue_with_words_slice_number_GL = [...]int{
 	-1, // 18
 	-1, // 19
 	-1, // 20
+}
+
+var exclude_mutually_exclusive_words_GL = [...]bool{
+	false, // Ignored
+	true,  // 1
+	true,  // 2
+	true,  // 3
+	true,  // 4
+	true,  // 5
+	true,  // 6
+	true,  // 7
+	true,  // 8
+	true,  // 9
+	true,  // 10
+	true,  // 11
+	true,  // 12
+	true,  // 13
+	true,  // 14
+	true,  // 15
+	true,  // 16
+	true,  // 17
+	true,  // 18
+	true,  // 19
+	true,  // 20
 }

@@ -27,12 +27,13 @@ const CMDi_INF_SEP string = "/"
 const CMDi_INDEX_INF1 int32 = 0
 
 // CMDi_INF1_DO_SOMETHING signals that the referring command requires the assistant to do something.
-const CMDi_INF1_DO_SOMETHING string = "1"
+const CMDi_INF1_DO_SOMETHING string = "0_0"
 
 // CMDi_INF1_ONLY_SPEAK signals that the referring command only requires the assistant to say something (like asking
 // what time is it).
-const CMDi_INF1_ONLY_SPEAK string = "2"
+const CMDi_INF1_ONLY_SPEAK string = "0_1"
 
+// CMDi_INFO a map of each command and its additional information. Use with GetCmdAdditionalInfo().
 var CMDi_INFO map[string]string = map[string]string{
 	// 0 - Ignored
 	CMD_TOGGLE_MEDIA:            CMDi_INF1_DO_SOMETHING, // 1

@@ -25,8 +25,8 @@ Format of CMD_-started constants: CMD_ + an indicative name of the command. The 
 more about the command.
 
 Format of RET_-started constants: RET_ + value of the corresponding CMD_-started constants + _ + anything that indicates
-the recognized command more specifically, if needed. For example, RET_0_ON means it was detected a command to turn the
-flashlight on.
+the recognized command more specifically, if needed. For example, RET_8_ON means a command to turn the flashlight on was
+detected (the "8" is the same number as the string value of the CMD_-started constant).
 */
 package CommandsDetection_APU
 
@@ -41,7 +41,7 @@ package CommandsDetection_APU
 // Note: all RET_-started constants must be a float32 in a string which starts by the number on the corresponding
 // CMD_-started constant and must advance by increments of 0.1 and continues like if it were an integer > 1 (1.9,
 // 1.10...). The first float can't end in .0. No reason in specific, it's just in case it's ever needed to use the main
-// integer. So start for example with 0.1 and 1.1.
+// integer. So start for example with 1.1 and 2.1.
 
 // CMD_TOGGLE_MEDIA is the command to stop, pause, play, or go to the next or previous media element
 const CMD_TOGGLE_MEDIA string = "1"
@@ -258,7 +258,7 @@ var words_list_GL = [...][][]string{
 	{ // 19
 		{"on", "off", "power", "battery"},
 		{"saver", "power", "battery"},
-		{"on", "off"},
+		{"on", "off", "saver"},
 	},
 	{ // 20
 		{"recording", "record"},

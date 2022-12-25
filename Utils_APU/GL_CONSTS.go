@@ -15,11 +15,12 @@
  */
 
 // Package GlobalUtils_APU contains constants useful inside and outside this module
-package GlobalUtils_APU
+package Utils_APU
 
 // VERSION is the constant to check to know the version of the compiled module. The format is
-// 		"yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])"
-const VERSION string = "2022-01-26 -- 00:27:29.176396 (Hora padrão de GMT)"
+//
+//	"yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])"
+const VERSION string = "2022-01-26 -- 00:35:50.107109 (Hora padrão de GMT)"
 
 // ASSISTANT_NAME is the constant that has the assistant name used in the entire module.
 const ASSISTANT_NAME string = "V.I.S.O.R."
@@ -28,5 +29,6 @@ const ASSISTANT_NAME string = "V.I.S.O.R."
 // an error that is not from third-party/Go libraries). A string must be appended with the format "X: Y", in which X is
 // a unique error identifier (float - 1 or 1.1) for the submodule, and Y is an error description. A result example
 // might be
-// 		"APU error 1: Some description here"
-const APU_ERR_PREFIX = "APU error "
+//
+//	"Err 1: Some description here"
+const APU_ERR_PREFIX = "Err "

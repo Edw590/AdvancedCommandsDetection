@@ -25,41 +25,27 @@ package CommandsDetection_APU
 // front to be seen well that that index is not being used (if it's to be used again, it's a notification on the IDE
 // warning about unused slots, so it's good to be there).
 
-//
 // Various of the empty conditions have a pair on the no continuation conditions - take a look before deleting anything!
-//
 var conditions_continue_GL = [...][][][]string{
 	{}, // Ignored
 	{}, // 1
 	{}, // 2
 	{}, // 3
-	{ // 4
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
-	{ // 5
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
-	{ // 6
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
+	{}, // 4
+	{}, // 5
+	{}, // 6
 	{}, // 7
-	{ // 8
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
+	{}, // 8
 	{}, // 9
-	{ // 10
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
-	{ // 11
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
+	{}, // 10
+	{}, // 11
 	{}, // 12
 	{ // 13
 		{{A_WORD_IN_LIST}, {}},
 	},
-	{
+	{ // 14
 		{{A_WORD_IN_LIST}, {}, {}},
-	}, // 14
+	},
 	{ // 15
 		// Different here because only one of the words on the 2nd sub-list of the words_list is mandatory ("take a
 		// picture"). No word of the first sub-list is mandatory.
@@ -75,9 +61,7 @@ var conditions_continue_GL = [...][][][]string{
 		{{"what"}, {"say", "said"}},
 	},
 	{}, // 18
-	{ // 19
-		{{A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}, {A_WORD_IN_LIST}},
-	},
+	{}, // 19
 	{}, // 20
 }
 
@@ -86,38 +70,14 @@ var conditions_not_continue_GL = [...][][][][]string{
 	{}, // 1
 	{}, // 2
 	{}, // 3
-	{ // 4
-		{
-			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
-		},
-	},
-	{ // 5
-		{
-			{{}, {"on"}, {}, {"off"}}, {{}, {"off"}, {}, {"on"}},
-		},
-	},
-	{ // 6
-		{
-			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
-		},
-	},
+	{}, // 4
+	{}, // 5
+	{}, // 6
 	{}, // 7
-	{ // 8
-		{
-			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
-		},
-	},
+	{}, // 8
 	{}, // 9
-	{ // 10
-		{
-			{{}, {"off"}, {"on"}}, {{}, {"on"}, {"off"}},
-		},
-	},
-	{ // 11
-		{
-			{{}, {"off"}, {}, {"on"}}, {{}, {"on"}, {}, {"off"}},
-		},
-	},
+	{}, // 10
+	{}, // 11
 	{}, // 12
 	{}, // 13
 	{}, // 14
@@ -137,11 +97,7 @@ var conditions_not_continue_GL = [...][][][][]string{
 		},
 	},
 	{}, // 18
-	{ // 19
-		{
-			{{}, {"off"}, {}, {"on"}}, {{}, {"on"}, {}, {"off"}},
-		},
-	},
+	{}, // 19
 	{}, // 20
 }
 
@@ -169,9 +125,11 @@ the last part (means, for example, put an slice with RET_2 alone on the only ind
 it's needed to check 2 conditions and return one thing, and in case those 2 don't apply but *any* other applies, return
 something else, put those 2 conditions on 2 separate slices and then one below those 2.
 Example of this:
-		{{"0", "thing1"}, {RET_0_OPTION1}},
-		{{"1", "thing2"}, {RET_0_OPTION1}},
-		{{RET_0_OPTION2}},
+
+	{{"0", "thing1"}, {RET_0_OPTION1}},
+	{{"1", "thing2"}, {RET_0_OPTION1}},
+	{{RET_0_OPTION2}},
+
 In the example above, it's either OPTION1 by the first 2 conditions, or it's OPTION2 in *any other combination* of
 results (this is equivalent to an "else" statement).
 
@@ -187,7 +145,6 @@ function).
 success. If the results include an index which is not present on these indexes mentioned here, the word on it will be
 ignored. The order of these slices will be respected, and if one of them gives a positive result, the others will not be
 considered.
-
 */
 var conditions_return_GL = [...][][][]string{
 	{}, // Ignored

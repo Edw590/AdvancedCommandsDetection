@@ -23,14 +23,13 @@ import (
 
 /*
 GenerateListAllCmds generates a string with a list of all the available commands specified on each CMD_-started
-constant. This string can be used directly with Main().
+constant, which can be used directly with Main().
 
 -----------------------------------------------------------
 
 > Params:
 
 - none
-
 
 > Returns:
 
@@ -59,7 +58,6 @@ constant.
 
 - cmdi_info_index – the index of the wanted information (one of the CMDi_INDEX_INF-started constants)
 
-
 > Returns:
 
 - the value associated with the requested information (one of the CMDi_INF-started constants)
@@ -69,7 +67,7 @@ func GetCmdAdditionalInfo(cmd_constant string, cmdi_info_index int32) string {
 		return strings.Split(cmd_info, CMDi_INF_SEP)[cmdi_info_index]
 	} else {
 		// Won't happen - just don't use strings calling this function and use actual constants (and as long as they're
-		// on the map, which they must be and are not only by brain memory leak xD).
-		return "Won't happen" // 😂
+		// on the map, which they must be, and are not only by brain memory leak xD).
+		return "Won't happen" // lol
 	}
 }

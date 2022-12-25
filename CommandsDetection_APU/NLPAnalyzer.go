@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	"Assist_Platforms_Unifier/GlobalUtilsInt_APU"
+	"Assist_Platforms_Unifier/UtilsInt"
 	"github.com/jdkato/prose/v2"
 )
 
@@ -83,17 +83,24 @@ meaning. Could be a good idea for the assistant to return a warning about an "it
 
 - sentence – a pointer to the header of the created 'sentence' slice on the function MainInternal()
 
-- tokens – a list with the tokens of all the 'sentence' words
-
+- sentence_str – the string sent to MainInternal() but with the modifications done on sentenceNLPPreparation()
 
 > Returns:
 
-- nothing
+- the updated 'sentence_str' according to the also updated 'sentence'
 */
-func nlpAnalyzer(sentence *[]string, sentence_str string) {
+func nlpAnalyzer(sentence *[]string, sentence_str string) string {
 	log.Println("-----")
 
 	resetVariables()
+
+	// todo See how this file works and finish this. You were going to pass to the function an it_and variable saying
+	//  what was "it" and what "and" was referring to, like "turn wifi on", and seconds later, "turn it off" --> "wifi"
+	//  is the "it"
+	//nlp_last_name_found = append(nlp_last_name_found, it_and)
+
+	log.Println("-----------------------------")
+	log.Println(sentence_str)
 
 	// Create a new document with the default configuration
 	nlp_doc, _ := prose.NewDocument(sentence_str)
@@ -113,7 +120,7 @@ func nlpAnalyzer(sentence *[]string, sentence_str string) {
 			// intact. It's just removed from the tokens to synchronize them with the 'sentence' and nothing else. If
 			// possible nothing would be removed... (don't like the idea too much, but no better ideas at the moment).
 
-			GlobalUtilsInt_APU.DelElemInSlice(&tokens, counter)
+			UtilsInt.DelElemInSlice(&tokens, counter)
 			// Decrement the counter, so we go to the previous, to then be incremented by the loop and go to the
 			// current one, which is now the old next one.
 			counter--
@@ -138,6 +145,8 @@ func nlpAnalyzer(sentence *[]string, sentence_str string) {
 	//log.Println("---")
 	log.Println(*sentence)
 	//log.Println("-----")
+
+	return strings.Join(*sentence, " ")
 }
 
 const WHATS_IT string = "3234_WHATS_IT"
@@ -163,7 +172,6 @@ deletes "Wi-Fi" from the sentence.
 
 - tokens – a list with the tokens of all the 'sentence' words
 
-
 > Returns:
 
 - nothing
@@ -172,7 +180,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 	// Leave the 2 parameters because both exist on CmdsDetector(), so why create one of them again and not use the one
 	// that already exists? Optimization.
 
-	// Way of checking if the function is working well below (seems a good check - has all cases on it, I think):
+	// Way of checking if the function is working well below (seems to be a good check - has all cases on it, I think):
 	// "turn it on turn on wifi and the airplane mode get it it on no don't turn it on turn off airplane mode and the " +
 	//	"wifi turn it on"
 
@@ -186,7 +194,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			// If the last word was an "it", it means there are repeated ones - delete all the repeated ones and use
 			// only the first one. If they were not deleted, too many words would in between the command words -->
 			// no detection.
-			GlobalUtilsInt_APU.DelElemInSlice(sentence, nlp_sentence_counter)
+			UtilsInt.DelElemInSlice(sentence, nlp_sentence_counter)
 			nlp_sentence_counter-- // And since an element was deleted, decrement the sentence_counter.
 			//log.Println("*****")
 			//log.Println(*sentence)
@@ -201,7 +209,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			if len(nlp_last_name_found) > 1 {
 				for name_index, name_slice := range nlp_last_name_found[1:] {
 					// +1 below because we're starting from [1:].
-					GlobalUtilsInt_APU.AddElemSlice(sentence, name_slice[0], nlp_sentence_counter+name_index+1)
+					UtilsInt.AddElemSlice(sentence, name_slice[0], nlp_sentence_counter+name_index+1)
 				}
 			}
 			// Increment the sentence_counter. -1 because it needs to stay at the element before the next. The next
@@ -212,14 +220,14 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 
 			//log.Println("+++++")
 			//log.Println(*sentence)
-			// The original words on the 'sentence' get deleted so the function does not try to detect anything
+			// The original words on the 'sentence' get deleted so that the function does not try to detect anything
 			// based on them, because the words belong to where they were put (on the "if"'s place) - but they're
 			// deleted also to reduce the number of words between the command main words - or no detection will
 			// happen.
 			for i := len(nlp_last_name_found) - 1; i >= 0; i-- {
 				word_index, _ := strconv.Atoi(nlp_last_name_found[i][1])
 				if word_index > 0 { // If the word hasn't been deleted already...
-					GlobalUtilsInt_APU.DelElemInSlice(sentence, word_index)
+					UtilsInt.DelElemInSlice(sentence, word_index)
 					nlp_last_name_found[i][1] = "-1" // This signals the word has been deleted - can't delete it twice.
 					nlp_sentence_counter--
 				}
@@ -264,7 +272,7 @@ if it's set to true, please note this may not work as expected. This is because 
 those that don't refer to actions, like this example: "turn on the wifi and turn off the airplane mode", which will
 become "turn on the wifi turn on turn off the airplane mode" --> ignoring command repetitions and processing them
 anyways will make this not work as expected. If the repetition is ignored, the sentence will be like "turn on the wifi
-turn on the airplane mode".
+turn off the airplane mode".
 
 -----------------------------------------------------------
 
@@ -273,7 +281,6 @@ turn on the airplane mode".
 - sentence – same as in nlpAnalyzer()
 
 - tokens – a list with the tokens of all the 'sentence' words
-
 
 > Returns:
 
@@ -290,7 +297,7 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 	if "and" == (*sentence)[nlp_sentence_counter] {
 		if nlp_last_was_an_and {
 			// The same as for the "it" case.
-			GlobalUtilsInt_APU.DelElemInSlice(sentence, nlp_sentence_counter)
+			UtilsInt.DelElemInSlice(sentence, nlp_sentence_counter)
 			nlp_sentence_counter--
 			//log.Println("*****")
 			//log.Println(*sentence)
@@ -308,7 +315,7 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 			if len(nlp_second_last_to_last_non_allowed_tag) > 1 {
 				for non_name_index, name_slice := range nlp_second_last_to_last_non_allowed_tag[1:] {
 					// +1 below because we're starting from [1:].
-					GlobalUtilsInt_APU.AddElemSlice(sentence, name_slice[0], nlp_sentence_counter+non_name_index+1)
+					UtilsInt.AddElemSlice(sentence, name_slice[0], nlp_sentence_counter+non_name_index+1)
 				}
 			}
 			nlp_sentence_counter += len(nlp_second_last_to_last_non_allowed_tag) - 1

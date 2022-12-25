@@ -21,16 +21,16 @@ import (
 	"os"
 
 	"Assist_Platforms_Unifier/CommandsDetection_APU"
-	"Assist_Platforms_Unifier/GlobalUtils_APU"
+	"Assist_Platforms_Unifier/Utils_APU"
 )
 
 const ERR_NOT_ENOUGH_ARGS string = "3234_ERR_NOT_ENOUGH_ARGS"
 
 func main() {
-	log.Println(GlobalUtils_APU.ASSISTANT_NAME + "'s Platform Unifier module.")
+	log.Println(Utils_APU.ASSISTANT_NAME + "'s Platform Unifier module.")
 	log.Println("---")
 	log.Println("")
-	log.Println("Version of the module: " + GlobalUtils_APU.VERSION)
+	log.Println("Version of the module: " + Utils_APU.VERSION)
 	log.Println("")
 	log.Println("//-->3234_BEGINNING<--\\\\")
 	log.Println("")
@@ -54,7 +54,8 @@ func main() {
 
 	// todo None of these below work decently... Fix them.
 
-	var sentence_str string = "the video stop it and then play it again"
+	var sentence_str string = "reboot to recovery"
+	//var sentence_str string = "the video stop it and then play it again"
 	// This above needs a change in the NLPAnalyzer...
 	// The 1st "it" is "video", so it's replaced when the sentence_counter gets to "it". At that time, the "and"
 	// function has "stop" stored as a verb, but the counter is on the "it" place. When "video" is deleted after being
@@ -62,6 +63,7 @@ func main() {
 	// I think it thinks it's "it" - so it's stored too as a "non-name" --> wrong!
 	// Reset the counters every time or something.
 
+	log.Println(sentence_str) // Just to also see it on the terminal (better than get back here to read it)
 	log.Println("To do: " + CommandsDetection_APU.MainInternal(sentence_str, all_allowed_cmds))
 	log.Println("")
 	log.Println("\\\\-->3234_END<--//")

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package GlobalUtilsInt_APU
+package UtilsInt
 
 import (
 	"bytes"
@@ -22,14 +22,15 @@ import (
 	"fmt"
 	"reflect"
 
-	"Assist_Platforms_Unifier/GlobalUtils_APU"
+	"Assist_Platforms_Unifier/Utils_APU"
 )
 
 // MOD_RET_ERR_PREFIX is the prefix to be used to define a constant at the submodule level, which shall be a return
 // string with an error description on it. A unique string with the submodule name on it (can be abbreviated) must be
 // appended to it, followed by " - ". For example, "CMD_DETECT - " for the Commands Detection submodule. A result
 // example might be
-// 		"3234_ERR_GO_CMD_DETECT - Err 1: Some description here"
+//
+//	"3234_ERR_GO_CMD_DETECT - Err 1: Some description here"
 const MOD_RET_ERR_PREFIX = "3234_APU_ERR_"
 
 ///////////////////////////////////////
@@ -86,17 +87,20 @@ NOTICE: it does NOT offer conditional evaluation and requires a type assertion, 
 (0.27 ns original vs 18.8 ns this implementation).
 
 Example of use:
+
 	func Abs(n int) int {
 		return tern(n >= 0, n, -n).(int) // .(int) is a type assertion
 	}
 
 Equivalent (but faster - no type assertion necessary):
+
 	test = func1()
 	if condition {
 		test = func2()
 	}
 
 Example with conditional evaluation (possibly the only way in Go):
+
 	if condition {
 		test = func1()
 	} else {
@@ -126,7 +130,6 @@ Credits to https://stackoverflow.com/a/56591107/8228163 (optimized here).
 
 - index – the index of the element to remove
 
-
 > Returns:
 
 - nothing
@@ -148,7 +151,6 @@ AddElemSlice adds an element to a specific index of a slice, keeping the element
 - element – the element to add
 
 - index – the index to add the element on, with range [0, len(slice)]
-
 
 > Returns:
 
@@ -176,7 +178,9 @@ Note: the below described won't have any effect if the slice to copy has only on
 at all as the function will copy all values normally. If the slice has more dimensions, read the below explanation.
 
 I wrote “Outer“ in caps because of this example:
+
 	var example [][]int = [][]int{{1}, {2}, {3}}
+
 This function will copy the values of the outer slice only - which are pointers to the inner slices. If ANY value of the
 inner slices gets changed, on the original slice that shall happen too, because both the original and the copy point to
 the same inner slices. Only the outer slices differ - so one can add an inner slice to the copy, and it will not
@@ -188,7 +192,6 @@ don't change.
 > Params:
 
 - slice – the slice
-
 
 > Returns:
 
@@ -217,7 +220,6 @@ from multidimensional slices/arrays.
 
 - source – the source slice/array
 
-
 > Returns:
 
 - nothing
@@ -238,6 +240,7 @@ func CopySlice(destination interface{}, source interface{}) {
 PanicInt calls the built-in panic() function, but with a string with the standard format to this module.
 
 The format is:
+
 	GlobalUtils_APU.APU_ERR_PREFIX + err_code + ": " + description
 
 -----------------------------------------------------------
@@ -248,11 +251,10 @@ The format is:
 
 - description – a description of the error
 
-
 > Returns:
 
 - nothing
 */
 func PanicInt(err_code float32, description string) {
-	panic(GlobalUtils_APU.APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)
+	panic(Utils_APU.APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)
 }
