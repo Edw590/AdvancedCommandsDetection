@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package UtilsInt
+package AdvancedCommandsDetection
 
 import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
 	"reflect"
-
-	"Assist_Platforms_Unifier/Utils_APU"
 )
 
 // MOD_RET_ERR_PREFIX is the prefix to be used to define a constant at the submodule level, which shall be a return
@@ -31,57 +29,10 @@ import (
 // example might be
 //
 //	"3234_ERR_GO_CMD_DETECT - Err 1: Some description here"
-const MOD_RET_ERR_PREFIX = "3234_APU_ERR_"
-
-///////////////////////////////////////
-// Try / Catch / Finally
-
-// Credits: https://dzone.com/articles/try-and-catch-in-golang
-
-type Exception interface{}
-
-func Throw(up Exception) {
-	panic(up)
-}
-
-func (tcf Tcf) Do() {
-	if tcf.Finally != nil {
-		defer tcf.Finally()
-	}
-	if tcf.Catch != nil {
-		defer func() {
-			if r := recover(); r != nil {
-				tcf.Catch(r)
-			}
-		}()
-	}
-	tcf.Try()
-}
-
-type Tcf struct {
-	Try     func()
-	Catch   func(Exception)
-	Finally func()
-}
-
-/* Original example:
-Tcf {
-	Try: func() {
-		fmt.Println("I tried")
-		throw("Oh,...sh...")
-	},
-	Catch: func(e Exception) {
-		fmt.Printf("Caught %v\n", e)
-	},
-	Finally: func() {
-		fmt.Println("Finally...")
-	},
-}.Do()
-*/
-///////////////////////////////////////
+const MOD_RET_ERR_PREFIX = "3234_ACD_ERR"
 
 /*
-Tern behaves like the ternary operator (not present in Go) - though, inefficiently.
+tern behaves like the ternary operator (not present in Go) - though, inefficiently.
 
 NOTICE: it does NOT offer conditional evaluation and requires a type assertion, so that would explain its inefficiency
 (0.27 ns original vs 18.8 ns this implementation).
@@ -109,7 +60,7 @@ Example with conditional evaluation (possibly the only way in Go):
 
 Use type assertion to get the correct return type
 */
-func Tern(statement bool, true_return interface{}, false_return interface{}) interface{} {
+func tern(statement bool, true_return interface{}, false_return interface{}) interface{} {
 	if statement {
 		return true_return
 	}
@@ -118,7 +69,7 @@ func Tern(statement bool, true_return interface{}, false_return interface{}) int
 }
 
 /*
-DelElemInSlice removes an element from a slice by its index.
+delElemInSlice removes an element from a slice by its index.
 
 Credits to https://stackoverflow.com/a/56591107/8228163 (optimized here).
 
@@ -134,13 +85,13 @@ Credits to https://stackoverflow.com/a/56591107/8228163 (optimized here).
 
 - nothing
 */
-func DelElemInSlice(slice interface{}, index int) {
+func delElemInSlice(slice interface{}, index int) {
 	var slice_value reflect.Value = reflect.ValueOf(slice).Elem()
 	slice_value.Set(reflect.AppendSlice(slice_value.Slice(0, index), slice_value.Slice(index+1, slice_value.Len())))
 }
 
 /*
-AddElemSlice adds an element to a specific index of a slice, keeping the elements' order.
+addElemSlice adds an element to a specific index of a slice, keeping the elements' order.
 
 -----------------------------------------------------------
 
@@ -156,7 +107,7 @@ AddElemSlice adds an element to a specific index of a slice, keeping the element
 
 - nothing
 */
-func AddElemSlice(slice interface{}, element interface{}, index int) {
+func addElemSlice(slice interface{}, element interface{}, index int) {
 	var slice_value reflect.Value = reflect.ValueOf(slice).Elem()
 	var element_value reflect.Value = reflect.ValueOf(element)
 	var result reflect.Value
@@ -172,7 +123,7 @@ func AddElemSlice(slice interface{}, element interface{}, index int) {
 }
 
 /*
-CopyOuterSlice copies all the values from an OUTER slice to a new slice, with the length and capacity of the original.
+copyOuterSlice copies all the values from an OUTER slice to a new slice, with the length and capacity of the original.
 
 Note: the below described won't have any effect if the slice to copy has only one dimension - in that case, don't worry
 at all as the function will copy all values normally. If the slice has more dimensions, read the below explanation.
@@ -197,7 +148,7 @@ don't change.
 
 - the new slice as an Interface (use type assertion to get the correct slice type)
 */
-func CopyOuterSlice(slice interface{}) interface{} {
+func copyOuterSlice(slice interface{}) interface{} {
 	var slice_value reflect.Value = reflect.ValueOf(slice)
 	var new_slice reflect.Value = reflect.MakeSlice(slice_value.Type(), slice_value.Len(), slice_value.Cap())
 	reflect.Copy(new_slice, slice_value)
@@ -206,7 +157,7 @@ func CopyOuterSlice(slice interface{}) interface{} {
 }
 
 /*
-CopySlice copies all the values from slice/array to a new slice/array, with the length and capacity of the original,
+copySlice copies all the values from slice/array to a new slice/array, with the length and capacity of the original,
 provided both slices/arrays have the same type (that includes the length of each dimension with arrays).
 
 NOTE: this function is slow, according to what someone told me. Don't use unless you really need to copy all values
@@ -224,7 +175,7 @@ from multidimensional slices/arrays.
 
 - nothing
 */
-func CopySlice(destination interface{}, source interface{}) {
+func copySlice(destination interface{}, source interface{}) {
 	var buf *bytes.Buffer = new(bytes.Buffer)
 	var err error = gob.NewEncoder(buf).Encode(source)
 	if err != nil {
@@ -237,7 +188,7 @@ func CopySlice(destination interface{}, source interface{}) {
 }
 
 /*
-PanicInt calls the built-in panic() function, but with a string with the standard format to this module.
+panicInt calls the built-in panic() function, but with a string with the standard format to this module.
 
 The format is:
 
@@ -255,6 +206,6 @@ The format is:
 
 - nothing
 */
-func PanicInt(err_code float32, description string) {
-	panic(Utils_APU.APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)
+func panicInt(err_code float32, description string) {
+	panic(APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)
 }

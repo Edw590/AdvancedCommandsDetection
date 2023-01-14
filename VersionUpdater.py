@@ -23,6 +23,7 @@ This file updates this module's VERSION variable each time it's ran.
 """
 import datetime
 
+FILE_REL_PATH = "AdvancedCommandsDetection/GL_CONSTS.go"
 LINE_BEGINNING = "const VERSION string ="
 LOCAL_TIMEZONE = str(datetime.datetime.now(datetime.timezone(datetime.timedelta(0))).astimezone().tzinfo)
 DATE_TIME = str(datetime.datetime.now().strftime("%Y-%m-%d -- %H:%M:%S.%f"))
@@ -31,7 +32,7 @@ DATE_TIME = str(datetime.datetime.now().strftime("%Y-%m-%d -- %H:%M:%S.%f"))
 # reports it. That one is correct (at least on Windows).
 FINAL_LINE = '{} "{} ({})"\n'.format(LINE_BEGINNING, DATE_TIME, LOCAL_TIMEZONE)
 
-with open("GlobalUtils_APU/GL_CONSTS.go", "r", encoding="UTF-8") as file:
+with open(FILE_REL_PATH, "r", encoding="UTF-8") as file:
 	lines = file.readlines()
 
 #print(lines)
@@ -42,5 +43,5 @@ for counter, line in enumerate(lines):
 		#print(lines[counter])
 		break
 
-with open("GlobalUtils_APU/GL_CONSTS.go", "w", encoding="UTF-8") as file:
+with open(FILE_REL_PATH, "w", encoding="UTF-8") as file:
 	file.writelines(lines)

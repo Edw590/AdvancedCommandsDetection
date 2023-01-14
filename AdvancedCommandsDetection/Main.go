@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-// Package CommandsDetection_APU is the submodule that detects commands in a given string of words
-package CommandsDetection_APU
+package AdvancedCommandsDetection
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
-	"Assist_Platforms_Unifier/UtilsInt"
+	"AdvancedCommandsDetection/Tcf"
 )
 
-const ERR_CMD_DETECT string = UtilsInt.MOD_RET_ERR_PREFIX + "CMD_DETECT - "
+const ERR_CMD_DETECT string = MOD_RET_ERR_PREFIX + " - "
 
 /*
 Main is the function to call to request a detection of commands in a given sentence of words.
@@ -37,10 +35,6 @@ Main is the function to call to request a detection of commands in a given sente
 
 - sentence_str – a sentence of words, for example coming directly from speech recognition
 
-- allowed_cmds – a string containing a list of the CMD_-started constants of all the commands that are allowed to be
-returned if found on the 'sentence', separated by CMDS_SEPARATOR - if all commands are wanted for detection, consider
-using the return of GenerateListAllCmds()
-
 > Returns:
 
   - a list of the detected commands in the form
@@ -50,14 +44,14 @@ with CMDS_SEPARATOR as the separator; if the function detected no commands, an e
 string beginning with ERR_CMD_DETECT, followed either by GlobalUtils_APU.APU_ERR_PREFIX and its requirements, or a Go
 error
 */
-func Main(sentence_str string, allowed_cmds_str string) string {
-	var ret_var string
+func Main(sentence_str string) string {
+	var ret_var string = ""
 
-	UtilsInt.Tcf{
+	Tcf.Tcf{
 		Try: func() {
-			ret_var = MainInternal(sentence_str, allowed_cmds_str)
+			ret_var = MainInternal(sentence_str)
 		},
-		Catch: func(e UtilsInt.Exception) {
+		Catch: func(e Tcf.Exception) {
 			ret_var = ERR_CMD_DETECT + fmt.Sprint(e)
 		},
 	}.Do()
@@ -75,7 +69,7 @@ instead (no protection here), so always call the other one in production code.
 
 Note: if you find this function exported, know it's just for testing from the main package. Do NOT use it in production.
 */
-func MainInternal(sentence_str string, allowed_cmds_str string) string {
+func MainInternal(sentence_str string) string {
 	if "" == strings.TrimSpace(sentence_str) {
 		// If the string is empty on visible characters (space counts as invisible here...), return now, because the
 		// code ahead may not work with strings like that (and some of it does not - panic --> reason I'm returning
@@ -87,29 +81,21 @@ func MainInternal(sentence_str string, allowed_cmds_str string) string {
 	sentence_str = sentenceCorrection(sentence_str, nil, true)
 
 	var sentence []string = strings.Split(sentence_str, " ")
-	var allowed_cmds []int = nil
-	for _, cmd_index := range strings.Split(allowed_cmds_str, CMDS_SEPARATOR) {
-		number, _ := strconv.Atoi(cmd_index)
-		allowed_cmds = append(allowed_cmds, number)
-	}
 
 	// Prepare the sentence for the NLP analysis
 	sentence_str = sentenceNLPPreparation(sentence_str, &sentence, true)
 	// Analyze the sentence with NLP help and, for example, replace all the "it"s on the sentence with their meaning
-	// todo ^^^^^ enter on the NLPAnalyzer file and do this above (get the meaning of "it" and "and" and replace before
-	//  continuing the sentence analysis)
 	sentence_str = nlpAnalyzer(&sentence, sentence_str)
 	// "Unprepare" what was prepared on the sentence for the NLP analysis
 	/*sentence_str = */
 	sentenceNLPPreparation(sentence_str, &sentence, false) //--> uncomment the beginning if sentence_str is needed
 
-	/*sentence_str = */
 	sentenceCorrection("", &sentence, false)
 
-	log.Println(sentence)
+	//log.Println(sentence)
 
-	// Get all the commands present on the sentence (according to the allowed_cmds).
-	var sentence_cmds []float32 = sentenceCmdsDetector(sentence, allowed_cmds)
+	// Get all the commands present on the sentence.
+	var sentence_cmds []float32 = sentenceCmdsDetector(sentence)
 
 	// Filter the sentence of special commands (like "don't"/"do not") and do the necessary for each special command.
 	taskFilter(&sentence_cmds)
@@ -119,8 +105,8 @@ func MainInternal(sentence_str string, allowed_cmds_str string) string {
 		ret_var += fmt.Sprint(command) + CMDS_SEPARATOR
 	}
 
-	log.Println("::::::::::::::::::::::::::::::::::")
-	log.Println(ret_var)
+	//log.Println("::::::::::::::::::::::::::::::::::")
+	//log.Println(ret_var)
 
 	if "" != ret_var {
 		ret_var = ret_var[:len(ret_var)-len(CMDS_SEPARATOR)]
@@ -129,8 +115,8 @@ func MainInternal(sentence_str string, allowed_cmds_str string) string {
 	// Remove consecutively repeated commands
 	//ret_var = removeRepeatedCmds(ret_var) - let's see if the verification function can handle it without this...
 
-	log.Println(ret_var)
-	log.Println("::::::::::::::::::::::::::::::::::")
+	//log.Println(ret_var)
+	//log.Println("::::::::::::::::::::::::::::::::::")
 
 	return ret_var
 }
@@ -189,14 +175,16 @@ func removeRepeatedCmds(ret_var string) string {
 	return ret_var
 }
 
-// ATTENTION - none of these constants below can collide with the WARN_-started constants on CmdsListP1!!!
+const ANY_MAIN_WORD string = ";4;"
+
+// ATTENTION - none of these constants below can collide with the WARN_-started constants on CmdsInfo!!!
 // const spec_cmd_dont_instead_CONST float32 = -1.1
 // const spec_cmd_stop_CONST float32 = -2
 // const spec_cmd_forget_CONST float32 = -3
 const spec_cmd_dont_CONST float32 = -1
 
 /*
-sentenceCmdsDetector detects commands (whose indexes are listed in a slice of numbers) in a sentence of words.
+sentenceCmdsDetector detects which of the cmds_GL commands are present in a sentence of words.
 
 -----------------------------------------------------------
 
@@ -205,13 +193,21 @@ sentenceCmdsDetector detects commands (whose indexes are listed in a slice of nu
 - sentence – a 1D slice of words on which the verification will be executed (basically it's sentence_str required by
 Main() split by spaces in a 1D slice).
 
-- allowed_cmds – same as in Main() but here it's in a slice of integers and not as a string
-
 > Returns:
 
-- a slice on which each index is a command found in the 'sentence', represented by one of its RET_-started constant
+- a slice on which each index is a command found in the 'sentence' in the order provided by the 'sentence'. The command
+is a float in which the integer part is the index of the command on cmds_GL and the decimal part is the index+1 of the
+detected condition of the command, with each condition incrementing by 0.01. For example, for
+
+	{ // 14
+		{{{-1}, {"device", "phone"}}, {{-1}, {"safe"}}, {-1: {"mode"}}},
+		{{{-1}, {"device", "phone"}}, {{-1}, {"recovery"}}},
+		{{{-1}, {"device", "phone"}}},
+	},
+
+and the sentence "reboot the device to recovery", the output will be 14.02 (command ID 14, 2nd condition).
 */
-func sentenceCmdsDetector(sentence []string, allowed_cmds []int) []float32 {
+func sentenceCmdsDetector(sentence []string) []float32 {
 	var detected_cmds []float32 = nil
 
 	for sentence_counter, sentence_word := range sentence {
@@ -222,47 +218,56 @@ func sentenceCmdsDetector(sentence []string, allowed_cmds []int) []float32 {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			detected_cmds = append(detected_cmds, float32(float))
 		} else {
-			for _, cmd_index := range allowed_cmds {
-				if cmd_index <= 0 {
-					// Can't detect non-positive command identifiers. Those are reserved identifiers. So panic to warn
-					// about wrong usage.
-					UtilsInt.PanicInt(1, "Non-positive command identifier sent for detection")
-				} else if cmd_index > HIGHEST_CMD_INT {
-					// Aside from getting the function to do additional tasks for nothing, there's nothing bad in
-					// sending a command that is not on the list. But probably is bad practice to put commands from 1 to
-					// 100 just to support all future commands - so panic.
-					UtilsInt.PanicInt(1, "Command identifier above highest value sent for detection")
-				}
-
-				for _, main_word := range main_words_GL[cmd_index] {
+			var cmds_GL_len int = len(cmds_GL)
+			for i := 0; i < cmds_GL_len; i++ {
+				for _, main_word := range cmds_GL[i].main_words {
 					if main_word == sentence_word {
-						/*if cmd_index != 11 {
-							// Uncomment for testing purposes
-							continue
-						}*/
 
-						log.Println("==============")
-						log.Println(sentence_word)
-						log.Println(cmd_index)
+						//log.Println("==============")
+						//log.Println(sentence_word)
+						//log.Println(i)
 
-						var results_WordsVerificationDADi [][]string = wordsVerificationFunction(sentence, sentence_counter,
-							main_words_GL[cmd_index], words_list_GL[cmd_index], left_intervs_GL[cmd_index],
-							right_intervs_GL[cmd_index], init_indexes_sub_verifs_GL[cmd_index],
-							exclude_word_found_GL[cmd_index], return_last_match_GL[cmd_index],
-							ignore_repets_main_words_GL[cmd_index], ignore_repets_cmds_GL[cmd_index],
-							order_words_list_GL[cmd_index], stop_first_not_found_GL[cmd_index],
-							exclude_original_words_GL[cmd_index], continue_with_words_slice_number_GL[cmd_index],
-							exclude_mutually_exclusive_words_GL[cmd_index])
+						var results_WordsVerificationDADi [][]bool = wordsVerificationFunction(sentence,
+							sentence_counter, cmds_GL[i])
 
-						log.Println("-----------")
-						log.Println(results_WordsVerificationDADi)
+						//log.Println("-----------")
+						//log.Println(results_WordsVerificationDADi)
 
-						if checkResultsWordsVerifFunc(words_list_GL[cmd_index], sentence_word,
-							results_WordsVerificationDADi, conditions_continue_GL[cmd_index],
-							conditions_not_continue_GL[cmd_index]) {
-							detected_cmds = append(detected_cmds,
-								computeVerifFuncResultsMeaning(sentence_word, results_WordsVerificationDADi,
-									conditions_return_GL[cmd_index])...)
+						if len(results_WordsVerificationDADi) > 0 {
+							var final_condition int = -1
+
+							//log.Println(success_detects)
+							for ii, jj := range results_WordsVerificationDADi {
+								var all_true bool = true
+								for _, jjj := range jj {
+									all_true = all_true && jjj
+								}
+								if all_true {
+									var words_list2 [][]string = cmds_GL[i].main_words_ret_conds
+									if (1 == len(words_list2[ii])) && (ANY_MAIN_WORD == words_list2[ii][0]) {
+										final_condition = ii
+
+										break
+									} else {
+										for _, word := range words_list2[ii] {
+											if word == sentence_word {
+												final_condition = ii
+
+												break
+											}
+										}
+									}
+								}
+							}
+
+							if final_condition != -1 {
+								detected_cmds = append(detected_cmds,
+									float32(final_condition+1)/100+float32(cmds_GL[i].cmd_id))
+								// results_WordsVerificationDADi + 1 because 0.00 must not happen
+								// / 100 to go from 0+1 = 1 to 0.01
+								// + cmd_index because what returns from the function is the return command ID for that
+								// specific command - not a global one --> this makes it global (always different)
+							}
 						}
 					}
 				}
@@ -295,8 +300,8 @@ func taskFilter(sentence_cmds *[]float32) {
 	//	{"test"}, {"test"}, {"test"}, {"test"}, {"test"}, {"test"}, {"test"}, {"test"}, }
 	//*sentence_cmds = []float32{24, -1, 26, 25, -1, -1, -1, 25, 24}
 
-	log.Println("==============================================")
-	log.Println("*sentence_cmds -->", *sentence_cmds)
+	//log.Println("==============================================")
+	//log.Println("*sentence_cmds -->", *sentence_cmds)
 
 	// RESTRICTED VALUE ON THE sentence_cmds SLICE - Used to mark elements for deletion on the slice. This way, they're
 	// deleted only in the end and on the main loop it doesn't get confusing about which elements have been deleted
@@ -375,12 +380,12 @@ func taskFilter(sentence_cmds *[]float32) {
 	for counter := 0; counter < len(*sentence_cmds); {
 		// Don't forget (again) --> the length must checked every time on the loop because it is changed on it
 		if MARK_TERMINATION_FLOAT32 == (*sentence_cmds)[counter] {
-			UtilsInt.DelElemInSlice(sentence_cmds, counter)
+			delElemInSlice(sentence_cmds, counter)
 		} else {
 			counter++
 		}
 	}
 
-	log.Println("*sentence_cmds -->", *sentence_cmds)
-	log.Println("==============================================")
+	//log.Println("*sentence_cmds -->", *sentence_cmds)
+	//log.Println("==============================================")
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package CommandsDetection_APU
+package AdvancedCommandsDetection
 
 import (
 	"strings"
@@ -29,7 +29,7 @@ also to be easier to list the commands (less word variations), and finally to ch
 one knows "do not" doesn't happen and doesn't need to worry about checking that, only "don't", which is easier - only
 one word, and in a "foreach word" loop is much easier).
 
-This function should be the first thing to be called on MainInternal() to normalize the sentence for the entire
+This function should be the first thing to be called on mainInternal() to normalize the sentence for the entire
 library.
 
 For example, it finds all occurrences of "what is" and replaces them by "what's". It also corrects "whats" to "what's",
@@ -79,6 +79,10 @@ func sentenceCorrection(sentence_str string, sentence *[]string, before_nlp_anal
 
 		sentence_str = strings.Replace(sentence_str, "do not", "don't", -1)
 		sentence_str = strings.Replace(sentence_str, "dont", "don't", -1)
+
+		// This may be incorrect sometimes, but the recognizers may not be able to distinguish, so one must treat them
+		// as equal anyways.
+		sentence_str = strings.Replace(sentence_str, "shutdown", "shut down", -1)
 	} else {
 		// Do these only after the NLP analyzer. Removing dashes may be bad for it, who knows. Better to let them stay
 		// and remove only after it for the rest of the function analysis.
@@ -102,7 +106,7 @@ analyzed by the command detector.
 
 > Params:
 
-- sentence – a pointer to the header of the created 'sentence' slice on the beginning of MainInternal()
+- sentence – a pointer to the header of the created 'sentence' slice on the beginning of mainInternal()
 
 - before_sending – true if this function is being called before the NLP analyzer, false if it's being called after it
 
@@ -122,7 +126,6 @@ func sentenceNLPPreparation(sentence_str string, sentence *[]string, before_nlp_
 		sentence_str = strings.Replace(sentence_str, "that's", "that is", -1)
 		sentence_str = strings.Replace(sentence_str, "there's", "there is", -1)
 		sentence_str = strings.Replace(sentence_str, "don't", "do not", -1)
-		sentence_str = strings.Replace(sentence_str, "shutdown", "shut down", -1) // Shutdown is not a verb. Shut is...
 	} else {
 		sentence_str = strings.Replace(sentence_str, "what is", "what's", -1)
 		sentence_str = strings.Replace(sentence_str, "who is", "who's", -1)
@@ -130,7 +133,6 @@ func sentenceNLPPreparation(sentence_str string, sentence *[]string, before_nlp_
 		sentence_str = strings.Replace(sentence_str, "that is", "that's", -1)
 		sentence_str = strings.Replace(sentence_str, "there is", "there's", -1)
 		sentence_str = strings.Replace(sentence_str, "do not", "don't", -1)
-		sentence_str = strings.Replace(sentence_str, "shut down", "shutdown", -1)
 	}
 
 	*sentence = strings.Split(sentence_str, " ")
