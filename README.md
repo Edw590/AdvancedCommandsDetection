@@ -6,6 +6,21 @@ This project is a part of a bigger project, consisting of the following:
 - [V.I.S.O.R. - A better Android assistant](https://github.com/DADi590/VISOR---A-better-Android-assistant)
 - [Advanced Commands Detection](https://github.com/DADi590/Advanced-Commands-Detection)
 
+## Examples of successful detections
+A list of sentences sent to the module and what it successfully understands at its output:
+```
+- "turn off airplane mode on": turn off airplane mode
+- "turn on turn off the wifi": turn off Wi-Fi and airplane mode
+- "turn on wifi and the bluetooth no don't turn it on": turn on Wi-Fi
+- "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on": turn on airplane mode, then turn if off again, and turn on Wi-Fi
+- "turn on turn wifi on please": turn on Wi-Fi
+- "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please": warn about a meaningless "it", turn on Wi-Fi, turn off both airplane mode and Wi-Fi
+- "turn on wifi and and the airplane mode and the flashlight": turn on Wi-Fi, airplane mode, and flashligh
+- "shut down the phone and reboot it": shut down and reboot device
+- "fast reboot the phone": fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
+```
+These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications.
+
 ## Table of Contents
 - [Background](#background)
 - [Examples of successful detections](#examples-of-successful-detections)
@@ -25,21 +40,6 @@ This is a command detection module that I began in 2017 or 2018 still when I did
 I call it Advanced(?) because it's not just a simple "turn on wifi" thing. Instead, it detects each keyword in an interval of words. It also knows what "don't" and "it" mean ("turn on wifi. no, don't turn it on" --> 0 commands detected here). Or knows what an "and" means ("turn on the wifi and the airplane mode" - no need to say "turn on wifi turn on airplane mode"). And there are still improvements to be made to this. I don't use AI for this, at most I use NLP (so far), so that might also explain why the module is complex.
 
 I'm also not really wanting to use C/C++ for this, not unless Go stops being fast enough - else I have to pay attention to infinity that can can wrong on a C/C++ program... Waste of time if Go is fast enough. It's also in Go and not in Java as VISOR is because then I can use this for any other platform without worrying about the supported languages nor reimplementing all this infinity (VISOR is supposed to be multi-platform, not just Android - but I lack the time to make that happen...).
-
-## Examples of successful detections
-A list of sentences sent to the module and what it successfully understands at its output:
-```
-- "turn off airplane mode on": turn off airplane mode
-- "turn on turn off the wifi": turn off Wi-Fi and airplane mode
-- "turn on wifi and the bluetooth no don't turn it on": turn on Wi-Fi
-- "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on": turn on airplane mode, then turn if off again, and turn on Wi-Fi
-- "turn on turn wifi on please": turn on Wi-Fi
-- "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please": warn about a meaningless "it", turn on Wi-Fi, turn off both airplane mode and Wi-Fi
-- "turn on wifi and and the airplane mode and the flashlight": turn on Wi-Fi, airplane mode, and flashligh
-- "shut down the phone and reboot it": shut down and reboot device
-- "fast reboot the phone": fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
-```
-These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications.
 
 ## How it works
 The `ACD.Main()` function outputs a list of detected commands in a given sentence of words. For example, give it (without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present): `"turn it on. turn on the wifi, and and the airplane mode, get it it on. no, don't turn it on. turn off airplane mode and also the wifi, please."` - this string will make the module output orders to (in order of given commands), request an explanation of the first "it" (which has no meaning), turn on the Wi-Fi, then turn off the airplane mode, and also the Wi-Fi. And it does: `"-10, 4.01, 11.02, 4.02"`, which means the same, according to the way the module works.
