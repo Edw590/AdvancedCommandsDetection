@@ -23,7 +23,6 @@ These are automated test sentences that are tested each time modifications are m
 
 ## Table of Contents
 - [Background](#background)
-- [Examples of successful detections](#examples-of-successful-detections)
 - [How it works](#how-it-works)
 - - [To compile the module](#--to-compile-the-module)
 - - [Small explanation of the project structure](#--small-explanation-of-the-project-structure)
