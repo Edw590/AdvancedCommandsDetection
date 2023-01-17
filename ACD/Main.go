@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package AdvancedCommandsDetection
+package ACD
 
 import (
 	"fmt"
@@ -32,24 +32,28 @@ Main is the function to call to request a detection of commands in a given sente
 -----------------------------------------------------------
 
 > Params:
-
-- sentence_str – a sentence of words, for example coming directly from speech recognition
+  - sentence_str – a sentence of words, for example coming directly from speech recognition
+  - remove_repet_cmds – true to remove repeated adjacent commands and leave only the last one, false to not remove them.
+    Note that repeated commands means any commands with the same ID, whether or not they have the same sub-output. Example:
+    "1.01, 1.02, 2.01, 1.01" --> "1.02, 2.01, 1.01".
+  - invalidate_detec_words – same as in sentenceCmdsDetector()
 
 > Returns:
 
-  - a list of the detected commands in the form
-    [CMD1][separator][CMD2][separator][CMD3]
+– a list of the detected commands in the form
+
+	[CMD1][separator][CMD2][separator][CMD3]
 
 with CMDS_SEPARATOR as the separator; if the function detected no commands, an empty string; if any error occurred, a
 string beginning with ERR_CMD_DETECT, followed either by GlobalUtils_APU.APU_ERR_PREFIX and its requirements, or a Go
 error
 */
-func Main(sentence_str string) string {
+func Main(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool) string {
 	var ret_var string = ""
 
 	Tcf.Tcf{
 		Try: func() {
-			ret_var = MainInternal(sentence_str)
+			ret_var = MainInternal(sentence_str, remove_repet_cmds, invalidate_detec_words)
 		},
 		Catch: func(e Tcf.Exception) {
 			ret_var = ERR_CMD_DETECT + fmt.Sprint(e)
@@ -69,7 +73,7 @@ instead (no protection here), so always call the other one in production code.
 
 Note: if you find this function exported, know it's just for testing from the main package. Do NOT use it in production.
 */
-func MainInternal(sentence_str string) string {
+func MainInternal(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool) string {
 	if "" == strings.TrimSpace(sentence_str) {
 		// If the string is empty on visible characters (space counts as invisible here...), return now, because the
 		// code ahead may not work with strings like that (and some of it does not - panic --> reason I'm returning
@@ -95,7 +99,7 @@ func MainInternal(sentence_str string) string {
 	//log.Println(sentence)
 
 	// Get all the commands present on the sentence.
-	var sentence_cmds []float32 = sentenceCmdsDetector(sentence)
+	var sentence_cmds []float32 = sentenceCmdsDetector(sentence, invalidate_detec_words)
 
 	// Filter the sentence of special commands (like "don't"/"do not") and do the necessary for each special command.
 	taskFilter(&sentence_cmds)
@@ -113,7 +117,12 @@ func MainInternal(sentence_str string) string {
 	}
 
 	// Remove consecutively repeated commands
-	//ret_var = removeRepeatedCmds(ret_var) - let's see if the verification function can handle it without this...
+	// Let's see if the verification function can handle it without this...
+	// EDIT: it could very well (improved a lot since then), but it's needed again, at least sometimes. So I'm putting
+	// it optional.
+	if remove_repet_cmds {
+		ret_var = removeRepeatedCmds(ret_var)
+	}
 
 	//log.Println(ret_var)
 	//log.Println("::::::::::::::::::::::::::::::::::")
@@ -147,32 +156,40 @@ another function call.
 this function at all!!! A thanks to this might be due to the new parameter on the wordsVerificationFunction() that
 ignores possibly repeated commands!)
 */
-func removeRepeatedCmds(ret_var string) string {
-	var ret_var_list []string = strings.Split(ret_var, CMDS_SEPARATOR)
+func removeRepeatedCmds(detected_cmds_str_param string) string {
+	var detected_cmds_list []string = strings.Split(detected_cmds_str_param, CMDS_SEPARATOR)
 
 	const MARK_TERMINATION_STR string = "3234_TERM"
 
-	var ret_var_list_len = len(ret_var_list) // Optimization
-	for counter := 0; counter < ret_var_list_len; counter++ {
-		if counter != ret_var_list_len-1 {
-			if ret_var_list[counter+1] == ret_var_list[counter] {
-				ret_var_list[counter] = MARK_TERMINATION_STR
+	var detected_cmds_list_len_1 int = len(detected_cmds_list) - 1
+	for i, j := range detected_cmds_list {
+		if i != detected_cmds_list_len_1 {
+			var next_j string = detected_cmds_list[i+1]
+			var next_j_index int = strings.Index(next_j, ".")
+			var j_index int = strings.Index(j, ".")
+			//log.Println("-------")
+			//log.Println(prev_j)
+			//log.Println(prev_j[:prev_j_index)
+			//log.Println(j)
+			//log.Println(j[:j_index)
+			if (-1 != next_j_index) && (-1 != j_index) && (j[:j_index] == next_j[:next_j_index]) {
+				detected_cmds_list[i] = MARK_TERMINATION_STR
 			}
 		}
 	}
 
-	ret_var = ""
-	for _, command := range ret_var_list {
+	var detected_cmds_str string = ""
+	for _, command := range detected_cmds_list {
 		if command != MARK_TERMINATION_STR {
-			ret_var += command + CMDS_SEPARATOR
+			detected_cmds_str += command + CMDS_SEPARATOR
 		}
 	}
 
-	if strings.HasSuffix(ret_var, CMDS_SEPARATOR) {
-		ret_var = ret_var[:len(ret_var)-len(CMDS_SEPARATOR)]
+	if strings.HasSuffix(detected_cmds_str, CMDS_SEPARATOR) {
+		detected_cmds_str = detected_cmds_str[:len(detected_cmds_str)-len(CMDS_SEPARATOR)]
 	}
 
-	return ret_var
+	return detected_cmds_str
 }
 
 const ANY_MAIN_WORD string = ";4;"
@@ -183,19 +200,25 @@ const ANY_MAIN_WORD string = ";4;"
 // const spec_cmd_forget_CONST float32 = -3
 const spec_cmd_dont_CONST float32 = -1
 
+const invalidate_word_CONST string = ";5;"
+
 /*
 sentenceCmdsDetector detects which of the cmds_GL commands are present in a sentence of words.
 
 -----------------------------------------------------------
 
 > Params:
-
-- sentence – a 1D slice of words on which the verification will be executed (basically it's sentence_str required by
-Main() split by spaces in a 1D slice).
+  - sentence – a 1D slice of words on which the verification will be executed (basically it's sentence_str required by
+    Main() split by spaces in a 1D slice).
+  - invalidate_detec_words – true to invalidate words used on detections so that they're not used on further detections
+    (useful to prevent wrong detections), false otherwise. Example of a problematic sentence: "fast reboot the phone", with
+    "fast" and "reboot" being both command main words - 2 command detections will be triggered and phone (fast reboot and
+    reboot normally) --> with this set to true, not anymore, because each word used on a successful detection will be
+    replaced by invalidate_word_CONST and hence will not be used again.
 
 > Returns:
 
-- a slice on which each index is a command found in the 'sentence' in the order provided by the 'sentence'. The command
+– a slice on which each index is a command found in the 'sentence' in the order provided by the 'sentence'. The command
 is a float in which the integer part is the index of the command on cmds_GL and the decimal part is the index+1 of the
 detected condition of the command, with each condition incrementing by 0.01. For example, for
 
@@ -207,7 +230,7 @@ detected condition of the command, with each condition incrementing by 0.01. For
 
 and the sentence "reboot the device to recovery", the output will be 14.02 (command ID 14, 2nd condition).
 */
-func sentenceCmdsDetector(sentence []string) []float32 {
+func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []float32 {
 	var detected_cmds []float32 = nil
 
 	for sentence_counter, sentence_word := range sentence {
@@ -218,16 +241,19 @@ func sentenceCmdsDetector(sentence []string) []float32 {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			detected_cmds = append(detected_cmds, float32(float))
 		} else {
-			var cmds_GL_len int = len(cmds_GL)
-			for i := 0; i < cmds_GL_len; i++ {
+			for i := range cmds_GL {
 				for _, main_word := range cmds_GL[i].main_words {
 					if main_word == sentence_word {
+						// Uncomment for testing
+						//if 14 != cmds_GL[i].cmd_id {
+						//	continue
+						//}
 
 						//log.Println("==============")
 						//log.Println(sentence_word)
 						//log.Println(i)
 
-						var results_WordsVerificationDADi [][]bool = wordsVerificationFunction(sentence,
+						var results_WordsVerificationDADi [][][]interface{} = wordsVerificationFunction(sentence,
 							sentence_counter, cmds_GL[i])
 
 						//log.Println("-----------")
@@ -235,25 +261,43 @@ func sentenceCmdsDetector(sentence []string) []float32 {
 
 						if len(results_WordsVerificationDADi) > 0 {
 							var final_condition int = -1
+							// Must be the biggest condition because, for example "reboot phone" and "reboot phone into
+							// recovery", and the sentence is "reboot phone into recovery". Both are successful
+							// detections (all words are found in both variations). But only the 2nd (the *biggest*) is
+							// correct, because more words were found, and more words has higher priority than fewer
+							// words.
+							var biggest_len int = -1
 
 							//log.Println(success_detects)
 							for ii, jj := range results_WordsVerificationDADi {
 								var all_true bool = true
 								for _, jjj := range jj {
-									all_true = all_true && jjj
+									all_true = all_true && jjj[0].(bool)
 								}
 								if all_true {
-									var words_list2 [][]string = cmds_GL[i].main_words_ret_conds
-									if (1 == len(words_list2[ii])) && (ANY_MAIN_WORD == words_list2[ii][0]) {
-										final_condition = ii
-
-										break
+									var main_words_ret_conds [][]string = cmds_GL[i].main_words_ret_conds
+									var arr_id int = 0
+									if ii >= len(main_words_ret_conds) {
+										// In case there are not enough return conditions, use the last one present.
+										arr_id = len(main_words_ret_conds) - 1
 									} else {
-										for _, word := range words_list2[ii] {
+										arr_id = ii
+									}
+									if (1 == len(main_words_ret_conds[arr_id])) &&
+										(ANY_MAIN_WORD == main_words_ret_conds[arr_id][0]) {
+										if len(jj) > biggest_len {
+											final_condition = ii
+											biggest_len = len(jj)
+										}
+									} else {
+										for _, word := range main_words_ret_conds[arr_id] {
 											if word == sentence_word {
-												final_condition = ii
+												if len(jj) > biggest_len {
+													final_condition = ii
+													biggest_len = len(jj)
 
-												break
+													break
+												}
 											}
 										}
 									}
@@ -267,6 +311,21 @@ func sentenceCmdsDetector(sentence []string) []float32 {
 								// / 100 to go from 0+1 = 1 to 0.01
 								// + cmd_index because what returns from the function is the return command ID for that
 								// specific command - not a global one --> this makes it global (always different)
+
+								if invalidate_detec_words {
+									sentence[sentence_counter] = invalidate_word_CONST
+									for _, j := range results_WordsVerificationDADi[final_condition] {
+										var index int = j[1].(int)
+										if index >= 0 {
+											sentence[index] = invalidate_word_CONST
+										}
+									}
+								}
+
+								//log.Println("-----------")
+								//log.Println(results_WordsVerificationDADi[final_condition])
+
+								//log.Println(sentence)
 							}
 						}
 					}
@@ -287,12 +346,10 @@ For example, "turn on the lights and play some music. no, don't turn on the ligh
 -----------------------------------------------------------
 
 > Params:
-
-- sentence_cmds – same as in sentenceCmdsDetector()
+  - sentence_cmds – same as in sentenceCmdsDetector()
 
 > Returns:
-
-- nothing
+  - nothing
 */
 func taskFilter(sentence_cmds *[]float32) {
 	// For testing

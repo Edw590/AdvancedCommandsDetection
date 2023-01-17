@@ -5,6 +5,7 @@
         <option name="USE_TAB_CHARACTER" value="true" />
       </value>
     </option>
+    <option name="LINE_SEPARATOR" value="&#13;&#10;" />
     <GoCodeStyleSettings>
       <option name="ADD_PARENTHESES_FOR_SINGLE_IMPORT" value="true" />
       <option name="MOVE_ALL_IMPORTS_IN_ONE_DECLARATION" value="true" />

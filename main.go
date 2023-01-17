@@ -21,7 +21,7 @@ import (
 	"os"
 	"strings"
 
-	"AdvancedCommandsDetection/AdvancedCommandsDetection"
+	"AdvancedCommandsDetection/ACD"
 )
 
 const ERR_NOT_ENOUGH_ARGS string = "3234_ERR_NOT_ENOUGH_ARGS"
@@ -30,7 +30,7 @@ func main() {
 	log.Println("V.I.S.O.R.'s Advanced Commands Detection module.")
 	log.Println("---")
 	log.Println("")
-	log.Println("Version of the module: " + AdvancedCommandsDetection.VERSION)
+	log.Println("Version of the module: " + ACD.VERSION)
 	log.Println("")
 	log.Println("//-->3234_BEGINNING<--\\\\")
 	log.Println("")
@@ -54,37 +54,37 @@ func main() {
 	const CMD_MAKE_CALL string = "18"
 	const CMD_TOGGLE_POWER_SAVER_MODE string = "19"
 	const CMD_STOP_RECORD_MEDIA string = "20"
-	const CMD_STOP_MEDIA string = "21"
-	const CMD_PAUSE_MEDIA string = "22"
-	const CMD_PLAY_MEDIA string = "23"
-	const CMD_NEXT_MEDIA string = "24"
-	const CMD_PREVIOUS_MEDIA string = "25"
+	const CMD_MEDIA_STOP string = "21"
+	const CMD_MEDIA_PAUSE string = "22"
+	const CMD_MEDIA_PLAY string = "23"
+	const CMD_MEDIA_NEXT string = "24"
+	const CMD_MEDIA_PREVIOUS string = "25"
 
 	var commands = [...][]string{
-		{CMD_TOGGLE_WIFI, AdvancedCommandsDetection.CMDi_TYPE_TURN_ONFF, "", "", "wifi"},
-		{CMD_TOGGLE_MOBILE_DATA, AdvancedCommandsDetection.CMDi_TYPE_TURN_ONFF, "", "", "mobile data"},
-		{CMD_TOGGLE_BLUETOOTH, AdvancedCommandsDetection.CMDi_TYPE_TURN_ONFF, "", "", "bluetooth"},
-		{CMD_TOGGLE_FLASHLIGHT, AdvancedCommandsDetection.CMDi_TYPE_TURN_ONFF, "", "", "flashlight/lantern"},
-		{CMD_TOGGLE_SPEAKERS, AdvancedCommandsDetection.CMDi_TYPE_TURN_ONFF, "", "", "speaker/speakers"},
-		{CMD_TOGGLE_AIRPLANE_MODE, AdvancedCommandsDetection.CMDi_TYPE_TURN_ONFF, "", "", "airplane mode"},
-		{CMD_TOGGLE_POWER_SAVER_MODE, AdvancedCommandsDetection.CMDi_TYPE_TURN_ONFF, "", "", "power/battery saver"},
-		{CMD_ASK_TIME, AdvancedCommandsDetection.CMDi_TYPE_ASK, "", "", "time"},
-		{CMD_ASK_DATE, AdvancedCommandsDetection.CMDi_TYPE_ASK, "", "", "date"},
-		{CMD_ASK_BATTERY_PERCENT, AdvancedCommandsDetection.CMDi_TYPE_ASK, "", "", "battery percentage", "battery status", "battery level"},
-		{CMD_SAY_AGAIN, AdvancedCommandsDetection.CMDi_TYPE_REPEAT_SPEECH, "", "", "again", "say", "said"},
-		{CMD_END_CALL, AdvancedCommandsDetection.CMDi_TYPE_STOP, "", "", "call"},
-		{CMD_STOP_RECORD_MEDIA, AdvancedCommandsDetection.CMDi_TYPE_STOP, "", "", "recording audio/sound|recording video/camera"},
-		{CMD_ANSWER_CALL, AdvancedCommandsDetection.CMDi_TYPE_ANSWER, "", "", "call"},
-		{CMD_SHUT_DOWN_DEVICE, AdvancedCommandsDetection.CMDi_TYPE_SHUT_DOWN, "", "", "device/phone"},
-		{CMD_REBOOT_DEVICE, AdvancedCommandsDetection.CMDi_TYPE_REBOOT, "", "", "device/phone safe mode|device/phone recovery|device/phone"},
-		{CMD_STOP_MEDIA, AdvancedCommandsDetection.CMDi_TYPE_MANUAL, "stop", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_PAUSE_MEDIA, AdvancedCommandsDetection.CMDi_TYPE_MANUAL, "pause", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_PLAY_MEDIA, AdvancedCommandsDetection.CMDi_TYPE_MANUAL, "play continue resume", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_NEXT_MEDIA, AdvancedCommandsDetection.CMDi_TYPE_MANUAL, "next", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_PREVIOUS_MEDIA, AdvancedCommandsDetection.CMDi_TYPE_MANUAL, "previous", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_TAKE_PHOTO, AdvancedCommandsDetection.CMDi_TYPE_MANUAL, "take", "", "frontal picture/photo|picture/photo"},
-		{CMD_RECORD_MEDIA, AdvancedCommandsDetection.CMDi_TYPE_RECORD, "", "", "audio/sound|frontal video/camera|video/camera"},
-		{CMD_MAKE_CALL, AdvancedCommandsDetection.CMDi_TYPE_MANUAL, "make place", "", "call"},
+		{CMD_TOGGLE_FLASHLIGHT, ACD.CMDi_TYPE_TURN_ONFF, "", "", "flashlight/lantern"},
+		{CMD_ASK_TIME, ACD.CMDi_TYPE_ASK, "", "", "time"},
+		{CMD_ASK_DATE, ACD.CMDi_TYPE_ASK, "", "", "date"},
+		{CMD_TOGGLE_WIFI, ACD.CMDi_TYPE_TURN_ONFF, "", "", "wifi"},
+		{CMD_TOGGLE_MOBILE_DATA, ACD.CMDi_TYPE_TURN_ONFF, "", "", "mobile data"},
+		{CMD_TOGGLE_BLUETOOTH, ACD.CMDi_TYPE_TURN_ONFF, "", "", "bluetooth"},
+		{CMD_ANSWER_CALL, ACD.CMDi_TYPE_ANSWER, "", "", "call"},
+		{CMD_END_CALL, ACD.CMDi_TYPE_STOP, "", "", "call"},
+		{CMD_TOGGLE_SPEAKERS, ACD.CMDi_TYPE_TURN_ONFF, "", "", "speaker/speakers"},
+		{CMD_TOGGLE_AIRPLANE_MODE, ACD.CMDi_TYPE_TURN_ONFF, "", "", "airplane mode"},
+		{CMD_ASK_BATTERY_PERCENT, ACD.CMDi_TYPE_ASK, "", "", "battery percentage", "battery status", "battery level"},
+		{CMD_SHUT_DOWN_DEVICE, ACD.CMDi_TYPE_SHUT_DOWN, "", "", "device/phone"},
+		{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT + "+" + ACD.CMDi_TYPE_MANUAL, "fast", "fast|;4;", "reboot/restart device/phone|device/phone|device/phone recovery|device/phone safe mode|device/phone bootloader"},
+		{CMD_TAKE_PHOTO, ACD.CMDi_TYPE_MANUAL, "take", "", "picture/photo|frontal picture/photo"},
+		{CMD_RECORD_MEDIA, ACD.CMDi_TYPE_RECORD, "", "", "audio/sound|video/camera|frontal video/camera"},
+		{CMD_SAY_AGAIN, ACD.CMDi_TYPE_REPEAT_SPEECH, "", "", "again", "say", "said"},
+		{CMD_MAKE_CALL, ACD.CMDi_TYPE_MANUAL, "make place", "", "call"},
+		{CMD_TOGGLE_POWER_SAVER_MODE, ACD.CMDi_TYPE_TURN_ONFF, "", "", "power/battery saver"},
+		{CMD_STOP_RECORD_MEDIA, ACD.CMDi_TYPE_STOP, "", "", "recording audio/sound|recording video/camera"},
+		{CMD_MEDIA_STOP, ACD.CMDi_TYPE_MANUAL, "stop", "", "media/song/songs/music/musics/video/videos"},
+		{CMD_MEDIA_PAUSE, ACD.CMDi_TYPE_MANUAL, "pause", "", "media/song/songs/music/musics/video/videos"},
+		{CMD_MEDIA_PLAY, ACD.CMDi_TYPE_MANUAL, "play continue resume", "", "media/song/songs/music/musics/video/videos"},
+		{CMD_MEDIA_NEXT, ACD.CMDi_TYPE_MANUAL, "next", "", "media/song/songs/music/musics/video/videos"},
+		{CMD_MEDIA_PREVIOUS, ACD.CMDi_TYPE_MANUAL, "previous", "", "media/song/songs/music/musics/video/videos"},
 	}
 
 	var commands_almost_str []string = nil
@@ -95,32 +95,25 @@ func main() {
 
 	log.Println(commands_str)
 
-	AdvancedCommandsDetection.PrepareCmdsArray(commands_str)
+	ACD.PrepareCmdsArray(commands_str)
 
 	arguments := os.Args
 	if len(arguments) > 1 {
-		log.Println("To do: " + AdvancedCommandsDetection.Main(os.Args[1]))
+		log.Println("To do: " + ACD.Main(os.Args[1], false, true))
 	} else {
 		log.Println(ERR_NOT_ENOUGH_ARGS)
 		//os.Exit(0) // Comment to dev mode (run stuff written below without needing CMD parameters)
 	}
 	log.Println("")
 
-	var sentence_str string = "shut down the phone and reboot it"
+	var sentence_str string = "the video stop it and then play it again"
 	// todo None of these below work decently... Fix them.
 	//var sentence_str string = "stop and play the song"
 	// This above needs the change on the TO DO file. It needs to know it's to STOP_MEDIA. "song" is more than 3 words
 	// away from "stop" - no detection.
-	//var sentence_str string = "the video stop it and then play it again"
-	// This above needs a change in the NLPAnalyzer...
-	// The 1st "it" is "video", so it's replaced when the sentence_counter gets to "it". At that time, the "and"
-	// function has "stop" stored as a verb, but the counter is on the "it" place. When "video" is deleted after being
-	// replaced and the "and" checker goes to check what's on the current word, what's on its place is "video", but
-	// I think it thinks it's "it" - so it's stored too as a "non-name" --> wrong!
-	// Reset the counters every time or something.
 
 	log.Println(sentence_str) // Just to also see it on the terminal (better than getting back here just to read it)
-	log.Println("To do: " + AdvancedCommandsDetection.MainInternal(sentence_str))
+	log.Println("To do: " + ACD.MainInternal(sentence_str, false, true))
 	log.Println("")
 	log.Println("\\\\-->3234_END<--//")
 
@@ -134,22 +127,24 @@ func testCommandsDetection() {
 	// Tests of good functioning of the commands detector (the sentence and the expected output).
 	// Only put commands here that have once worked, and so they must continue to work even after updates to the
 	// detection engine.
-	var sentences [][]string = [][]string{
-		{"turn off airplane mode on", "11.02"},
-		{"turn on turn off the wifi", "4.02"},
-		{"turn on wifi and the bluetooth no don't turn it on", "4.01"},
-		{"turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on", "11.01, 11.02, 4.01"},
-		{"turn on turn wifi on please", "4.01"},
-		{"turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please", "-10, 4.01, 11.02, 4.02"},
-		{"turn on wifi and and the airplane mode and the flashlight", "4.01, 11.01, 1.01"},
+	var sentences [][]interface{} = [][]interface{}{
+		{"turn off airplane mode on", true, "11.02"},
+		{"turn on turn off the wifi", true, "4.02"},
+		{"turn on wifi and the bluetooth no don't turn it on", true, "4.01"},
+		{"turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on", false, "11.01, 11.02, 4.01"}, // false because this is not realistic (why turn on and off on the same command...?). This is just to test a complex example.
+		{"turn on turn wifi on please", true, "4.01"},
+		{"turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please", true, "-10, 4.01, 11.02, 4.02"},
+		{"turn on wifi and and the airplane mode and the flashlight", true, "4.01, 11.01, 1.01"},
+		{"shut down the phone and then reboot it", true, "13.01, 14.02"},
+		{"fast reboot the phone", true, "14.01"},
 	}
 
 	var successes int = 0
 	var problems []string = nil
 	for _, j := range sentences {
-		var detected_commands string = AdvancedCommandsDetection.Main(j[0])
-		if detected_commands != j[1] {
-			problems = append(problems, "PROBLEM DETECTED: "+j[0]+" / "+j[1]+" --> "+detected_commands)
+		var detected_commands string = ACD.MainInternal(j[0].(string), false, true) //j[1].(bool), true)
+		if detected_commands != j[2] {
+			problems = append(problems, "PROBLEM DETECTED: "+j[0].(string)+" / "+j[2].(string)+" --> "+detected_commands)
 		} else {
 			successes++
 		}

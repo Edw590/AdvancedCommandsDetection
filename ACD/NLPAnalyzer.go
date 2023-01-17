@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package AdvancedCommandsDetection
+package ACD
 
 import (
 	"strconv"
@@ -72,7 +72,8 @@ wordsVerificationFunction() - if it's set to true, please note this may not work
 
 -----CONSTANTS-----
 
-- WHATS_IT – this may be in the 'sentence' after the return of this function. It means an "it" was detected with no
+  - WHATS_IT – this may be in the 'sentence' after the return of this function. It means an "it" was detected with no
+
 meaning. Could be a good idea for the assistant to return a warning about an "it" on the sentence with no meaning.
 
 -----CONSTANTS-----
@@ -80,14 +81,11 @@ meaning. Could be a good idea for the assistant to return a warning about an "it
 -----------------------------------------------------------
 
 > Params:
-
-- sentence – a pointer to the header of the created 'sentence' slice on the function mainInternal()
-
-- sentence_str – the string sent to mainInternal() but with the modifications done on sentenceNLPPreparation()
+  - sentence – a pointer to the header of the created 'sentence' slice on the function mainInternal()
+  - sentence_str – the string sent to mainInternal() but with the modifications done on sentenceNLPPreparation()
 
 > Returns:
-
-- the updated 'sentence_str' according to the also updated 'sentence'
+  - the updated 'sentence_str' according to the also updated 'sentence'
 */
 func nlpAnalyzer(sentence *[]string, sentence_str string) string {
 	//log.Println("-----")
@@ -149,7 +147,7 @@ func nlpAnalyzer(sentence *[]string, sentence_str string) string {
 	return strings.Join(*sentence, " ")
 }
 
-const WHATS_IT string = "3234_WHATS_IT"
+const WHATS_IT string = ";6;"
 
 /*
 replaceIts replaces all "it"s that it finds on the sentence by their meaning, based on the names that appear before
@@ -162,21 +160,18 @@ must not be removed.
 
 -----CONSTANTS-----
 
-- WHATS_IT – same as in nlpAnalyzer()
+  - WHATS_IT – same as in nlpAnalyzer()
 
 -----CONSTANTS-----
 
 -----------------------------------------------------------
 
 > Params:
-
-- sentence – same as in nlpAnalyzer()
-
-- tokens – a list with the tokens of all the 'sentence' words
+  - sentence – same as in nlpAnalyzer()
+  - tokens – a list with the tokens of all the 'sentence' words
 
 > Returns:
-
-- nothing
+  - nothing
 */
 func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 	// Leave the 2 parameters because both exist on CmdsDetector(), so why create one of them again and not use the one
@@ -265,10 +260,14 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 }
 
 /*
-replaceAnds replaces all "and"s that it finds on the sentence by the action they refer to.
+replaceAnds replaces all "and"s that it finds on the sentence by the action they refer to, or simply deletes them in
+case they don't mean anything.
 
 For example, "Turn on the Wi-Fi and the airplane mode." --> the "and" refers to "turn on" - this function replaces "and"
 by "Turn on", being the final sentence "Turn on the Wi-Fi Turn on the airplane mode".
+
+Another example, "Shut down the phone and reboot it." --> the "and" means nothing here, because there's a verb (new
+action just in front of it). So the final sentence is just "Shut down the phone reboot it.".
 
 WARNING: this function assumes the parameter 'ignore_repets_cmds' is set to false when calling wordsVerificationFunction() -
 if it's set to true, please note this may not work as expected. This is because the function replaces *any* "and", even
@@ -280,14 +279,11 @@ turn off the airplane mode".
 -----------------------------------------------------------
 
 > Params:
-
-- sentence – same as in nlpAnalyzer()
-
-- tokens – a list with the tokens of all the 'sentence' words
+  - sentence – same as in nlpAnalyzer()
+  - tokens – a list with the tokens of all the 'sentence' words
 
 > Returns:
-
-- nothing
+  - nothing
 */
 func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 	// Leave the 2 parameters because both exist on CmdsDetector(), so why create one of them again and not use the one
@@ -298,8 +294,15 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 	// When the implementation is changed, swap the places of "on" and "wifi" and check if it still works.
 
 	if "and" == (*sentence)[nlp_sentence_counter] {
-		if nlp_last_was_an_and {
+		if nlp_last_was_an_and ||
+			((len(*tokens) > nlp_sentence_counter+1) && strings.HasPrefix((*tokens)[nlp_sentence_counter+1].Tag, "VB")) ||
+			((len(*tokens) > nlp_sentence_counter+2) && strings.HasPrefix((*tokens)[nlp_sentence_counter+2].Tag, "VB")) {
 			// The same as for the "it" case.
+			// Except here also delete if the next word is a verb: "shut down the phone and reboot it". Here, "and" is
+			// not supposed to be replaced by "shut down". Instead, its presence is irrelevant. So just remove it,
+			// because the next word is a verb (means after it is said the actual action and not to repeat the previous
+			// one).
+			// Also with +2 because "and then reboot". The verb is the 2nd word here, not the 1st.
 			delElemInSlice(sentence, nlp_sentence_counter)
 			nlp_sentence_counter--
 			//log.Println("*****")
@@ -326,7 +329,6 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 			// No deletions here as with "it". What was before the "and" remains there to still have impact (unlike with
 			// "it" in which the names are just in the wrong place for the verification function to work properly).
 		}
-
 	} else {
 		nlp_last_was_an_and = false
 		var current_tag string = (*tokens)[nlp_token_counter].Tag

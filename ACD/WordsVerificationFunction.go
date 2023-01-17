@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package AdvancedCommandsDetection
+package ACD
 
 import (
 	"strconv"
@@ -46,9 +46,8 @@ func chooseCustomIntervals(intervs_map map[int]int, sub_verif_number int, defaul
 			if interv_temp, ok = intervs_map[ALL_SUB_VERIFS_INT]; ok {
 				interv = interv_temp
 			} else {
-				// If nothing found of the above, return the default value.
-
-				return default_interv
+				// If nothing found of the above, use the default value.
+				interv = DEFAULT_INDEX
 			}
 		}
 	}
@@ -88,25 +87,20 @@ Note: sub-verification means "position index verification", in which the functio
 
 -----CONSTANTS-----
 
-– ALL_SUB_VERIFS_INT – for 'exclude_word_found_group', 'init_indexes_sub_verifs': used to indicate it applies to all
-sub-verifications
-
-– INDEX_EVEN – for 'left_intervs', 'right_intervs': used to indicate the next value applies only for even indexes
-
-– INDEX_ODD – for 'left_intervs', 'right_intervs': same as for INDEX_EVEN but for odd indexes
-
-– DEFAULT_INDEX – for 'left_intervs', 'right_intervs': used to indicate the function to use the default index
+  - ALL_SUB_VERIFS_INT – for 'exclude_word_found_group', 'init_indexes_sub_verifs': used to indicate it applies to all
+    sub-verifications
+  - INDEX_EVEN – for 'left_intervs', 'right_intervs': used to indicate the next value applies only for even indexes
+  - INDEX_ODD – for 'left_intervs', 'right_intervs': same as for INDEX_EVEN but for odd indexes
+  - DEFAULT_INDEX – for 'left_intervs', 'right_intervs': used to indicate the function to use the default index
 
 – IS_DIGIT – for 'words_list': used to indicate the "word" is a digit and not really a word. Example:
 
 	{{{-1}, {IS_DIGIT}}, {{-1}, {"alarms"}}},
 
 Here the 1st words group must contain a digit.
-
-– INDEX_WORD_FOUND – for 'init_indexes_sub_verifs': used to indicate the function to use the index of the last found
-word
-
-– INDEX_DEFAULT – for 'init_indexes_sub_verifs': used to indicate it's to use the default index calculation
+  - INDEX_WORD_FOUND – for 'init_indexes_sub_verifs': used to indicate the function to use the index of the last found
+    word
+  - INDEX_DEFAULT – for 'init_indexes_sub_verifs': used to indicate it's to use the default index calculation
 
 – NONE – for 'words_list': to use if one of the words group is optional. Example:
 
@@ -122,13 +116,10 @@ completed on the current condition, and only in case no word was found.
 -----------------------------------------------------------
 
 > Params:
-
-– sentence – same as in sentenceCmdsDetector()
-
-– sentence_index – index on the sentence where to start the search
-
-– main_words – 1D slice with the words that activated the command detection. Example: for commands pair
-"set the alarm"/"new alarm", 'main_words' is {"set", "new"}
+  - sentence – same as in sentenceCmdsDetector()
+  - sentence_index – index on the sentence where to start the search
+  - main_words – 1D slice with the words that activated the command detection. Example: for commands pair
+    "set the alarm"/"new alarm", 'main_words' is {"set", "new"}
 
 – words_list – a [][][][]interface{} that contains the words that the command accepts; their variations and with them,
 variations of the return command. Examples:
@@ -187,32 +178,27 @@ the 3 words before the found word for the next word on the 'words_list'. Also, i
 number is not used for a specific sub-verification, the default one will be used. Use a nil or empty slice to disregard
 this feature.
 
-– right_intervs – same as for 'left_intervs', but for the right side. Default is 3.
-
-– init_indexes_sub_verifs – a map in which each key X is the number of the sub-verification, and the value is the index
-on which to begin the specified sub-verification. Note: the 1st sub-verification (number 0) always starts on index 0, so
-attempts to change that sub-verification initial index will be ignored. The value can also be one of the constants. In
-case it's INDEX_WORD_FOUND, one can put a + or a - and a number to add or subtract said number to the index of the word
-found. Example: { INDEX_WORD_FOUND + "+1"}. The default index is the index of the word found in the sub-verification.
-Use a nil or empty slice to disregard this feature.
-
-– exclude_word_found_group – 1D slice in which each element is a number of a sub-verification on which to exclude the
-word group found from the subsequent sub-verifications. One of the constants can also be used but only in the first
-index, and in this case, any other elements in the slice will be ignored.
-Use a nil or empty slice to disregard this feature.
-
-– return_last_match – true to instead of returning the first match in the 'words_list', keep searching until the end
-and return the last match; false to return the first match on the 'words_list'
-
-– ignore_repets_cmds – ignore repetitions of the original 'main_words' that activate the command detection. In
-the case of "set alarm"/"new alarm", ignore repetitions of "set" and "new". Example: "set alarm set 2 reminders" -->
-ignore the repetition and don't treat as being an example of "set ah... set 2 alarms" - treat as being 2 different
-commands (or don't ignore and stop the verification immediately after finding the repeated word). The function checks if
-the repeated word is before any of the found words. If it is, the verification will stop. For example, "turn on turn
-wifi on please" - if it's to ignore 2 commands to start the Wi-Fi will be returned. Else, only one.
-
-– exclude_main_words – true to exclude all the 'main_words' from the 'words_list' to be sure the function doesn't detect
-them by accident (which already happened), false to not exclude them.
+  - right_intervs – same as for 'left_intervs', but for the right side. Default is 3.
+  - init_indexes_sub_verifs – a map in which each key X is the number of the sub-verification, and the value is the index
+    on which to begin the specified sub-verification. Note: the 1st sub-verification (number 0) always starts on index 0, so
+    attempts to change that sub-verification initial index will be ignored. The value can also be one of the constants. In
+    case it's INDEX_WORD_FOUND, one can put a + or a - and a number to add or subtract said number to the index of the word
+    found. Example: { INDEX_WORD_FOUND + "+1"}. The default index is the index of the word found in the sub-verification.
+    Use a nil or empty slice to disregard this feature.
+  - exclude_word_found_group – 1D slice in which each element is a number of a sub-verification on which to exclude the
+    word group found from the subsequent sub-verifications. One of the constants can also be used but only in the first
+    index, and in this case, any other elements in the slice will be ignored.
+    Use a nil or empty slice to disregard this feature.
+  - return_last_match – true to instead of returning the first match in the 'words_list', keep searching until the end
+    and return the last match; false to return the first match on the 'words_list'
+  - ignore_repets_cmds – ignore repetitions of the original 'main_words' that activate the command detection. In
+    the case of "set alarm"/"new alarm", ignore repetitions of "set" and "new". Example: "set alarm set 2 reminders" -->
+    ignore the repetition and don't treat as being an example of "set ah... set 2 alarms" - treat as being 2 different
+    commands (or don't ignore and stop the verification immediately after finding the repeated word). The function checks if
+    the repeated word is before any of the found words. If it is, the verification will stop. For example, "turn on turn
+    wifi on please" - if it's to ignore 2 commands to start the Wi-Fi will be returned. Else, only one.
+  - exclude_main_words – true to exclude all the 'main_words' from the 'words_list' to be sure the function doesn't detect
+    them by accident (which already happened), false to not exclude them.
 
 - exclude_mutually_exclusive_words – exclude words that are mutually exclusive, like "on" and "off". With this enabled,
 this function will never return results with both "on" and "off" on the detection, which already happened. Real example:
@@ -228,10 +214,12 @@ Note that this will not remove the word found (if it detects "off", it will only
 words - which excludes "off"). For that, use the 'exclude_word_found_group' parameter.
 
 > Returns:
-
-– the indexes of the conditions in which all word groups were detected successfully (empty if none were detected)
+  - a 3D array with the first arrays being the number of command variations (len(words_list)), the second arrays being
+    the number of word maps in the command variation, and the third arrays are arrays of 2 elements only, with the 1st
+    a bool indicating if the word was detected or not, and the 2nd the index in which it was detected, or -1 if the 1st
+    index is false (no word detected)
 */
-func wordsVerificationFunction(sentence []string, sentence_index int, cmd commandInfo) [][]bool {
+func wordsVerificationFunction(sentence []string, sentence_index int, cmd commandInfo) [][][]interface{} {
 
 	// Make a copy of the 'words_list', so it doesn't get modified by this function as the copy will be. Must be a real
 	// copy (elements from sub-slices will be removed/added), so CopySlice().
@@ -266,7 +254,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 	var sentence_len int = len(sentence)
 	var num_conditions int = len(words_list)
 
-	var success_detects [][]bool = nil
+	var success_detects [][][]interface{} = nil
 	var left_intervs []int = nil
 	var right_intervs []int = nil
 	var max_sub_verifications int = 0
@@ -299,13 +287,17 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 				continue
 			}
 
-			success_detects[curr_words_cond_index] = append(success_detects[curr_words_cond_index], true)
+			success_detects[curr_words_cond_index] = append(success_detects[curr_words_cond_index], []interface{}{true, -1})
 
 			var init_index int = init_indexes[curr_words_cond_index]
 			var index_previous_word_found int = indexes_previous_word_found[curr_words_cond_index]
 
 			var left_interv int = left_intervs[sub_verification]
 			var right_interv int = right_intervs[sub_verification]
+
+			//log.Println(init_index)
+			//log.Println(left_interv)
+			//log.Println(right_interv)
 
 			var word_found_info WordFoundInfo = WordFoundInfo{
 				word_found:           NONE,
@@ -330,6 +322,9 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 				if index < 0 || index == init_index {
 					continue
 				}
+
+				//log.Println("SDFJLH")
+				//log.Println(index)
 
 				for index_words_map, words_map := range curr_words_condition {
 					if 0 == len(words_map) {
@@ -414,7 +409,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 				}
 
 				// Else, output a false to the success array and go to the next condition since this was is garbage now.
-				success_detects[curr_words_cond_index][sub_verification] = false
+				success_detects[curr_words_cond_index][sub_verification] = []interface{}{false, -1}
 
 				goto end_condition
 			}
@@ -453,7 +448,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 								// various conditions. We need to check them all first in this case.)
 
 								// Set one of the word detections to false to exclude this condition.
-								success_detects[curr_words_cond_index][sub_verification] = false
+								success_detects[curr_words_cond_index][sub_verification] = []interface{}{false, -1}
 
 								goto end_condition
 							}
@@ -467,6 +462,9 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 			//
 
 			//log.Println("4---")
+
+			// Detection successful, so update the index of the word found.
+			success_detects[curr_words_cond_index][sub_verification][1] = word_found_info.index_word_found
 
 			// If there are more sub-verifications, prepare the next one
 			if sub_verification != max_sub_verifications-1 {

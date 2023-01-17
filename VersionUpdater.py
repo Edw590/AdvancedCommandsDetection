@@ -23,7 +23,7 @@ This file updates this module's VERSION variable each time it's ran.
 """
 import datetime
 
-FILE_REL_PATH = "AdvancedCommandsDetection/GL_CONSTS.go"
+FILE_REL_PATH = "ACD/GL_CONSTS.go"
 LINE_BEGINNING = "const VERSION string ="
 LOCAL_TIMEZONE = str(datetime.datetime.now(datetime.timezone(datetime.timedelta(0))).astimezone().tzinfo)
 DATE_TIME = str(datetime.datetime.now().strftime("%Y-%m-%d -- %H:%M:%S.%f"))

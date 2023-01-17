@@ -13,7 +13,7 @@ gomobile bind^
  -x^
  -v^
  -ldflags="-v -s -w -compressdwarf=true"^
- -o="GeneratedBinaries_EOG/AdvancedCommandsDetection.aar"^
- "AdvancedCommandsDetection/AdvancedCommandsDetection"
+ -o="GeneratedBinaries/AdvancedCommandsDetection.aar"^
+ "AdvancedCommandsDetection/ACD"
 
-::PAUSE
+echo Error code: %ERRORLEVEL%

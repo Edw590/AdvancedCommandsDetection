@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package AdvancedCommandsDetection
+package ACD
 
 // VERSION is the constant to check to know the version of the compiled module. The format is
 //
 //	"yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])"
-const VERSION string = "2023-01-14 -- 00:59:21.099836 (Hora padrão de GMT)"
+const VERSION string = "2023-01-17 -- 22:39:38.211842 (Hora padrão de GMT)"
 
-// ASSISTANT_NAME is the constant that has the assistant name used in the entire module.
-//const ASSISTANT_NAME string = "V.I.S.O.R."
+const MOD_NAME string = "Advanced Commands Detection"
 
 // APU_ERR_PREFIX is the prefix to be used after MOD_RET_ERR_PREFIX and its additions to return a custom error (that is,
 // an error that is not from third-party/Go libraries). A string must be appended with the format "X: Y", in which X is

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package AdvancedCommandsDetection
+package ACD
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Constants of the various commands in the arrays below and in the other parts

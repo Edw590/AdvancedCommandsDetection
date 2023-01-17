@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package AdvancedCommandsDetection
+package ACD
 
 import (
 	"bytes"
@@ -76,14 +76,11 @@ Credits to https://stackoverflow.com/a/56591107/8228163 (optimized here).
 -----------------------------------------------------------
 
 > Params:
-
-- slice – a pointer to the slice header
-
-- index – the index of the element to remove
+  - slice – a pointer to the slice header
+  - index – the index of the element to remove
 
 > Returns:
-
-- nothing
+  - nothing
 */
 func delElemInSlice(slice interface{}, index int) {
 	var slice_value reflect.Value = reflect.ValueOf(slice).Elem()
@@ -96,16 +93,12 @@ addElemSlice adds an element to a specific index of a slice, keeping the element
 -----------------------------------------------------------
 
 > Params:
-
-- slice – a pointer to the slice header
-
-- element – the element to add
-
-- index – the index to add the element on, with range [0, len(slice)]
+  - slice – a pointer to the slice header
+  - element – the element to add
+  - index – the index to add the element on, with range [0, len(slice)]
 
 > Returns:
-
-- nothing
+  - nothing
 */
 func addElemSlice(slice interface{}, element interface{}, index int) {
 	var slice_value reflect.Value = reflect.ValueOf(slice).Elem()
@@ -141,12 +134,10 @@ don't change.
 -----------------------------------------------------------
 
 > Params:
-
-- slice – the slice
+  - slice – the slice
 
 > Returns:
-
-- the new slice as an Interface (use type assertion to get the correct slice type)
+  - the new slice as an Interface (use type assertion to get the correct slice type)
 */
 func copyOuterSlice(slice interface{}) interface{} {
 	var slice_value reflect.Value = reflect.ValueOf(slice)
@@ -166,14 +157,11 @@ from multidimensional slices/arrays.
 -----------------------------------------------------------
 
 > Params:
-
-- destination – a pointer to an empty destination slice header/array
-
-- source – the source slice/array
+  - destination – a pointer to an empty destination slice header/array
+  - source – the source slice/array
 
 > Returns:
-
-- nothing
+  - nothing
 */
 func copySlice(destination interface{}, source interface{}) {
 	var buf *bytes.Buffer = new(bytes.Buffer)
@@ -197,14 +185,11 @@ The format is:
 -----------------------------------------------------------
 
 > Params:
-
-- err_code – a unique error identifier for the submodule that calls the function
-
-- description – a description of the error
+  - err_code – a unique error identifier for the submodule that calls the function
+  - description – a description of the error
 
 > Returns:
-
-- nothing
+  - nothing
 */
 func panicInt(err_code float32, description string) {
 	panic(APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)

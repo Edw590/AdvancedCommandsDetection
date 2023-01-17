@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package AdvancedCommandsDetection
+package ACD
 
 import (
 	"strconv"
@@ -45,7 +45,7 @@ var cmds_types_keywords = [...][][]string{
 		// on or off)
 	},
 	{ // 2
-		{"what's", "tell", "say"},
+		{"what's", "what", "tell", "say"},
 	},
 	{ // 3
 		{"stop", "end", "finish", "cease", "conclude", "terminate"},
@@ -74,7 +74,7 @@ func PrepareCmdsArray(commands_str string) {
 
 	var commands_info []string = strings.Split(commands_str, "\\")
 
-	for i := 0; i < len(commands_info); i++ {
+	for i := range commands_info {
 		var cmd_info []string = strings.Split(commands_info[i], "||")
 
 		cmd_id, _ := strconv.Atoi(cmd_info[0])
@@ -92,7 +92,7 @@ func PrepareCmdsArray(commands_str string) {
 			exclude_mutually_exclusive_words: true,
 		})
 
-		prepareCmdArray(&cmds_GL[i], strings.Split(cmd_info[1], " "), strings.Split(cmd_info[2], " "), cmd_info[3],
+		prepareCmdArray(&cmds_GL[i], strings.Split(cmd_info[1], "+"), strings.Split(cmd_info[2], " "), cmd_info[3],
 			strings.Split(cmd_info[4], "|"))
 	}
 
@@ -100,7 +100,7 @@ func PrepareCmdsArray(commands_str string) {
 	//log.Println("===========")
 }
 
-func prepareCmdArray(cmd_info_GL *commandInfo, types_str []string, main_words_alt []string,
+func prepareCmdArray(cmd_info_GL *commandInfo, types_str []string, main_words_manual []string,
 	main_words_ret_conds_str string, words_list_param []string) {
 	var types_int []int = nil
 	for _, j := range types_str {
@@ -114,7 +114,7 @@ func prepareCmdArray(cmd_info_GL *commandInfo, types_str []string, main_words_al
 	// main_words
 	for i, j := range types_str {
 		if CMDi_TYPE_MANUAL == j {
-			cmd_info_GL.main_words = append(cmd_info_GL.main_words, main_words_alt...)
+			cmd_info_GL.main_words = append(cmd_info_GL.main_words, main_words_manual...)
 		} else {
 			cmd_info_GL.main_words = append(cmd_info_GL.main_words, cmds_types_keywords[types_int[i]][0]...)
 		}
@@ -151,11 +151,10 @@ func prepareCmdArray(cmd_info_GL *commandInfo, types_str []string, main_words_al
 		default:
 			{
 				if 2 == len(cmds_types_keywords[types_int[i]]) {
-					for ii := 0; ii < len(words_list); ii++ {
+					for ii := range words_list {
 						words_list[ii] = append(words_list[ii], nil)
 						var words_list_i_len int = len(words_list[ii])
-						words_list[ii][words_list_i_len-1] = append(words_list[ii][words_list_i_len-1],
-							[]interface{}{-1})
+						words_list[ii][words_list_i_len-1] = append(words_list[ii][words_list_i_len-1], []interface{}{-1})
 						words_list[ii][words_list_i_len-1] = append(words_list[ii][words_list_i_len-1], nil)
 						for _, j := range cmds_types_keywords[types_int[i]][1] {
 							words_list[ii][words_list_i_len-1][1] = append(words_list[ii][words_list_i_len-1][1], j)
