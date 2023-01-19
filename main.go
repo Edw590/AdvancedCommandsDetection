@@ -73,7 +73,7 @@ func main() {
 		{CMD_TOGGLE_AIRPLANE_MODE, ACD.CMDi_TYPE_TURN_ONFF, "", "", "airplane mode"},
 		{CMD_ASK_BATTERY_PERCENT, ACD.CMDi_TYPE_ASK, "", "", "battery percentage", "battery status", "battery level"},
 		{CMD_SHUT_DOWN_DEVICE, ACD.CMDi_TYPE_SHUT_DOWN, "", "", "device/phone"},
-		{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT + "+" + ACD.CMDi_TYPE_MANUAL, "fast", "fast|;4;", "reboot/restart device/phone|device/phone|device/phone recovery|device/phone safe mode|device/phone bootloader"},
+		{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT + "+" + ACD.CMDi_TYPE_MANUAL, "fast", "fast|;4; -fast", "reboot/restart device/phone|device/phone|device/phone recovery|device/phone safe mode|device/phone bootloader"},
 		{CMD_TAKE_PHOTO, ACD.CMDi_TYPE_MANUAL, "take", "", "picture/photo|frontal picture/photo"},
 		{CMD_RECORD_MEDIA, ACD.CMDi_TYPE_RECORD, "", "", "audio/sound|video/camera|frontal video/camera"},
 		{CMD_SAY_AGAIN, ACD.CMDi_TYPE_REPEAT_SPEECH, "", "", "again", "say", "said"},
@@ -137,6 +137,8 @@ func testCommandsDetection() {
 		{"turn on wifi and and the airplane mode and the flashlight", true, "4.01, 11.01, 1.01"},
 		{"shut down the phone and then reboot it", true, "13.01, 14.02"},
 		{"fast reboot the phone", true, "14.01"},
+		{"fast phone recovery", true, ""},
+		{"the video stop it and then play it again", true, "21.01, 23.01"},
 	}
 
 	var successes int = 0

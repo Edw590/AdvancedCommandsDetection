@@ -38,44 +38,43 @@ type commandInfo struct {
 	main_words []string
 
 	/*
-		Example of how it could be for some commands:
-		{ // 4
-			{";ANY;"},
-			{";ANY;"},
-		},
-		{ // 14
-			{";ANY;"},
-			{";ANY;"},
-			{"reboot restart"},
-			{";ANY;"},
-		},
+		Example of how it could be for some commands (following the ones on words_list):
+			{ // 4
+				{ANY_MAIN_WORD},
+				{ANY_MAIN_WORD},
+			},
+			{ // 14
+				{"fast"},
+				{ANY_MAIN_WORD, "-fast"},
+				[the rest uses the last existing array here]
+			},
 	*/
 	main_words_ret_conds [][]string
 
 	/*
 		Example of how it could be for some commands (it now includes the old conditions_continue and conditions_return):
-		{ // 4
-			{{{-1}, {"on"}}, {{-1}, {"wifi", "wi-fi"}}},
-			{{{-1}, {"off"}}, {{-1}, {"wifi", "wi-fi"}}},
-		},
-		{ // 14
-			{{{-1}, {"device", "phone"}}, {{-1}, {"safe"}}, {{-1}, {"mode"}}},
-			{{{-1}, {"device", "phone"}}, {{-1}, {"recovery"}}},
-			{{{-1}, {"device", "phone"}}},
-			{{{-1}, {"device", "phone"}}},
-		},
-		{ // 16
-			{{{-1}, {NONE, "rear"}}, {{-1}, {"video"}}},
-			{{{-1}, {"frontal"}}, {{-1}, {"video"}}},
-			{{{-1}, {"audio"}}},
-		},
-		{ // 17
-			{{-1}, {{"again", "said", "say"}}},
-		},
-		{ // 19
-			{{{-1}, {"on"}}, {-1: {"battery", "power"}}, {{-1}, {"saver"}}},
-			{{{-1}, {"off"}}, {-1: {"battery", "power"}}, {{-1}, {"saver"}}},
-		},
+			{ // 4
+				{{{-1}, {"on"}}, {{-1}, {"wifi", "wi-fi"}}},
+				{{{-1}, {"off"}}, {{-1}, {"wifi", "wi-fi"}}},
+			},
+			{ // 14
+				{{{-1}, {"reboot", "restart"}}, {{-1}, {"device", "phone"}}},
+				{{{-1}, {"device", "phone"}}},
+				{{{-1}, {"device", "phone"}}, {{-1}, {"safe"}}, {{-1}, {"mode"}}},
+				{{{-1}, {"device", "phone"}}, {{-1}, {"recovery"}}},
+			},
+			{ // 16
+				{{{-1}, {NONE, "rear"}}, {{-1}, {"video"}}},
+				{{{-1}, {"frontal"}}, {{-1}, {"video"}}},
+				{{{-1}, {"audio"}}},
+			},
+			{ // 17
+				{{-1}, {{"again", "said", "say"}}},
+			},
+			{ // 19
+				{{{-1}, {"on"}}, {-1: {"battery", "power"}}, {{-1}, {"saver"}}},
+				{{{-1}, {"off"}}, {-1: {"battery", "power"}}, {{-1}, {"saver"}}},
+			},
 	*/
 	words_list [][][][]interface{}
 

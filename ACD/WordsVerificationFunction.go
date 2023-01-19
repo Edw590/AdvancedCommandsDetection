@@ -17,6 +17,7 @@
 package ACD
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -598,4 +599,116 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 	//log.Println("________________________")
 
 	return success_detects
+}
+
+/*
+checkMainWordsRetConds checks if the results coming from wordsVerificationFunction() agree with the return conditions
+for the command 'main_words'.
+
+-----------------------------------------------------------
+
+> Params:
+  - results_wordsVerifFunc – the direct return from wordsVerificationFunction()
+  - sentence_word – the current 'sentence_word' on the sentenceCmdsDetector()
+  - cmds_GL_index – the current 'cmds_GL' looping index on the sentenceCmdsDetector()
+
+> Returns:
+
+– the index of the final accepted 'words_list' condition for the current 'sentence_word'
+*/
+func checkMainWordsRetConds(results_wordsVerifFunc [][][]interface{}, sentence_word string, cmds_GL_index int) int {
+	var final_condition int = -1
+	// Must be the biggest condition because, for example "reboot phone" and "reboot phone into
+	// recovery", and the sentence is "reboot phone into recovery". Both are successful
+	// detections (all words are found in both variations). But only the 2nd (the *biggest*) is
+	// correct, because more words were found, and more words has higher priority than fewer
+	// words.
+	var biggest_len int = -1
+
+	//log.Println(success_detects)
+	for ii, jj := range results_wordsVerifFunc {
+		var all_true bool = true
+		for _, jjj := range jj {
+			all_true = all_true && jjj[0].(bool)
+		}
+		if all_true {
+			var main_words_ret_conds [][]string = cmds_GL[cmds_GL_index].main_words_ret_conds
+			var arr_id int = 0
+			if ii >= len(main_words_ret_conds) {
+				// In case there are not enough return conditions, use the last one present.
+				arr_id = len(main_words_ret_conds) - 1
+			} else {
+				arr_id = ii
+			}
+
+			var any_main_word bool = false
+			if (1 == len(main_words_ret_conds[arr_id])) &&
+				(ANY_MAIN_WORD == main_words_ret_conds[arr_id][0]) {
+				any_main_word = true
+			}
+			var words_exclude_anyway []string = nil
+			//log.Println("SSSSSSSSSSSSSSS")
+			//log.Println(main_words_ret_conds[arr_id])
+			for _, word := range main_words_ret_conds[arr_id] {
+				if ANY_MAIN_WORD == word {
+					any_main_word = true
+				} else if strings.HasPrefix(word, "-") {
+					words_exclude_anyway = append(words_exclude_anyway, regexp.MustCompile("[^a-zA-Z]+").ReplaceAllString(word, ""))
+				}
+			}
+
+			//log.Println("DDDDDDDDDDDDDDDDDDD")
+			//log.Println(any_main_word)
+			//log.Println(words_exclude_anyway)
+
+			for _, word := range main_words_ret_conds[arr_id] {
+				if strings.HasPrefix(word, "-") {
+					// Don't do anything if it's a word that beings with a "-", which means it's to exclude it from the
+					// accepted main words. The actual verification will be on the ANY_MAIN_WORD command or any other
+					// main words on the list. The ones beginning with "-" are only added to an exclusion list to be
+					// iterated in the end of each iteration of this loop.
+					continue
+				}
+
+				//log.Println("++++++++++++++")
+				//log.Println(word)
+				//log.Println(sentence_word)
+
+				var actual_word string = word
+				if !isSpecialCommand(actual_word) {
+					// If it's a special command like ;4;, keep it like that. Else, leave only alphanumeric characters.
+					// Example, "-fast", to remove the word "fast" from the accepted main words.
+					regexp.MustCompile("[^a-zA-Z0-9 ]+").ReplaceAllString(word, "")
+				}
+
+				// If any main word counts, then if the current word matches the sentence word or not doesn't matter,
+				// because the command was triggered by a main word, and any main word is accepted.
+				if any_main_word || actual_word == sentence_word {
+					// Though, there can still be words that must be excluded ("All except these: [...]").
+					var exclude_word bool = false
+					for _, word_exclude := range words_exclude_anyway {
+						if sentence_word == word_exclude {
+							exclude_word = true
+
+							break
+						}
+					}
+					//log.Println("FFFFFFFFFFFFFFFFF")
+					//log.Println(actual_word)
+					//log.Println(sentence_word)
+					//log.Println(exclude_word)
+					// If the 'sentence_word' is not on the excluded list, carry on.
+					if !exclude_word && len(jj) > biggest_len {
+						//log.Println("QQQQQQQQQQQQQQQQQQ")
+						final_condition = ii
+						biggest_len = len(jj)
+
+						break
+					}
+				}
+			}
+		}
+	}
+
+	return final_condition
 }

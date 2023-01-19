@@ -175,7 +175,7 @@ func prepareCmdArray(cmd_info_GL *commandInfo, types_str []string, main_words_ma
 		}
 	} else {
 		for _, j := range strings.Split(main_words_ret_conds_str, "|") {
-			cmd_info_GL.main_words_ret_conds = append(cmd_info_GL.main_words_ret_conds, strings.Split(j, "/"))
+			cmd_info_GL.main_words_ret_conds = append(cmd_info_GL.main_words_ret_conds, strings.Split(j, " "))
 		}
 	}
 	//log.Println(cmd_info_GL.main_words_ret_conds)

@@ -260,53 +260,13 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 						//log.Println(results_WordsVerificationDADi)
 
 						if len(results_WordsVerificationDADi) > 0 {
-							var final_condition int = -1
-							// Must be the biggest condition because, for example "reboot phone" and "reboot phone into
-							// recovery", and the sentence is "reboot phone into recovery". Both are successful
-							// detections (all words are found in both variations). But only the 2nd (the *biggest*) is
-							// correct, because more words were found, and more words has higher priority than fewer
-							// words.
-							var biggest_len int = -1
-
-							//log.Println(success_detects)
-							for ii, jj := range results_WordsVerificationDADi {
-								var all_true bool = true
-								for _, jjj := range jj {
-									all_true = all_true && jjj[0].(bool)
-								}
-								if all_true {
-									var main_words_ret_conds [][]string = cmds_GL[i].main_words_ret_conds
-									var arr_id int = 0
-									if ii >= len(main_words_ret_conds) {
-										// In case there are not enough return conditions, use the last one present.
-										arr_id = len(main_words_ret_conds) - 1
-									} else {
-										arr_id = ii
-									}
-									if (1 == len(main_words_ret_conds[arr_id])) &&
-										(ANY_MAIN_WORD == main_words_ret_conds[arr_id][0]) {
-										if len(jj) > biggest_len {
-											final_condition = ii
-											biggest_len = len(jj)
-										}
-									} else {
-										for _, word := range main_words_ret_conds[arr_id] {
-											if word == sentence_word {
-												if len(jj) > biggest_len {
-													final_condition = ii
-													biggest_len = len(jj)
-
-													break
-												}
-											}
-										}
-									}
-								}
-							}
-
-							if final_condition != -1 {
+							//log.Println("_____________")
+							//log.Println(cmds_GL[i].cmd_id)
+							//log.Println(results_WordsVerificationDADi)
+							var final_cond int = checkMainWordsRetConds(results_WordsVerificationDADi, sentence_word, i)
+							if final_cond != -1 {
 								detected_cmds = append(detected_cmds,
-									float32(final_condition+1)/100+float32(cmds_GL[i].cmd_id))
+									float32(final_cond+1)/100+float32(cmds_GL[i].cmd_id))
 								// results_WordsVerificationDADi + 1 because 0.00 must not happen
 								// / 100 to go from 0+1 = 1 to 0.01
 								// + cmd_index because what returns from the function is the return command ID for that
@@ -314,7 +274,7 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 
 								if invalidate_detec_words {
 									sentence[sentence_counter] = invalidate_word_CONST
-									for _, j := range results_WordsVerificationDADi[final_condition] {
+									for _, j := range results_WordsVerificationDADi[final_cond] {
 										var index int = j[1].(int)
 										if index >= 0 {
 											sentence[index] = invalidate_word_CONST
@@ -323,7 +283,7 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 								}
 
 								//log.Println("-----------")
-								//log.Println(results_WordsVerificationDADi[final_condition])
+								//log.Println(results_WordsVerificationDADi[final_cond])
 
 								//log.Println(sentence)
 							}

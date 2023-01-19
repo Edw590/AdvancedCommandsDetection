@@ -21,6 +21,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 // MOD_RET_ERR_PREFIX is the prefix to be used to define a constant at the submodule level, which shall be a return
@@ -193,4 +194,19 @@ The format is:
 */
 func panicInt(err_code float32, description string) {
 	panic(APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)
+}
+
+/*
+isSpecialCommand check if a string is an internal command, like NONE.
+
+-----------------------------------------------------------
+
+> Params:
+  - str – the string to check
+
+> Returns:
+  - true if it's a special command, false otherwise
+*/
+func isSpecialCommand(str string) bool {
+	return strings.HasPrefix(str, ";") && strings.HasSuffix(str, ";")
 }
