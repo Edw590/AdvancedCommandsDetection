@@ -99,8 +99,8 @@ This project is licensed under Apache 2.0 License - http://www.apache.org/licens
 
 ## Support
 If you have any questions, try the options below:
-- Create an Issue here: https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier/issues
-- Create a Discussion here: https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier/discussions
+- Create an Issue here: https://github.com/DADi590/Advanced-Commands-Detection/issues
+- Create a Discussion here: https://github.com/DADi590/Advanced-Commands-Detection/discussions
 
 ## Final notes
 Any new ideas and/or improvements are welcomed! (Just giving the idea and/or making a pull request)
