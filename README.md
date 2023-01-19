@@ -18,6 +18,8 @@ A list of sentences sent to the module and what it successfully understands at i
 - "turn on wifi and and the airplane mode and the flashlight" --> turn on Wi-Fi, airplane mode, and flashligh
 - "shut down the phone and reboot it" --> shut down and reboot device
 - "fast reboot the phone" --> fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
+- "fast phone recovery" --> nothing (because of the way the reboot command is configured, this is a useful test)
+- "the video stop it and then play it again" --> stop and play the video
 ```
 These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications.
 
