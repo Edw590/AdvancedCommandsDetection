@@ -18,6 +18,8 @@ A list of sentences sent to the module and what it successfully understands at i
 - "turn on wifi and and the airplane mode and the flashlight" --> turn on Wi-Fi, airplane mode, and flashligh
 - "shut down the phone and reboot it" --> shut down and reboot device
 - "fast reboot the phone" --> fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
+- "fast phone recovery" --> nothing (because of the way the reboot command is configured, this is a useful test)
+- "the video stop it and then play it again" --> stop and play the video
 ```
 These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications.
 
@@ -55,17 +57,19 @@ words_list = [][][][]interface{}{
 }
 main_words_ret_conds = [][]string{
 	{"fast"},
-	{ANY_MAIN_WORD},
+	{ANY_MAIN_WORD, "-fast"},
 }
 
-commands_info = [][]string{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT+"+"+ACD.CMDi_TYPE_MANUAL, "fast", "fast|"+ACD.ANY_MAIN_WORD, "reboot/restart device/phone|device/phone|device/phone safe mode|device/phone recovery"},
+// What is sent to the function for command configuration (much easier than the arrays above)
+commands_info = [][]string{CMD_REBOOT_DEVICE, CMDi_TYPE_REBOOT+"+"+CMDi_TYPE_MANUAL, "fast", "fast|"+ANY_MAIN_WORD+" -fast", "reboot/restart device/phone|device/phone|device/phone safe mode|device/phone recovery"},
+
+// To know exactly what each parameter here means, that's all on the PrepareCmdsArray function on CmdsArrayPreparation. When I have more time I'll do a full documentation about it. If I could send a struct/object through Gomobile would be much easier, but it's not possible.
 ```
 The -1 on the arrays means the words in it can be in any detected word position. If for example on the "safe" were the index 0, then the "safe" word would have to be the 1st (not counting the main word) to be detected (something like "reboot into safe mode the phone" had to be said). Also any words on the same group are mutually exclusive (it can detect either "device" or "phone" and it will accept the word detection for that position).
 
 The return is based on the number of the detected `words_list` array/condition. If the first command condition is detected ("fast reboot phone"), the command ID is returned (for reboot, CMD_REBOOT_DEVICE, it's 14) plus a decimal number which is the number of the detected condition. For the first one would be 14.00001. If the last one ("reboot into recovery") is detected, 14.00004 is returned.
 
-The main words return conditions (`main_words_ret_conds`) serve the purpose of extending the word verification to the main command words. On the example above, the first condition on the `words_list` will only be detected successfully if the corresponding 1st condition on the `main_words_ret_conds` agrees - and in this case it says the main word must have been "fast" ("fast reboot/restart the device/phone"). Else, it uses any main word for any other condition on the `words_list`.
-EDIT: there's mistake here it seems. "fast device recovery" is detected as the same as "reboot device recovery"... Will be fixed.
+The main words return conditions (`main_words_ret_conds`) serve the purpose of extending the word verification to the main command words. On the example above, the first condition on the `words_list` will only be detected successfully if the corresponding 1st condition on the `main_words_ret_conds` agrees - and in this case it says the main word must have been "fast" ("fast reboot/restart the device/phone"). Else, it uses any main word for any other condition on the `words_list`. The 2nd condition says that any main word can be detected ("fast", "reboot", or "restart"), but right after there's a "-" which indicates the word is to be excluded, so that leaves "reboot" and "restart" as possibilities for all the other command conditions to be accepted.
 
 The last thing is the (current) sort of simple way the command is configured (2022-01-18 - check the main.go file which has the most updated way always). No need to manually create or generate the other arrays. There are also other command parameters automatically set that are not present on the `commands_info` array. The drawback of trying to simplify the commands configuration is that customizations are lost (those parameters and the arrays of position numbers (the -1s above)), but so far they haven't been needed.
 
@@ -95,8 +99,8 @@ This project is licensed under Apache 2.0 License - http://www.apache.org/licens
 
 ## Support
 If you have any questions, try the options below:
-- Create an Issue here: https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier/issues
-- Create a Discussion here: https://github.com/DADi590/V.I.S.O.R.---A-real-assistant--Platforms-Unifier/discussions
+- Create an Issue here: https://github.com/DADi590/Advanced-Commands-Detection/issues
+- Create a Discussion here: https://github.com/DADi590/Advanced-Commands-Detection/discussions
 
 ## Final notes
 Any new ideas and/or improvements are welcomed! (Just giving the idea and/or making a pull request)
