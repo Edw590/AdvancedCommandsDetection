@@ -95,7 +95,7 @@ func main() {
 
 	log.Println(commands_str)
 
-	ACD.PrepareCmdsArray(commands_str)
+	ACD.ReloadCmdsArray(commands_str)
 
 	arguments := os.Args
 	if len(arguments) > 1 {
@@ -118,7 +118,7 @@ func main() {
 	log.Println("\\\\-->3234_END<--//")
 
 	// Uncomment to test if the commands detection is still functioning well after modifications to the engine.
-	//testCommandsDetection()
+	testCommandsDetection()
 }
 
 func testCommandsDetection() {
@@ -128,17 +128,17 @@ func testCommandsDetection() {
 	// Only put commands here that have once worked, and so they must continue to work even after updates to the
 	// detection engine.
 	var sentences [][]interface{} = [][]interface{}{
-		{"turn off airplane mode on", true, "11.02"},
-		{"turn on turn off the wifi", true, "4.02"},
-		{"turn on wifi and the bluetooth no don't turn it on", true, "4.01"},
-		{"turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on", false, "11.01, 11.02, 4.01"}, // false because this is not realistic (why turn on and off on the same command...?). This is just to test a complex example.
-		{"turn on turn wifi on please", true, "4.01"},
-		{"turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please", true, "-10, 4.01, 11.02, 4.02"},
-		{"turn on wifi and and the airplane mode and the flashlight", true, "4.01, 11.01, 1.01"},
-		{"shut down the phone and then reboot it", true, "13.01, 14.02"},
-		{"fast reboot the phone", true, "14.01"},
+		{"turn off airplane mode on", true, "11.00002"},
+		{"turn on turn off the wifi", true, "4.00002"},
+		{"turn on wifi and the bluetooth no don't turn it on", true, "4.00001"},
+		{"turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on", false, "11.00001, 11.00002, 4.00001"}, // false because this is not realistic (why turn on and off on the same command...?). This is just to test a complex example.
+		{"turn on turn wifi on please", true, "4.00001"},
+		{"turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please", true, "-10, 4.00001, 11.00002, 4.00002"},
+		{"turn on wifi and and the airplane mode and the flashlight", true, "4.00001, 11.00001, 1.00001"},
+		{"shut down the phone and then reboot it", true, "13.00001, 14.00002"},
+		{"fast reboot the phone", true, "14.00001"},
 		{"fast phone recovery", true, ""},
-		{"the video stop it and then play it again", true, "21.01, 23.01"},
+		{"the video stop it and then play it again", true, "21.00001, 23.00001"},
 	}
 
 	var successes int = 0

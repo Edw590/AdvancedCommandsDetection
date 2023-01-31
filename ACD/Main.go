@@ -35,7 +35,7 @@ Main is the function to call to request a detection of commands in a given sente
   - sentence_str – a sentence of words, for example coming directly from speech recognition
   - remove_repet_cmds – true to remove repeated adjacent commands and leave only the last one, false to not remove them.
     Note that repeated commands means any commands with the same ID, whether or not they have the same sub-output. Example:
-    "1.01, 1.02, 2.01, 1.01" --> "1.02, 2.01, 1.01".
+    "1.00001, 1.02, 2.00001, 1.00001" --> "1.02, 2.00001, 1.00001".
   - invalidate_detec_words – same as in sentenceCmdsDetector()
 
 > Returns:
@@ -220,7 +220,7 @@ sentenceCmdsDetector detects which of the cmds_GL commands are present in a sent
 
 – a slice on which each index is a command found in the 'sentence' in the order provided by the 'sentence'. The command
 is a float in which the integer part is the index of the command on cmds_GL and the decimal part is the index+1 of the
-detected condition of the command, with each condition incrementing by 0.01. For example, for
+detected condition of the command, with each condition incrementing by 0.00001. For example, for
 
 	{ // 14
 		{{{-1}, {"device", "phone"}}, {{-1}, {"safe"}}, {-1: {"mode"}}},
@@ -266,9 +266,9 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 							var final_cond int = checkMainWordsRetConds(results_WordsVerificationDADi, sentence_word, i)
 							if final_cond != -1 {
 								detected_cmds = append(detected_cmds,
-									float32(final_cond+1)/100+float32(cmds_GL[i].cmd_id))
+									float32(final_cond+1)/MAX_SUB_CMDS+float32(cmds_GL[i].cmd_id))
 								// results_WordsVerificationDADi + 1 because 0.00 must not happen
-								// / 100 to go from 0+1 = 1 to 0.01
+								// / 100 to go from 0+1 = 1 to 0.00001
 								// + cmd_index because what returns from the function is the return command ID for that
 								// specific command - not a global one --> this makes it global (always different)
 

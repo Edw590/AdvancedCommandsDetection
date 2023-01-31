@@ -21,6 +21,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -31,6 +32,22 @@ import (
 //
 //	"3234_ERR_GO_CMD_DETECT - Err 1: Some description here"
 const MOD_RET_ERR_PREFIX = "3234_ACD_ERR"
+
+/*
+GetSubCmdIndex returns the index of a returned float by Main(), in the original command information array.
+
+For example, for 10.00023, it multiplies ".00023" by MAX_SUB_CMDS and subtracts 1, which currently (100k as max) will
+return 22. Or for 10.0023, it will return 229.
+*/
+func GetSubCmdIndex(returned_float string) int {
+	s, _ := strconv.ParseFloat("."+strings.Split(returned_float, ".")[1], 32)
+
+	return int(s*MAX_SUB_CMDS - 1)
+}
+
+// Exported functions above
+//////////////////////////////////////////////////////////////
+// Not exported functions below
 
 /*
 tern behaves like the ternary operator (not present in Go) - though, inefficiently.

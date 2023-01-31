@@ -68,17 +68,30 @@ var cmds_types_keywords = [...][][]string{
 	},
 }
 
-func PrepareCmdsArray(commands_str string) {
-	// Reset the commands array
-	cmds_GL = nil
+/*
+AddUpdateCmd adds a command to the list of the possible commands for detection, or updates the current one in case it
+already exists.
+*/
+func AddUpdateCmd(command_info_str string) {
+	var cmd_info []string = strings.Split(command_info_str, "||")
 
-	var commands_info []string = strings.Split(commands_str, "\\")
+	cmd_id, _ := strconv.Atoi(cmd_info[0])
+	var types_str []string = strings.Split(cmd_info[1], "+")
+	var main_words_manual []string = strings.Split(cmd_info[2], " ")
+	var main_words_ret_conds_str string = cmd_info[3]
+	var words_list_param []string = strings.Split(cmd_info[4], "|")
 
-	for i := range commands_info {
-		var cmd_info []string = strings.Split(commands_info[i], "||")
+	if (cmd_id <= 0) || (0 == len(types_str)) || (0 == len(words_list_param)) {
+		return
+	}
 
-		cmd_id, _ := strconv.Atoi(cmd_info[0])
-
+	var cmds_GL_index int = -1
+	for i := range cmds_GL {
+		if cmd_id == cmds_GL[i].cmd_id {
+			cmds_GL_index = i
+		}
+	}
+	if cmds_GL_index < 1 {
 		cmds_GL = append(cmds_GL, commandInfo{
 			cmd_id:                           cmd_id,
 			main_words:                       nil,
@@ -92,15 +105,49 @@ func PrepareCmdsArray(commands_str string) {
 			exclude_mutually_exclusive_words: true,
 		})
 
-		prepareCmdArray(&cmds_GL[i], strings.Split(cmd_info[1], "+"), strings.Split(cmd_info[2], " "), cmd_info[3],
-			strings.Split(cmd_info[4], "|"))
+		cmds_GL_index = len(cmds_GL) - 1
+	}
+
+	loadCmdToArray(&cmds_GL[cmds_GL_index], types_str, main_words_manual, main_words_ret_conds_str, words_list_param)
+}
+
+/*
+RemoveCmd removes a command from the list based on its ID.
+*/
+func RemoveCmd(cmd_id int) {
+	var cmds_GL_index int = -1
+	for i := range cmds_GL {
+		if cmd_id == cmds_GL[i].cmd_id {
+			cmds_GL_index = i
+		}
+	}
+
+	if cmds_GL_index >= 1 {
+		delElemInSlice(&cmds_GL, cmds_GL_index)
+	}
+}
+
+/*
+ReloadCmdsArray resets and loads all commands from scratch into the commands list.
+*/
+func ReloadCmdsArray(commands_str string) {
+	// Reset the commands array
+	cmds_GL = nil
+
+	var commands_info []string = strings.Split(commands_str, "\\")
+
+	for i := range commands_info {
+		AddUpdateCmd(commands_info[i])
 	}
 
 	//log.Println(len(cmds_GL))
 	//log.Println("===========")
 }
 
-func prepareCmdArray(cmd_info_GL *commandInfo, types_str []string, main_words_manual []string,
+/*
+loadCmdToArray loads a command into the list.
+*/
+func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_manual []string,
 	main_words_ret_conds_str string, words_list_param []string) {
 	var types_int []int = nil
 	for _, j := range types_str {

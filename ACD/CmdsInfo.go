@@ -24,9 +24,15 @@ package ACD
 // MARK_TERMINATION_FLOAT32 on TaskChecker.) All negative values are also reserved for special commands.
 //
 // Note: all RET_-started constants must be a float32 in a string which starts by the number on the corresponding
-// CMD_-started constant and must advance by increments of 0.01 (means 100 sub-commands at most). The first float can't
-// end in .0 (99 then, not 100). No reason in specific, it's just in case it's ever needed to use the main integer. So
-// start for example with 1.01 and 2.01.
+// CMD_-started constant and must advance by increments of 0.00001 (means 1 000 000 sub-commands at most). The first
+// float can't end in .0 (99 then, not 100). No reason in specific, it's just in case it's ever needed to use the main
+// integer. So start for example with 1.00001 and 2.00001.
+
+// Minimum float precision of 32 bits for this - do NOT increase to 1 000 000. I tried it and the program started
+// malfunctioning a bit returning 0.000002 instead of 0.000001 in one case only, and the others returned normally. Not
+// sure why doesn't happen with 100k or below. Must always be a multiple of 10. Can't be 1M, must be 100k.
+
+const MAX_SUB_CMDS = 100_000
 
 var cmds_GL []commandInfo = nil
 
