@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -42,7 +43,7 @@ return 22. Or for 10.0023, it will return 229.
 func GetSubCmdIndex(returned_float string) int {
 	s, _ := strconv.ParseFloat("."+strings.Split(returned_float, ".")[1], 32)
 
-	return int(s*MAX_SUB_CMDS - 1)
+	return int(math.Round(s*MAX_SUB_CMDS) - 1)
 }
 
 // Exported functions above
