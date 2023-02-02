@@ -9,17 +9,17 @@ This project is a part of a bigger project, consisting of the following:
 ## Examples of successful detections
 A list of sentences sent to the module and what it successfully understands at its output:
 ```
-- "turn off airplane mode on" --> turn off airplane mode
-- "turn on turn off the wifi" --> turn off Wi-Fi and airplane mode
-- "turn on wifi and the bluetooth no don't turn it on" --> turn on Wi-Fi
-- "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on" --> turn on airplane mode, then turn if off again, and turn on Wi-Fi
-- "turn on turn wifi on please" --> turn on Wi-Fi
-- "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please" --> warn about a meaningless "it", turn on Wi-Fi, turn off both airplane mode and Wi-Fi
-- "turn on wifi and and the airplane mode and the flashlight" --> turn on Wi-Fi, airplane mode, and flashligh
-- "shut down the phone and reboot it" --> shut down and reboot device
-- "fast reboot the phone" --> fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
-- "fast phone recovery" --> nothing (because of the way the reboot command is configured, this is a useful test)
-- "the video stop it and then play it again" --> stop and play the video
+- "turn off airplane mode on"  -->  turn off airplane mode
+- "turn on turn off the wifi"  -->  turn off Wi-Fi and airplane mode
+- "turn on wifi and the bluetooth no don't turn it on"  -->  turn on Wi-Fi
+- "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"  -->  turn on airplane mode, then turn if off again, and turn on Wi-Fi
+- "turn on turn wifi on please"  -->  turn on Wi-Fi
+- "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please"  -->  warn about a meaningless "it", turn on Wi-Fi, turn off both airplane mode and Wi-Fi
+- "turn on wifi and and the airplane mode and the flashlight"  -->  turn on Wi-Fi, airplane mode, and flashlight
+- "shut down the phone and reboot it"  -->  shut down and reboot device
+- "fast reboot the phone"  -->  fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
+- "fast phone recovery"  -->  nothing (because of the way the reboot command is configured, this is a useful test)
+- "the video stop it and then play it again"  -->  stop and play the video
 ```
 These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications.
 
