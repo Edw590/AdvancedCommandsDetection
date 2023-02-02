@@ -1,5 +1,7 @@
 # Advanced Commands Detection
-The Advanced Commands Detection module of my virtual assistant, V.I.S.O.R.
+An advanced assistant commands detection engine (no AI, but understands complex sentences) 
+
+I made it to my virtual assistant, VISOR, but it can be used anywhere.
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
