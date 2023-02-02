@@ -84,7 +84,7 @@ If there are multiple detected conditions ("reboot device into recovery" makes t
 As this module is compiled for Android with Gomobile, it's limited to the supported types by go/build: https://pkg.go.dev/golang.org/x/mobile/cmd/gobind#hdr-Type_restrictions, so all the exported elements must follow those rules (some, as for example if a slice is exported, no error is thrown, so doesn't seem to be bad to export those to be accessible across packages - won't be accessible on Android though). So for example, to pass an array to the functions of the library, it must be encoded into a string and decoded on the function again.
 
 ## To compile the module
-- To run on PC, either use an IDE which does it automatically (I use GoLand, for example), or run the following command in the project folder as working directory: "go run AdvancedCommandsDetection".
+- To run on PC, either use an IDE which does it automatically (I use GoLand, for example), or run the following command in the project folder as working directory: "go run ACD".
 - To compile for Android and create an AAR package, have a look on the Build_AAR_Android.bat file and execute the command inside it. If you use the file, make sure to change the ANDROID_HOME variable. For some reason, I can't use relative paths here, so I used an absolute one (must be doing something wrong). You might also want to run VersionUpdater.py before the batch script to update the ACD's VERSION constant to the current date/time (just to keep track of which version is being used on the AAR).
 
 ## About
@@ -92,7 +92,7 @@ As this module is compiled for Android with Gomobile, it's limited to the suppor
 Have a look on the "TODO.md" file.
 
 ### - Project status
-Ongoing, but possibly slowly since I'm a student, so I may not have that much time to work on this.
+Ongoing, but possibly slowly since I'm a student, so I may not have that much time to work on this. I also come here more rarely, mostly when I need VISOR to do something that requires an update here. Else I normally prefer to keep adding features to VISOR. Though, there's the TODO list... Not much time either. Heh.
 
 ### - License
 This project is licensed under Apache 2.0 License - http://www.apache.org/licenses/LICENSE-2.0.
