@@ -12,7 +12,7 @@ This project is a part of a bigger project, consisting of the following:
 A list of sentences sent to the module and what it successfully understands at its output:
 ```
 - "turn off airplane mode on"  -->  turn off airplane mode
-- "turn on turn off the wifi"  -->  turn off Wi-Fi and airplane mode
+- "turn on turn off the wifi"  -->  turn off Wi-Fi
 - "turn on wifi and the bluetooth no don't turn it on"  -->  turn on Wi-Fi
 - "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"  -->  turn on airplane mode, then turn if off again, and turn on Wi-Fi
 - "turn on turn wifi on please"  -->  turn on Wi-Fi
@@ -46,6 +46,8 @@ I'm also not really wanting to use C/C++ for this, not unless Go stops being fas
 
 ## How it works
 The `ACD.Main()` function outputs a list of detected commands in a given sentence of words. For example, give it (without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present): `"turn it on. turn on the wifi, and and the airplane mode, get it it on. no, don't turn it on. turn off airplane mode and also the wifi, please."` - this string will make the module output orders to (in order of given commands), request an explanation of the first "it" (which has no meaning), turn on the Wi-Fi, then turn off the airplane mode, and also the Wi-Fi. And it does: `"-10, 4.00001, 11.00002, 4.00002"`, which means the same, according to the way the module works.
+
+Take a look at main.go to know how to actually use this. You need to call a function to prepare the library - you give it commands, it stores them, and then you call `ACD.Main()` how many times you want with different command strings and the commands you told it to store will be used to detect commands in the given string.
 
 ### - How the engine works
 Each word of the provided sentence is compared to all commands' `main_words` list. Those are the words that trigger the command detection. There are also the rest of the command words (`words_list`). For example, for the reboot command:
