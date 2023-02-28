@@ -1,5 +1,5 @@
 # Advanced Commands Detection
-An advanced assistant commands detection engine (no AI, but understands complex sentences) 
+
 
 I made it for my virtual assistant, VISOR, but it can be used anywhere, not just with my assistant, and in any OS/architecture that Go can compile to (I only have releases for Android in AAR package form because I'm not using it anywhere else).
 
@@ -14,7 +14,8 @@ A list of sentences sent to the module and what it successfully understands at i
 - "turn off airplane mode on"  -->  turn off airplane mode
 - "turn on turn off the wifi"  -->  turn off Wi-Fi
 - "turn on wifi and the bluetooth no don't turn it on"  -->  turn on Wi-Fi
-- "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"  -->  turn on airplane mode, then turn if off again, and turn on Wi-Fi
+- "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"  -->  turn on ai
+rplane mode, then turn if off again, and turn on Wi-Fi
 - "turn on turn wifi on please"  -->  turn on Wi-Fi
 - "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please"  -->  warn about a meaningless "it", turn on Wi-Fi, turn off both airplane mode and Wi-Fi
 - "turn on wifi and and the airplane mode and the flashlight"  -->  turn on Wi-Fi, airplane mode, and flashlight
@@ -40,7 +41,7 @@ These are automated test sentences that are tested each time modifications are m
 ## Background
 This is a command detection module that I began in 2017 or 2018 still when I didn't know what a function was and I made many copy/pastes of the small code that I made for 2 specific cases of use. From what I saw in older files I have around, I made it a function in 2019, recursive (who knows why. I had just learned about that, maybe I thought it was better that way(?)), and I've been improving ever since. And in this project, I've put together that function alongside various other methods that in the end help detecting the commands in a string.
 
-I call it Advanced(?) because it's not just a simple "turn on wifi" thing. Instead, it detects each keyword in an interval of words. It also knows what "don't" and "it" mean ("turn on wifi. no, don't turn it on" --> 0 commands detected here). Or knows what an "and" means ("turn on the wifi and the airplane mode" - no need to say "turn on wifi turn on airplane mode"). And there are still improvements to be made to this. I don't use AI for this, at most I use NLP (so far), so that might also explain why the module is complex.
+I call it Advanced(?) because it's not just a simple "turn on wifi" thing. Instead, it detects each keyword in an interval of words. It also knows what "don't" and "it" mean ("turn on wifi. no, don't turn it on" --> 0 commands detected here). Or knows what an "and" means ("turn on the wifi and the airplane mode" - no need to say "turn on wifi turn on airplane mode"). And there are still improvements to be made to this. I don't use ML for this, at most I use NLP (so far), so that might also explain why this is a bit complex.
 
 I'm also not really wanting to use C/C++ for this, not unless Go stops being fast enough - else I have to pay attention to infinity that can can wrong on a C/C++ program... Waste of time if Go is fast enough. It's also in Go and not in Java as VISOR is because then I can use this for any other platform without worrying about the supported languages nor reimplementing all this infinity (VISOR is supposed to be multi-platform, not just Android - but I lack the time to make that happen...).
 
