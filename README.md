@@ -1,7 +1,7 @@
 # Advanced Commands Detection
 An advanced assistant commands detection engine (no AI, but understands complex sentences) 
 
-I made it for my virtual assistant, VISOR, but it can be used anywhere, not just with my assistant.
+I made it for my virtual assistant, VISOR, but it can be used anywhere, not just with my assistant, and in any OS/architecture that Go can compile to (I only have releases for Android in AAR package form because I'm not using it anywhere else).
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
