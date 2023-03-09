@@ -72,7 +72,7 @@ func main() {
 		{CMD_SHUT_DOWN_DEVICE, ACD.CMDi_TYPE_SHUT_DOWN, "", "", "device/phone"},
 		{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT, "fast", "fast|;4; -fast", "reboot/restart device/phone|device/phone|device/phone recovery|device/phone safe mode|device/phone bootloader"},
 		{CMD_TAKE_PHOTO, ACD.CMDi_TYPE_NONE, "take", "", "picture/photo|frontal picture/photo"},
-		{CMD_RECORD_MEDIA, ACD.CMDi_TYPE_RECORD, "", "", "audio/sound|video/camera|frontal video/camera"},
+		{CMD_RECORD_MEDIA, ACD.CMDi_TYPE_START, "record", "record|record|;4; -record", "audio/sound|video/camera|recording audio/sound|recording video/camera"},
 		{CMD_SAY_AGAIN, ACD.CMDi_TYPE_REPEAT_SPEECH, "", "", "again", "say", "said"},
 		{CMD_MAKE_CALL, ACD.CMDi_TYPE_NONE, "make place", "", "call"},
 		{CMD_TOGGLE_POWER_SAVER_MODE, ACD.CMDi_TYPE_TURN_ONFF, "", "", "power/battery saver"},
@@ -100,7 +100,8 @@ func main() {
 	}
 	log.Println("")
 
-	var sentence_str string = "stop the song and play the next one"
+	var sentence_str string = "start recording audio"
+	//var sentence_str string = "record audio"
 	// todo None of these below work decently... Fix them.
 	//var sentence_str string = "stop and play the song"
 	// This above needs the change on the TO DO file. It needs to know it's to STOP_MEDIA. "song" is more than 3 words
