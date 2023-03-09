@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run on PC (tests)" type="GoApplicationRunConfiguration" factoryName="Go Application">
+  <configuration default="false" name="Run on PC (for tests)" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="AdvancedCommandsDetection" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />

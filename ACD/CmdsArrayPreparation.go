@@ -23,7 +23,7 @@ import (
 
 // The value of each TYPE constant is its index on the cmds_types_keywords array
 
-const CMDi_TYPE_MANUAL string = "0"
+const CMDi_TYPE_NONE string = "0"
 const CMDi_TYPE_TURN_ONFF string = "1"
 const CMDi_TYPE_ASK string = "2"
 const CMDi_TYPE_STOP string = "3"
@@ -32,17 +32,18 @@ const CMDi_TYPE_SHUT_DOWN string = "5"
 const CMDi_TYPE_REBOOT string = "6"
 const CMDi_TYPE_REPEAT_SPEECH string = "7"
 const CMDi_TYPE_RECORD string = "8"
+const CMDi_TYPE_START string = "9"
 
 // Each list of type keywords can have at most 2 arrays inside it (if more are needed, change the implementation, maybe
 // even generalize it - for now it's made for case of 1 array and case of 2 arrays).
 // The 2 arrays are of words that must be mixed with the command keywords to create the command ("turn", "on" + "wifi",
 // for example).
 var cmds_types_keywords = [...][][]string{
-	{}, // 0 - Ignored
+	{}, // 0
 	{ // 1
 		{"turn", "get", "switch", "put"}, // Default main words for this type to put be on the main_words array
-		{"on", "off"},                    // Other optional words to continue the first ones if necessary (turn... what? something. what?
-		// on or off)
+		{"on", "off"},                    // Other optional words to continue the first ones if necessary (turn... what?
+		// something. what? on or off)
 	},
 	{ // 2
 		{"what's", "what", "tell", "say"},
@@ -66,11 +67,13 @@ var cmds_types_keywords = [...][][]string{
 	{ // 8
 		{"record"},
 	},
+	{ // 9
+		{"start", "begin", "initialize", "commence"},
+	},
 }
 
 /*
-AddUpdateCmd adds a command to the list of the possible commands for detection, or updates the current one in case it
-already exists.
+AddUpdateCmd adds a command to the list or updates the current one in case it already exists.
 */
 func AddUpdateCmd(command_info_str string) {
 	var cmd_info []string = strings.Split(command_info_str, "||")
@@ -160,17 +163,32 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 
 	// main_words
 	for i, j := range types_str {
-		if CMDi_TYPE_MANUAL == j {
-			cmd_info_GL.main_words = append(cmd_info_GL.main_words, main_words_manual...)
-		} else {
+		if CMDi_TYPE_NONE != j {
 			cmd_info_GL.main_words = append(cmd_info_GL.main_words, cmds_types_keywords[types_int[i]][0]...)
 		}
 	}
+	cmd_info_GL.main_words = append(cmd_info_GL.main_words, main_words_manual...)
+
 	//log.Println(cmd_info_GL.main_words)
 
 	// words_list
 	// "device/phone safe mode|device/phone recovery|device/phone"
 	var words_list [][][][]interface{} = nil
+
+	if "" != main_words_ret_conds_str {
+		var main_words_ret_conds_len int = len(strings.Split(main_words_ret_conds_str, "|"))
+		var last_words_list_param_index int = len(words_list_param) - 1
+		for i := 0; i < main_words_ret_conds_len; i++ {
+			if len(words_list_param) >= main_words_ret_conds_len {
+				break
+			}
+			// Append the last element of the words_list_param for as many times as the number of main_words_ret_conds
+			// (just to ease the writing of the words_list - this will use the last list on the words_list), until the
+			// list has at least the same number of elements as main_words_ret_conds.
+			words_list_param = append(words_list_param, words_list_param[last_words_list_param_index])
+		}
+	}
+
 	for condition_str_num, condition_str := range words_list_param {
 		words_list = append(words_list, nil)
 		for ii, words_group := range strings.Split(condition_str, " ") {
@@ -216,10 +234,7 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 
 	// main_words_ret_conds
 	if "" == main_words_ret_conds_str {
-		var words_list_len int = len(cmd_info_GL.words_list)
-		for i := 0; i < words_list_len; i++ {
-			cmd_info_GL.main_words_ret_conds = append(cmd_info_GL.main_words_ret_conds, []string{ANY_MAIN_WORD})
-		}
+		cmd_info_GL.main_words_ret_conds = append(cmd_info_GL.main_words_ret_conds, []string{ANY_MAIN_WORD})
 	} else {
 		for _, j := range strings.Split(main_words_ret_conds_str, "|") {
 			cmd_info_GL.main_words_ret_conds = append(cmd_info_GL.main_words_ret_conds, strings.Split(j, " "))

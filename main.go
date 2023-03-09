@@ -54,11 +54,8 @@ func main() {
 	const CMD_MAKE_CALL string = "18"
 	const CMD_TOGGLE_POWER_SAVER_MODE string = "19"
 	const CMD_STOP_RECORD_MEDIA string = "20"
-	const CMD_MEDIA_STOP string = "21"
-	const CMD_MEDIA_PAUSE string = "22"
-	const CMD_MEDIA_PLAY string = "23"
-	const CMD_MEDIA_NEXT string = "24"
-	const CMD_MEDIA_PREVIOUS string = "25"
+	const CMD_CONTROL_MEDIA string = "21"
+	const CMD_CONFIRM string = "22"
 
 	var commands = [...][]string{
 		{CMD_TOGGLE_FLASHLIGHT, ACD.CMDi_TYPE_TURN_ONFF, "", "", "flashlight/lantern"},
@@ -73,18 +70,15 @@ func main() {
 		{CMD_TOGGLE_AIRPLANE_MODE, ACD.CMDi_TYPE_TURN_ONFF, "", "", "airplane mode"},
 		{CMD_ASK_BATTERY_PERCENT, ACD.CMDi_TYPE_ASK, "", "", "battery percentage", "battery status", "battery level"},
 		{CMD_SHUT_DOWN_DEVICE, ACD.CMDi_TYPE_SHUT_DOWN, "", "", "device/phone"},
-		{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT + "+" + ACD.CMDi_TYPE_MANUAL, "fast", "fast|;4; -fast", "reboot/restart device/phone|device/phone|device/phone recovery|device/phone safe mode|device/phone bootloader"},
-		{CMD_TAKE_PHOTO, ACD.CMDi_TYPE_MANUAL, "take", "", "picture/photo|frontal picture/photo"},
+		{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT, "fast", "fast|;4; -fast", "reboot/restart device/phone|device/phone|device/phone recovery|device/phone safe mode|device/phone bootloader"},
+		{CMD_TAKE_PHOTO, ACD.CMDi_TYPE_NONE, "take", "", "picture/photo|frontal picture/photo"},
 		{CMD_RECORD_MEDIA, ACD.CMDi_TYPE_RECORD, "", "", "audio/sound|video/camera|frontal video/camera"},
 		{CMD_SAY_AGAIN, ACD.CMDi_TYPE_REPEAT_SPEECH, "", "", "again", "say", "said"},
-		{CMD_MAKE_CALL, ACD.CMDi_TYPE_MANUAL, "make place", "", "call"},
+		{CMD_MAKE_CALL, ACD.CMDi_TYPE_NONE, "make place", "", "call"},
 		{CMD_TOGGLE_POWER_SAVER_MODE, ACD.CMDi_TYPE_TURN_ONFF, "", "", "power/battery saver"},
 		{CMD_STOP_RECORD_MEDIA, ACD.CMDi_TYPE_STOP, "", "", "recording audio/sound|recording video/camera"},
-		{CMD_MEDIA_STOP, ACD.CMDi_TYPE_MANUAL, "stop", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_MEDIA_PAUSE, ACD.CMDi_TYPE_MANUAL, "pause", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_MEDIA_PLAY, ACD.CMDi_TYPE_MANUAL, "play continue resume", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_MEDIA_NEXT, ACD.CMDi_TYPE_MANUAL, "next", "", "media/song/songs/music/musics/video/videos"},
-		{CMD_MEDIA_PREVIOUS, ACD.CMDi_TYPE_MANUAL, "previous", "", "media/song/songs/music/musics/video/videos"},
+		{CMD_CONTROL_MEDIA, ACD.CMDi_TYPE_NONE, "play continue resume pause stop next previous", "play continue resume|pause|stop|next|previous", "media/song/songs/music/audio/musics/video/videos"},
+		{CMD_CONFIRM, ACD.CMDi_TYPE_NONE, "i", "", "do/confirm/approve/certify"},
 	}
 
 	var commands_almost_str []string = nil
@@ -106,7 +100,7 @@ func main() {
 	}
 	log.Println("")
 
-	var sentence_str string = "the video stop it and then play it again"
+	var sentence_str string = "stop the song and play the next one"
 	// todo None of these below work decently... Fix them.
 	//var sentence_str string = "stop and play the song"
 	// This above needs the change on the TO DO file. It needs to know it's to STOP_MEDIA. "song" is more than 3 words
@@ -138,7 +132,8 @@ func testCommandsDetection() {
 		{"shut down the phone and then reboot it", true, "13.00001, 14.00002"},
 		{"fast reboot the phone", true, "14.00001"},
 		{"fast phone recovery", true, ""},
-		{"the video stop it and then play it again", true, "21.00001, 23.00001"},
+		{"the video stop it and then play it again", true, "21.00003, 21.00001"},
+		{"stop the song and play the next one", true, "21.00003, 21.00004"},
 	}
 
 	var successes int = 0

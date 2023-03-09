@@ -60,6 +60,11 @@ func sentenceCorrection(sentence_str string, sentence *[]string, before_nlp_anal
 	//
 
 	if before_nlp_analyzer {
+		sentence_str = strings.Replace(sentence_str, "next one", "next it", -1)
+		sentence_str = strings.Replace(sentence_str, "previous one", "previous it", -1)
+		sentence_str = strings.Replace(sentence_str, "that one", "that it", -1)
+		sentence_str = strings.Replace(sentence_str, "this one", "this it", -1)
+
 		sentence_str = strings.Replace(sentence_str, "what is", "what's", -1)
 		sentence_str = strings.Replace(sentence_str, "whats", "what's", -1)
 
