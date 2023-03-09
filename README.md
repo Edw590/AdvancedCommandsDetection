@@ -23,6 +23,7 @@ rplane mode, then turn if off again, and turn on Wi-Fi
 - "fast reboot the phone"  -->  fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
 - "fast phone recovery"  -->  nothing (because of the way the reboot command is configured, this is a useful test)
 - "the video stop it and then play it again"  -->  stop and play the video
+- "stop the song and play the next one" --> stop the current song and play the next one
 ```
 These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications.
 
