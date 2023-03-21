@@ -14,24 +14,25 @@ A list of sentences sent to the module and what it successfully understands at i
 - "turn off airplane mode on"  -->  turn off airplane mode
 - "turn on turn off the wifi"  -->  turn off Wi-Fi
 - "turn on wifi and the bluetooth no don't turn it on"  -->  turn on Wi-Fi
-- "turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"  -->  turn on ai
-rplane mode, then turn if off again, and turn on Wi-Fi
+- "turn wifi on and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on"  -->  turn on airplane mode, then turn if off again, and turn on Wi-Fi
 - "turn on turn wifi on please"  -->  turn on Wi-Fi
 - "turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please"  -->  warn about a meaningless "it", turn on Wi-Fi, turn off both airplane mode and Wi-Fi
-- "turn on wifi and and the airplane mode and the flashlight"  -->  turn on Wi-Fi, airplane mode, and flashlight
+- "turn wifi on and and the airplane mode and the flashlight"  -->  turn on Wi-Fi, airplane mode, and flashlight
 - "shut down the phone and reboot it"  -->  shut down and reboot device
 - "fast reboot the phone"  -->  fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
 - "fast phone recovery"  -->  nothing (because of the way the reboot command is configured, this is a useful test)
 - "the video stop it and then play it again"  -->  stop and play the video
 - "stop the song and play the next one" --> stop the current song and play the next one
+- "and the airplane mode too", with last cmd info being "turn on the wifi" --> turn on the airplane mode
+- "and now turn it off", with last cmd info being "turn on the wifi" --> turn off the Wi-Fi
 ```
-These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications.
+These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications (can only improve or maintain, but never go back).
 
 ## Table of Contents
 - [Background](#background)
 - [How it works](#how-it-works)
-- - [To compile the module](#--to-compile-the-module)
 - - [Small explanation of the project structure](#--small-explanation-of-the-project-structure)
+- [To compile the module](#to-compile-the-module)
 - [About](#about)
 - - [Roadmap](#--roadmap)
 - - [Project status](#--project-status)
@@ -50,6 +51,8 @@ I'm also not really wanting to use C/C++ for this, not unless Go stops being fas
 The `ACD.Main()` function outputs a list of detected commands in a given sentence of words. For example, give it (without the punctuation, as Speech Recognition engines don't put it, so it's not used here and must not be present): `"turn it on. turn on the wifi, and and the airplane mode, get it it on. no, don't turn it on. turn off airplane mode and also the wifi, please."` - this string will make the module output orders to (in order of given commands), request an explanation of the first "it" (which has no meaning), turn on the Wi-Fi, then turn off the airplane mode, and also the Wi-Fi. And it does: `"-10, 4.00001, 11.00002, 4.00002"`, which means the same, according to the way the module works.
 
 Take a look at main.go to know how to actually use this. You need to call a function to prepare the library - you give it commands, it stores them, and then you call `ACD.Main()` how many times you want with different command strings and the commands you told it to store will be used to detect commands in the given string.
+
+Also, previous command information can be given to `ACD.Main()` to make it know what to do if "and now turn it off" is sent to it, knowing the last executed command had as name "wifi" and action "turn on the" (though here the action is ignored - it's not in "and the bluetooth too" though - will use "turn on the" here), and it will replace "it" with "wifi" and continue the execution. This command information is also returned on the function, to be used for further calls if it's wanted.
 
 ### - How the engine works
 Each word of the provided sentence is compared to all commands' `main_words` list. Those are the words that trigger the command detection. There are also the rest of the command words (`words_list`). For example, for the reboot command:
