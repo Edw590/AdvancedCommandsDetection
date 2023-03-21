@@ -34,26 +34,30 @@ Main is the function to call to request a detection of commands in a given sente
 > Params:
   - sentence_str – a sentence of words, for example coming directly from speech recognition
   - remove_repet_cmds – true to remove repeated adjacent commands and leave only the last one, false to not remove them.
-    Note that repeated commands means any commands with the same ID, whether or not they have the same sub-output. Example:
-    "1.00001, 1.02, 2.00001, 1.00001" --> "1.02, 2.00001, 1.00001".
+    Note that repeated commands means any commands with the same ID, whether or not they have the same sub-output.
+    Example: "1.00001, 1.02, 2.00001, 1.00001" --> "1.02, 2.00001, 1.00001".
   - invalidate_detec_words – same as in sentenceCmdsDetector()
 
 > Returns:
 
-– a list of the detected commands in the form
+– a list of the detected commands of the form
 
-	[CMD1][separator][CMD2][separator][CMD3]
+	last name|last action|\\//CMD1, CMD2, CMD3, ...
 
-with CMDS_SEPARATOR as the separator; if the function detected no commands, an empty string; if any error occurred, a
-string beginning with ERR_CMD_DETECT, followed either by GlobalUtils_APU.APU_ERR_PREFIX and its requirements, or a Go
-error
+The separators are INFO_CMDS_SEPARATOR, CMDS_SEPARATOR and PREV_CMD_INFO_SEPARATOR.
+
+If the function detected no commands, an empty string will be after INFO_CMDS_SEPARATOR. The last name is the last name
+detected in the sentence (can be more than one, like "airplane mode"), and the same goes for the last action ("turn on
+the" wifi, for example).
+
+If any error occurred, a string beginning with ERR_CMD_DETECT, followed by a Go error.
 */
-func Main(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool) string {
+func Main(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool, prev_cmd_info string) string {
 	var ret_var string = ""
 
 	Tcf.Tcf{
 		Try: func() {
-			ret_var = MainInternal(sentence_str, remove_repet_cmds, invalidate_detec_words)
+			ret_var = MainInternal(sentence_str, remove_repet_cmds, invalidate_detec_words, prev_cmd_info)
 		},
 		Catch: func(e Tcf.Exception) {
 			ret_var = ERR_CMD_DETECT + fmt.Sprint(e)
@@ -63,6 +67,8 @@ func Main(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bo
 	return ret_var
 }
 
+const INFO_CMDS_SEPARATOR string = "\\\\//"
+const PREV_CMD_INFO_SEPARATOR string = "|"
 const CMDS_SEPARATOR string = ", "
 
 /*
@@ -73,7 +79,7 @@ instead (no protection here), so always call the other one in production code.
 
 Note: if you find this function exported, know it's just for testing from the main package. Do NOT use it in production.
 */
-func MainInternal(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool) string {
+func MainInternal(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool, prev_cmd_info string) string {
 	if "" == strings.TrimSpace(sentence_str) {
 		// If the string is empty on visible characters (space counts as invisible here...), return now, because the
 		// code ahead may not work with strings like that (and some of it does not - panic --> reason I'm returning
@@ -89,7 +95,8 @@ func MainInternal(sentence_str string, remove_repet_cmds bool, invalidate_detec_
 	// Prepare the sentence for the NLP analysis
 	sentence_str = sentenceNLPPreparation(sentence_str, &sentence, true)
 	// Analyze the sentence with NLP help and, for example, replace all the "it"s on the sentence with their meaning
-	sentence_str = nlpAnalyzer(&sentence, sentence_str)
+	var nlp_meanings []string = nlpAnalyzer(&sentence, sentence_str, strings.Split(prev_cmd_info, "|"))
+	sentence_str = strings.Join(sentence, " ") // Rebuild the sentence with the changes made by the NLP analyzer
 	// "Unprepare" what was prepared on the sentence for the NLP analysis
 	/*sentence_str = */
 	sentenceNLPPreparation(sentence_str, &sentence, false) //--> uncomment the beginning if sentence_str is needed
@@ -105,24 +112,33 @@ func MainInternal(sentence_str string, remove_repet_cmds bool, invalidate_detec_
 	taskFilter(&sentence_cmds)
 
 	var ret_var string = ""
+
+	var cmd_info string = ""
+	for _, meaning := range nlp_meanings {
+		cmd_info += meaning + PREV_CMD_INFO_SEPARATOR
+	}
+	ret_var += cmd_info + INFO_CMDS_SEPARATOR
+
+	var detected_commands string = ""
 	for _, command := range sentence_cmds {
-		ret_var += fmt.Sprint(command) + CMDS_SEPARATOR
+		detected_commands += fmt.Sprint(command) + CMDS_SEPARATOR
+	}
+	if "" != detected_commands {
+		detected_commands = detected_commands[:len(detected_commands)-len(CMDS_SEPARATOR)]
 	}
 
 	//log.Println("::::::::::::::::::::::::::::::::::")
 	//log.Println(ret_var)
-
-	if "" != ret_var {
-		ret_var = ret_var[:len(ret_var)-len(CMDS_SEPARATOR)]
-	}
 
 	// Remove consecutively repeated commands
 	// Let's see if the verification function can handle it without this...
 	// EDIT: it could very well (improved a lot since then), but it's needed again, at least sometimes. So I'm putting
 	// it optional.
 	if remove_repet_cmds {
-		ret_var = removeRepeatedCmds(ret_var)
+		detected_commands = removeRepeatedCmds(detected_commands)
 	}
+
+	ret_var += detected_commands
 
 	//log.Println(ret_var)
 	//log.Println("::::::::::::::::::::::::::::::::::")
@@ -240,14 +256,17 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 		} else if WHATS_IT == sentence_word {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			detected_cmds = append(detected_cmds, float32(float))
+		} else if WHATS_AND == sentence_word {
+			float, _ := strconv.ParseFloat(WARN_WHATS_AND, 32)
+			detected_cmds = append(detected_cmds, float32(float))
 		} else {
 			for i := range cmds_GL {
+				// Uncomment for testing
+				//if 14 != cmds_GL[i].cmd_id {
+				//	continue
+				//}
 				for _, main_word := range cmds_GL[i].main_words {
 					if main_word == sentence_word {
-						// Uncomment for testing
-						//if 14 != cmds_GL[i].cmd_id {
-						//	continue
-						//}
 
 						//log.Println("==============")
 						//log.Println(sentence_word)
@@ -265,12 +284,24 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 							//log.Println(results_WordsVerificationDADi)
 							var final_cond int = checkMainWordsRetConds(results_WordsVerificationDADi, sentence_word, i)
 							if final_cond != -1 {
-								detected_cmds = append(detected_cmds,
-									float32(final_cond+1)/MAX_SUB_CMDS+float32(cmds_GL[i].cmd_id))
+								var detected_command float32 = float32(final_cond+1)/MAX_SUB_CMDS+float32(cmds_GL[i].cmd_id)
+								detected_cmds = append(detected_cmds, detected_command)
 								// results_WordsVerificationDADi + 1 because 0.00 must not happen
 								// / 100 to go from 0+1 = 1 to 0.00001
 								// + cmd_index because what returns from the function is the return command ID for that
 								// specific command - not a global one --> this makes it global (always different)
+
+								// Uncomment for testing
+								//if detected_command == 1.00001 {
+								//	log.Println("==============")
+								//	log.Println(sentence_word)
+								//	log.Println(i)
+								//	log.Println("-----------")
+								//	log.Println(results_WordsVerificationDADi)
+								//	log.Println("_____________")
+								//	log.Println(cmds_GL[i])
+								//	log.Println(sentence)
+								//}
 
 								if invalidate_detec_words {
 									sentence[sentence_counter] = invalidate_word_CONST
@@ -282,10 +313,12 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 									}
 								}
 
-								//log.Println("-----------")
-								//log.Println(results_WordsVerificationDADi[final_cond])
-
-								//log.Println(sentence)
+								// Uncomment for testing
+								//if detected_command == 1.00001 {
+								//	log.Println("-----------")
+								//	//log.Println(results_WordsVerificationDADi[final_cond])
+								//	log.Println(sentence)
+								//}
 							}
 						}
 					}

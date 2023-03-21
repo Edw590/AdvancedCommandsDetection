@@ -222,6 +222,8 @@ words - which excludes "off"). For that, use the 'exclude_word_found_group' para
 */
 func wordsVerificationFunction(sentence []string, sentence_index int, cmd commandInfo) [][][]interface{} {
 
+	var success_detects [][][]interface{} = nil
+
 	// Make a copy of the 'words_list', so it doesn't get modified by this function as the copy will be. Must be a real
 	// copy (elements from sub-slices will be removed/added), so CopySlice().
 	var words_list [][][][]interface{} = nil
@@ -255,7 +257,6 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 	var sentence_len int = len(sentence)
 	var num_conditions int = len(words_list)
 
-	var success_detects [][][]interface{} = nil
 	var left_intervs []int = nil
 	var right_intervs []int = nil
 	var max_sub_verifications int = 0
@@ -288,7 +289,9 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 				continue
 			}
 
-			success_detects[curr_words_cond_index] = append(success_detects[curr_words_cond_index], []interface{}{true, -1})
+			// Set initial default values. The word found in the array is just for debugging purposes so far.
+			success_detects[curr_words_cond_index] = append(success_detects[curr_words_cond_index], []interface{}{true,
+				-1, "#%$&/€£@§@£"})
 
 			var init_index int = init_indexes[curr_words_cond_index]
 			var index_previous_word_found int = indexes_previous_word_found[curr_words_cond_index]
@@ -410,7 +413,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 				}
 
 				// Else, output a false to the success array and go to the next condition since this was is garbage now.
-				success_detects[curr_words_cond_index][sub_verification] = []interface{}{false, -1}
+				success_detects[curr_words_cond_index][sub_verification] = []interface{}{false, -1, NONE}
 
 				goto end_condition
 			}
@@ -449,7 +452,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 								// various conditions. We need to check them all first in this case.)
 
 								// Set one of the word detections to false to exclude this condition.
-								success_detects[curr_words_cond_index][sub_verification] = []interface{}{false, -1}
+								success_detects[curr_words_cond_index][sub_verification] = []interface{}{false, -1, NONE}
 
 								goto end_condition
 							}
@@ -466,6 +469,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 
 			// Detection successful, so update the index of the word found.
 			success_detects[curr_words_cond_index][sub_verification][1] = word_found_info.index_word_found
+			success_detects[curr_words_cond_index][sub_verification][2] = word_found_info.word_found
 
 			// If there are more sub-verifications, prepare the next one
 			if sub_verification != max_sub_verifications-1 {
@@ -530,12 +534,12 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 							if 0 == len(curr_words_condition[ii]) {
 								continue
 							}
-							var word_map []interface{} = curr_words_condition[ii][1]
-							for iii := 0; iii < len(word_map); iii++ {
-								jjj := word_map[iii]
+							var word_map *[]interface{} = &curr_words_condition[ii][1]
+							for iii := 0; iii < len(*word_map); iii++ {
+								jjj := (*word_map)[iii]
 								for _, word_to_exclude := range words_to_exclude {
 									if word_to_exclude == jjj {
-										delElemInSlice(&word_map, iii)
+										delElemInSlice(word_map, iii)
 										iii--
 									}
 								}

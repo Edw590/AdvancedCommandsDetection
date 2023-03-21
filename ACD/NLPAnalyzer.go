@@ -17,7 +17,6 @@
 package ACD
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/jdkato/prose/v2"
@@ -33,14 +32,18 @@ var nlp_token_counter int
 
 var nlp_last_was_an_it bool
 var nlp_non_name_passed_since_last_name bool
-var nlp_last_name_found [][]string
+var nlp_last_name_found []string
+var nlp_last_it string
+var prev_sentence_it string
 
 // For replaceAnds()
 
 var nlp_last_was_an_and bool
 var nlp_non_allowed_tag_passed_since_last_allowed bool
 var nlp_verbs_passed int
-var nlp_second_last_to_last_non_allowed_tag [][]string
+var nlp_second_last_to_last_non_allowed_tag []string
+var nlp_last_and string
+var prev_sentence_and string
 
 // This is a list of words and tags to always be applied to the NLP tagging output. Sometimes it sees "mode" as a verb,
 // for example. That's wtf, I think. In any case, for the purposes of the assistant at the moment, "mode" is always a
@@ -50,13 +53,47 @@ var nlp_second_last_to_last_non_allowed_tag [][]string
 // This applies for Prose in its current version (writing this on 2021-11-20).
 // Note: I took the tags below from an online P.O.S. tagger (https://parts-of-speech.info) in sentences that would make
 // it obvious what each word is (name, verb, adjective...).
+// Note 2: I've just added all the verbs present cmds_types_keywords array, so that they are always recognized as verbs.
 var nlp_static_word_tags map[string]string = map[string]string{
+	//////////////////////////
+	// Generic words
+	"do":          "VBP",
+	"mode":        "NN",
+	"bluetooth":   "NN",
+	"it":          "NN", // To recognize "it" as a name, not a pronoun, because it will be replaced by the name of the
+	// last name, and so that would be included in the middle of the "and" meaning (not supposed to be names there).
+	"please":      "RB",
+	"fast":        "JJ",
+
+	//////////////////////////
+	// Commands
 	"turn":   "VB",
-	"do":     "VBP",
-	"mode":   "NN",
+	"get":   "VB",
+	"switch":   "VB",
+	"put":   "VB",
+
 	"record": "VB", // For the commands, it's always a verb (recognized as name in "record the audio").
+
 	"reboot": "VB", // For the commands, it's always a verb (recognized as name in "shut down the phone and reboot it").
+	"restart":   "VB",
+
 	"shut":   "VB",
+
+	"start":  "VB", // For the commands, it's always a verb (recognized as name in "start recording it").
+	"begin":   "VB",
+	"initialize":   "VB",
+	"commence":   "VB",
+
+	"stop":   "VB", // For the commands, it's always a verb (recognized as name in "stop recording it").
+	"finish":   "VB",
+	"cease":   "VB",
+	"conclude":   "VB",
+	"terminate":   "VB",
+
+	"answer":   "VB",
+	"reply":   "VB",
+	"respond":   "VB",
+	"acknowledge":   "VB",
 }
 
 //////////////////////////
@@ -68,13 +105,14 @@ Currently, it replaces all instances of "it"s and "and"s on the 'sentence' by th
 function to better do its job.
 
 WARNING: the "and" verification assumes the parameter 'ignore_repets_cmds' is set to false when calling
-wordsVerificationFunction() - if it's set to true, please note this may not work as expected. Why? Refer to replaceAnds().
+wordsVerificationFunction() - if it's set to true, please note this may not work as expected. Why? Refer to
+replaceAnds().
 
 -----CONSTANTS-----
 
   - WHATS_IT – this may be in the 'sentence' after the return of this function. It means an "it" was detected with no
-
-meaning. Could be a good idea for the assistant to return a warning about an "it" on the sentence with no meaning.
+    meaning.
+  - WHATS_AND – same as WHATS_IT but for an "and".
 
 -----CONSTANTS-----
 
@@ -87,7 +125,7 @@ meaning. Could be a good idea for the assistant to return a warning about an "it
 > Returns:
   - the updated 'sentence_str' according to the also updated 'sentence'
 */
-func nlpAnalyzer(sentence *[]string, sentence_str string) string {
+func nlpAnalyzer(sentence *[]string, sentence_str string, nlp_meanings []string) []string {
 	//log.Println("-----")
 
 	resetVariables()
@@ -134,6 +172,19 @@ func nlpAnalyzer(sentence *[]string, sentence_str string) string {
 	//	log.Println(tok)
 	//}
 
+	prev_sentence_it = nlp_meanings[0]
+	prev_sentence_and = nlp_meanings[1]
+
+	if "" != prev_sentence_it {
+		nlp_last_name_found = strings.Split(prev_sentence_it, " ")
+	}
+	if "" != prev_sentence_and {
+		nlp_second_last_to_last_non_allowed_tag = strings.Split(prev_sentence_and, " ")
+	}
+
+	//log.Println("prev_sentence_it:", prev_sentence_it)
+	//log.Println("prev_sentence_and:", prev_sentence_and)
+
 	// The sentence_counter was already set before, so no setting it here on the loop (empty part).
 	for ; nlp_sentence_counter < len(*sentence); nlp_sentence_counter, nlp_token_counter = nlp_sentence_counter+1, nlp_token_counter+1 {
 		replaceIts(sentence, &tokens)
@@ -144,10 +195,11 @@ func nlpAnalyzer(sentence *[]string, sentence_str string) string {
 	//log.Println(*sentence)
 	//log.Println("-----")
 
-	return strings.Join(*sentence, " ")
+	return []string{nlp_last_it, nlp_last_and}
 }
 
 const WHATS_IT string = ";6;"
+const WHATS_AND string = ";7;"
 
 /*
 replaceIts replaces all "it"s that it finds on the sentence by their meaning, based on the names that appear before
@@ -161,6 +213,7 @@ must not be removed.
 -----CONSTANTS-----
 
   - WHATS_IT – same as in nlpAnalyzer()
+  - WHATS_AND – same as in nlpAnalyzer()
 
 -----CONSTANTS-----
 
@@ -189,7 +242,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 		//log.Println(nlp_last_was_an_it)
 		if nlp_last_was_an_it {
 			// If the last word was an "it", it means there are repeated ones - delete all the repeated ones and use
-			// only the first one. If they were not deleted, too many words would in between the command words -->
+			// only the first one. If they were not deleted, too many words would be in between the command words -->
 			// no detection.
 			delElemInSlice(sentence, nlp_sentence_counter)
 			nlp_sentence_counter-- // And since an element was deleted, decrement the sentence_counter.
@@ -202,11 +255,11 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 		if len(nlp_last_name_found) > 0 {
 			//log.Println((*sentence)[nlp_sentence_counter])
 			//log.Println(nlp_last_name_found[0][0])
-			(*sentence)[nlp_sentence_counter] = nlp_last_name_found[0][0]
+			(*sentence)[nlp_sentence_counter] = nlp_last_name_found[0]
 			if len(nlp_last_name_found) > 1 {
-				for name_index, name_slice := range nlp_last_name_found[1:] {
+				for name_index, name := range nlp_last_name_found[1:] {
 					// +1 below because we're starting from [1:].
-					addElemSlice(sentence, name_slice[0], nlp_sentence_counter+name_index+1)
+					addElemSlice(sentence, name, nlp_sentence_counter+name_index+1)
 				}
 			}
 			// Increment the sentence_counter. -1 because it needs to stay at the element before the next. The next
@@ -215,25 +268,23 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			// newly added ones (that would also not be in accordance with the tokens iteration).
 			nlp_sentence_counter += len(nlp_last_name_found) - 1
 
-			//log.Println("+++++")
-			//log.Println(*sentence)
-			// The original words on the 'sentence' get deleted so that the function does not try to detect anything
-			// based on them, because the words belong to where they were put (on the "if"'s place) - but they're
-			// deleted also to reduce the number of words between the command main words - or no detection will
-			// happen.
-			// EDIT: removed. Read on the doc why.
-			/*for i := len(nlp_last_name_found) - 1; i >= 0; i-- {
-				word_index, _ := strconv.Atoi(nlp_last_name_found[i][1])
-				if word_index > 0 { // If the word hasn't been deleted already...
-					UtilsInt.DelElemInSlice(sentence, word_index)
-					nlp_last_name_found[i][1] = "-1" // This signals the word has been deleted - can't delete it twice.
-					nlp_sentence_counter--
-				}
-			}*/
 			//log.Println(*sentence)
 		} else {
-			//log.Println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
-			(*sentence)[nlp_sentence_counter] = WHATS_IT
+			//log.Println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRR1")
+			var whats_it = WHATS_IT
+			if "" != prev_sentence_it {
+				whats_it = prev_sentence_it
+				prev_sentence_it = ""
+			}
+
+			whats_it_list := strings.Split(whats_it, " ")
+			(*sentence)[nlp_sentence_counter] = whats_it_list[0]
+			if len(whats_it_list) > 1 {
+				for name_index, name := range whats_it_list[1:] {
+					addElemSlice(sentence, name, nlp_sentence_counter+name_index+1)
+				}
+			}
+			nlp_sentence_counter += len(whats_it_list) - 1
 		}
 	} else {
 		nlp_last_was_an_it = false
@@ -247,8 +298,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			}
 			nlp_non_name_passed_since_last_name = false
 
-			nlp_last_name_found = append(nlp_last_name_found,
-				[]string{(*sentence)[nlp_sentence_counter], strconv.Itoa(nlp_sentence_counter)})
+			nlp_last_name_found = append(nlp_last_name_found, (*sentence)[nlp_sentence_counter])
 		} else {
 			if nlp_last_name_found != nil {
 				// If a word that is a not a name passed since the last consecutive name, signal it to know that the
@@ -257,6 +307,8 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			}
 		}
 	}
+
+	nlp_last_it = strings.Join(nlp_last_name_found, " ")
 }
 
 /*
@@ -317,26 +369,52 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 
 		if len(nlp_second_last_to_last_non_allowed_tag) > 0 {
 			//log.Println(nlp_sentence_counter)
-			(*sentence)[nlp_sentence_counter] = nlp_second_last_to_last_non_allowed_tag[0][0]
+			(*sentence)[nlp_sentence_counter] = nlp_second_last_to_last_non_allowed_tag[0]
 			if len(nlp_second_last_to_last_non_allowed_tag) > 1 {
-				for non_name_index, name_slice := range nlp_second_last_to_last_non_allowed_tag[1:] {
+				for non_name_index, non_name := range nlp_second_last_to_last_non_allowed_tag[1:] {
 					// +1 below because we're starting from [1:].
-					addElemSlice(sentence, name_slice[0], nlp_sentence_counter+non_name_index+1)
+					addElemSlice(sentence, non_name, nlp_sentence_counter+non_name_index+1)
 				}
 			}
 			nlp_sentence_counter += len(nlp_second_last_to_last_non_allowed_tag) - 1
 
+			// This -1 makes it so that as it found an "and", it will stop adding words to the list but will not discard
+			// or erase them.
+			nlp_verbs_passed = -1
+
 			// No deletions here as with "it". What was before the "and" remains there to still have impact (unlike with
 			// "it" in which the names are just in the wrong place for the verification function to work properly).
+		} else {
+			//log.Println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRR2")
+			var whats_and = WHATS_AND
+			if "" != prev_sentence_and {
+				whats_and = prev_sentence_and
+				prev_sentence_and = ""
+			}
+
+			whats_and_list := strings.Split(whats_and, " ")
+			(*sentence)[nlp_sentence_counter] = whats_and_list[0]
+			if len(whats_and_list) > 1 {
+				for non_name_index, non_name := range whats_and_list[1:] {
+					addElemSlice(sentence, non_name, nlp_sentence_counter+non_name_index+1)
+				}
+			}
+			nlp_sentence_counter += len(whats_and_list) - 1
 		}
 	} else {
 		nlp_last_was_an_and = false
 		var current_tag string = (*tokens)[nlp_token_counter].Tag
-		if strings.HasPrefix(current_tag, "VB") || strings.HasPrefix(current_tag, "PR") ||
-			strings.HasPrefix(current_tag, "RP") || strings.HasPrefix(current_tag, "IN") ||
-			strings.HasPrefix(current_tag, "W") {
+		if !strings.HasPrefix(current_tag, "N") {
 			if strings.HasPrefix(current_tag, "VB") {
+				if nlp_verbs_passed < 0 {
+					nlp_verbs_passed = 0
+				}
 				nlp_verbs_passed++
+				if nlp_verbs_passed == 1 {
+					// Reset the slice if a new verb is found. Useful for the first time in which a verb is detected
+					// and a slice had been passed as previous command information.
+					nlp_second_last_to_last_non_allowed_tag = nil
+				}
 			}
 			if nlp_non_allowed_tag_passed_since_last_allowed || nlp_verbs_passed > 1 {
 				// If a non-allowed tag passed since the last allowed one, empty the slice before appending - because on
@@ -345,23 +423,37 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 				nlp_second_last_to_last_non_allowed_tag = nil
 				// Don't reset the slice until a new allowed tags' word passes by. That way, this, for example, works:
 				// "turn on the wifi and the airplane mode and the flashlight".
-			}
-			if strings.HasPrefix(current_tag, "VB") {
-				nlp_verbs_passed = 1 // Verb just passed, so set to 1
+				if nlp_verbs_passed > 1 {
+					nlp_verbs_passed = 1 // Verb just passed, so set to 1
+				}
 			}
 			nlp_non_allowed_tag_passed_since_last_allowed = false
 
-			nlp_second_last_to_last_non_allowed_tag = append(nlp_second_last_to_last_non_allowed_tag,
-				[]string{(*sentence)[nlp_sentence_counter], strconv.Itoa(nlp_sentence_counter)})
-		} else {
-			nlp_verbs_passed = 0
-			if nlp_second_last_to_last_non_allowed_tag != nil {
-				// If a word that is a not a name passed since the last consecutive name, signal it to know that the
-				// next time a name is detected, it's not just to add it to the slice - first empty the slice.
-				nlp_non_allowed_tag_passed_since_last_allowed = true
+			if nlp_verbs_passed == 1 {
+				if strings.HasPrefix(current_tag, "VB") {
+					var adjectives_list []string = nil
+					for i := nlp_sentence_counter-1; i >= 0; i-- {
+						if strings.HasPrefix((*tokens)[i].Tag, "J") {
+							// Add all adjectives right behind the current word in case it's a verb.
+							adjectives_list = append(adjectives_list, (*sentence)[i])
+						} else {
+							// Stop when a non-adjective is found (must be consecutive adjectives).
+							break
+						}
+					}
+					for i := len(adjectives_list)-1; i >= 0; i-- {
+						// Add all adjectives in the order they were inserted in the sentence.
+						nlp_second_last_to_last_non_allowed_tag = append(nlp_second_last_to_last_non_allowed_tag,
+							adjectives_list[i])
+					}
+				}
+				nlp_second_last_to_last_non_allowed_tag = append(nlp_second_last_to_last_non_allowed_tag,
+					(*sentence)[nlp_sentence_counter])
 			}
 		}
 	}
+
+	nlp_last_and = strings.Join(nlp_second_last_to_last_non_allowed_tag, " ")
 }
 
 /*
@@ -375,10 +467,14 @@ func resetVariables() {
 	nlp_last_was_an_it = false
 	nlp_non_name_passed_since_last_name = false
 	nlp_last_name_found = nil
+	nlp_last_it = ""
+	prev_sentence_it = ""
 
 	// For replaceAnds()
 	nlp_last_was_an_and = false
 	nlp_non_allowed_tag_passed_since_last_allowed = false
 	nlp_verbs_passed = 0
 	nlp_second_last_to_last_non_allowed_tag = nil
+	nlp_last_and = ""
+	prev_sentence_and = ""
 }

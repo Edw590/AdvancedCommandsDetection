@@ -93,62 +93,22 @@ func main() {
 
 	arguments := os.Args
 	if len(arguments) > 1 {
-		log.Println("To do: " + ACD.Main(os.Args[1], false, true))
+		log.Println("To do: " + ACD.Main(os.Args[1], false, true, "|"))
 	} else {
 		log.Println(ERR_NOT_ENOUGH_ARGS)
 		//os.Exit(0) // Comment to dev mode (run stuff written below without needing CMD parameters)
 	}
 	log.Println("")
 
-	var sentence_str string = "start recording audio"
-	//var sentence_str string = "record audio"
-	// todo None of these below work decently... Fix them.
-	//var sentence_str string = "stop and play the song"
-	// This above needs the change on the TO DO file. It needs to know it's to STOP_MEDIA. "song" is more than 3 words
-	// away from "stop" - no detection.
+	var sentence_str string = "record audio"
+	// to do None of these below work decently... Fix them.
+	//var sentence_str string = "" // All done so far!
 
 	log.Println(sentence_str) // Just to also see it on the terminal (better than getting back here just to read it)
-	log.Println("To do: " + ACD.MainInternal(sentence_str, false, true))
+	log.Println("To do: " + ACD.MainInternal(sentence_str, false, true, "|"))
 	log.Println("")
 	log.Println("\\\\-->3234_END<--//")
 
 	// Uncomment to test if the commands detection is still functioning well after modifications to the engine.
 	testCommandsDetection()
-}
-
-func testCommandsDetection() {
-	log.Println("Running commands detection tests...")
-
-	// Tests of good functioning of the commands detector (the sentence and the expected output).
-	// Only put commands here that have once worked, and so they must continue to work even after updates to the
-	// detection engine.
-	var sentences [][]interface{} = [][]interface{}{
-		{"turn off airplane mode on", true, "11.00002"},
-		{"turn on turn off the wifi", true, "4.00002"},
-		{"turn on wifi and the bluetooth no don't turn it on", true, "4.00001"},
-		{"turn on wifi and get the airplane mode on no don't turn the wifi on turn off airplane mode and turn the wifi on", false, "11.00001, 11.00002, 4.00001"}, // false because this is not realistic (why turn on and off on the same command...?). This is just to test a complex example.
-		{"turn on turn wifi on please", true, "4.00001"},
-		{"turn it on turn on the wifi and and the airplane mode get it it on no don't turn it on turn off airplane mode and also the wifi please", true, "-10, 4.00001, 11.00002, 4.00002"},
-		{"turn on wifi and and the airplane mode and the flashlight", true, "4.00001, 11.00001, 1.00001"},
-		{"shut down the phone and then reboot it", true, "13.00001, 14.00002"},
-		{"fast reboot the phone", true, "14.00001"},
-		{"fast phone recovery", true, ""},
-		{"the video stop it and then play it again", true, "21.00003, 21.00001"},
-		{"stop the song and play the next one", true, "21.00003, 21.00004"},
-	}
-
-	var successes int = 0
-	var problems []string = nil
-	for _, j := range sentences {
-		var detected_commands string = ACD.MainInternal(j[0].(string), false, true) //j[1].(bool), true)
-		if detected_commands != j[2] {
-			problems = append(problems, "PROBLEM DETECTED: "+j[0].(string)+" / "+j[2].(string)+" --> "+detected_commands)
-		} else {
-			successes++
-		}
-	}
-	log.Println("Results (successes/total):", successes, "/", len(sentences))
-	for _, j := range problems {
-		log.Println(j)
-	}
 }

@@ -21,7 +21,7 @@ package ACD
 //
 // --- WARNING ---
 // The command ID 0 is reserved for function-related processing!!! (Want to know for what? Read the comment about
-// MARK_TERMINATION_FLOAT32 on TaskChecker.) All negative values are also reserved for special commands.
+// MARK_TERMINATION_FLOAT32 on TaskChecker.) Negative values are also reserved for special commands.
 //
 // Note: all RET_-started constants must be a float32 in a string which starts by the number on the corresponding
 // CMD_-started constant and must advance by increments of 0.00001 (means 1 000 000 sub-commands at most). The first
@@ -99,3 +99,5 @@ type commandInfo struct {
 // WARN_WHATS_IT is the constant that signals that an "it" was said but there seems to be nothing that it refers to, so
 // the assistant warns it didn't understand the meaning of the "it".
 const WARN_WHATS_IT string = "-10"
+// WARN_WHATS_AND has the same purpose as WARN_WHATS_IT but for an "and".
+const WARN_WHATS_AND string = "-11"

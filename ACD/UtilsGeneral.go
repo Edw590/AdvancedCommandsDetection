@@ -19,7 +19,6 @@ package ACD
 import (
 	"bytes"
 	"encoding/gob"
-	"fmt"
 	"math"
 	"reflect"
 	"strconv"
@@ -176,42 +175,24 @@ from multidimensional slices/arrays.
 -----------------------------------------------------------
 
 > Params:
-  - destination – a pointer to an empty destination slice header/array
-  - source – the source slice/array
+  - dest – a pointer to an empty destination slice header/array
+  - src – the source slice/array
 
 > Returns:
-  - nothing
+  - true if the slice was fully copied, false if an error occurred
 */
-func copySlice(destination interface{}, source interface{}) {
+func copySlice(dest interface{}, src interface{}) bool {
 	var buf *bytes.Buffer = new(bytes.Buffer)
-	var err error = gob.NewEncoder(buf).Encode(source)
+	var err error = gob.NewEncoder(buf).Encode(src)
 	if err != nil {
-		panic(err)
+		return false
 	}
-	err = gob.NewDecoder(buf).Decode(destination)
+	err = gob.NewDecoder(buf).Decode(dest)
 	if err != nil {
-		panic(err)
+		return false
 	}
-}
 
-/*
-panicInt calls the built-in panic() function, but with a string with the standard format to this module.
-
-The format is:
-
-	GlobalUtils_APU.APU_ERR_PREFIX + err_code + ": " + description
-
------------------------------------------------------------
-
-> Params:
-  - err_code – a unique error identifier for the submodule that calls the function
-  - description – a description of the error
-
-> Returns:
-  - nothing
-*/
-func panicInt(err_code float32, description string) {
-	panic(APU_ERR_PREFIX + fmt.Sprint(err_code) + ": " + description)
+	return true
 }
 
 /*

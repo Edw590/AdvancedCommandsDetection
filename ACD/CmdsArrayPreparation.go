@@ -76,8 +76,14 @@ func AddUpdateCmd(command_info_str string) {
 
 	cmd_id, _ := strconv.Atoi(cmd_info[0])
 	var types_str []string = strings.Split(cmd_info[1], "+")
-	var main_words_manual []string = strings.Split(cmd_info[2], " ")
-	var main_words_ret_conds_str string = cmd_info[3]
+	var main_words_manual []string = nil
+	if "" != cmd_info[2] {
+		main_words_manual = strings.Split(cmd_info[2], " ")
+	}
+	var main_words_ret_conds_str string = ""
+	if "" != cmd_info[2] {
+		main_words_ret_conds_str = cmd_info[3]
+	}
 	var words_list_param []string = strings.Split(cmd_info[4], "|")
 
 	if (cmd_id <= 0) || (0 == len(types_str)) || (0 == len(words_list_param)) {
@@ -163,7 +169,9 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 			cmd_info_GL.main_words = append(cmd_info_GL.main_words, cmds_types_keywords[types_int[i]][0]...)
 		}
 	}
-	cmd_info_GL.main_words = append(cmd_info_GL.main_words, main_words_manual...)
+	if len(main_words_manual) > 0 {
+		cmd_info_GL.main_words = append(cmd_info_GL.main_words, main_words_manual...)
+	}
 
 	//log.Println(cmd_info_GL.main_words)
 
@@ -198,8 +206,7 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 	}
 	for i, j := range types_str {
 		switch j {
-		case CMDi_TYPE_TURN_ONFF:
-			{
+			case CMDi_TYPE_TURN_ONFF: {
 				words_list[0] = append(words_list[0], nil)
 				var words_list_0_len int = len(words_list[0])
 				words_list[0][words_list_0_len-1] = append(words_list[0][words_list_0_len-1], []interface{}{-1})
@@ -209,8 +216,7 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 				copySlice(&words_list[1], words_list[0])
 				words_list[1][words_list_0_len-1][1][0] = "off"
 			}
-		default:
-			{
+			default: {
 				if 2 == len(cmds_types_keywords[types_int[i]]) {
 					for ii := range words_list {
 						words_list[ii] = append(words_list[ii], nil)

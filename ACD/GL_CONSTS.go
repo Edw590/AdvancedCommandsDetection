@@ -19,14 +19,7 @@ package ACD
 // VERSION is the constant to check to know the version of the compiled module. The format is
 //
 //	"yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])"
-const VERSION string = "2023-03-09 -- 17:44:23.193930 (Hora padrão de GMT)"
+const VERSION string = "2023-03-21 -- 00:53:22.149343 (Hora padrão de GMT)"
 
+// MOD_NAME is the constant to check to know the name of the compiled module.
 const MOD_NAME string = "Advanced Commands Detection"
-
-// APU_ERR_PREFIX is the prefix to be used after MOD_RET_ERR_PREFIX and its additions to return a custom error (that is,
-// an error that is not from third-party/Go libraries). A string must be appended with the format "X: Y", in which X is
-// a unique error identifier (float - 1 or 1.1) for the submodule, and Y is an error description. A result example
-// might be
-//
-//	"Err 1: Some description here"
-const APU_ERR_PREFIX = "Err "
