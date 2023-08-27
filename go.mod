@@ -24,4 +24,4 @@ require (
 	gopkg.in/neurosnap/sentences.v1 v1.0.7 // indirect
 )
 
-replace VISOR_S_L => ./
+replace VISOR_Server => ./

@@ -21,8 +21,8 @@ import (
 	"strconv"
 	"strings"
 
-	"VISOR_S_L/Utils"
-	"VISOR_S_L/Utils/Tcef"
+	"VISOR_Server/Utils"
+	"VISOR_Server/Utils/Tcef"
 )
 
 const ERR_CMD_DETECT string = _MOD_RET_ERR_PREFIX + " - "

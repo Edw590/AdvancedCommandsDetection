@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"strings"
 
-	"VISOR_S_L/Utils"
+	"VISOR_Server/Utils"
 )
 
 // The value of each TYPE constant is its index on the cmds_types_keywords array

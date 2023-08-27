@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	"VISOR_S_L/Utils"
+	"VISOR_Server/Utils"
 )
 
 var mutually_exclusive_words = [...][]string{
