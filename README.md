@@ -1,7 +1,8 @@
-# Advanced Commands Detection
-
+# VISOR-AdvancedCommandsDetection
 
 I made it for my virtual assistant, VISOR, but it can be used anywhere, not just with my assistant, and in any OS/architecture that Go can compile to (I only have releases for Android in AAR package form because I'm not using it anywhere else).
+
+This repository is a submodule on the [V.I.S.O.R. - Server Version Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant) project (the main project) and is compiled for its [Android version]((https://github.com/DADi590/VISOR---A-better-Android-assistant)).
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
