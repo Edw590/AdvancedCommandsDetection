@@ -20,6 +20,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"VISOR_S_L/Utils"
 )
 
 var mutually_exclusive_words = [...][]string{
@@ -60,7 +62,7 @@ func chooseCustomIntervals(intervs_map map[int]int, sub_verif_number int, defaul
 	}
 }
 
-type WordFoundInfo struct {
+type _WordFoundInfo struct {
 	word_found           string
 	index_word_found     int
 	index_word_found_map int
@@ -227,10 +229,10 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 	// Make a copy of the 'words_list', so it doesn't get modified by this function as the copy will be. Must be a real
 	// copy (elements from sub-slices will be removed/added), so CopySlice().
 	var words_list [][][][]interface{} = nil
-	copySlice(&words_list, cmd.words_list)
+	Utils.CopyFullSLICES(&words_list, cmd.words_list)
 	// And make a copy of the original words to use in the repeated words check. CopyOuterSlice() suffices, as it's just
 	// to copy each value of the slice (which are pointers - no problem with that as the contents won't be modified).
-	var original_main_words []string = copyOuterSlice(cmd.main_words).([]string)
+	var original_main_words []string = Utils.CopyOuterSLICES(cmd.main_words)
 
 	// If it's to exclude all the original words from the 'words_list', do it here, before the sub-verifications begin.
 	if cmd.exclude_main_words {
@@ -244,7 +246,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 				for iii, word := range jj[1] {
 					for _, main_word := range cmd.main_words {
 						if word == main_word {
-							delElemInSlice(&words_list[i][ii][1], iii)
+							Utils.DelElemSLICES(&words_list[i][ii][1], iii)
 
 							break
 						}
@@ -303,7 +305,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 			//log.Println(left_interv)
 			//log.Println(right_interv)
 
-			var word_found_info WordFoundInfo = WordFoundInfo{
+			var word_found_info _WordFoundInfo = _WordFoundInfo{
 				word_found:           NONE,
 				index_word_found:     init_index, // Can't be a negative number as those are reserved for error codes...
 				index_word_found_map: -1,
@@ -498,7 +500,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 									jjj := words_list[i][ii][1][iii]
 									for _, word_to_exclude := range mutually_exclusive_words[idx_array_mut_excl_words] {
 										if (word_to_exclude == jjj) && (word_to_exclude != word_found_info.word_found) {
-											delElemInSlice(&words_list[i][ii][1], iii)
+											Utils.DelElemSLICES(&words_list[i][ii][1], iii)
 											iii--
 										}
 									}
@@ -528,7 +530,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 					if exclude_word_found_now && (-1 != word_found_info.index_word_found_map) {
 						var words_to_exclude []interface{} = nil
 						// Full copy of the slice here (I'll be deleting from the original)
-						copySlice(&words_to_exclude, curr_words_condition[word_found_info.index_word_found_map][1])
+						Utils.CopyFullSLICES(&words_to_exclude, curr_words_condition[word_found_info.index_word_found_map][1])
 
 						for ii := range curr_words_condition {
 							if 0 == len(curr_words_condition[ii]) {
@@ -539,7 +541,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 								jjj := (*word_map)[iii]
 								for _, word_to_exclude := range words_to_exclude {
 									if word_to_exclude == jjj {
-										delElemInSlice(word_map, iii)
+										Utils.DelElemSLICES(word_map, iii)
 										iii--
 									}
 								}

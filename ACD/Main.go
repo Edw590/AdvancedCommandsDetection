@@ -21,10 +21,11 @@ import (
 	"strconv"
 	"strings"
 
-	"AdvancedCommandsDetection/Tcf"
+	"VISOR_S_L/Utils"
+	"VISOR_S_L/Utils/Tcef"
 )
 
-const ERR_CMD_DETECT string = MOD_RET_ERR_PREFIX + " - "
+const ERR_CMD_DETECT string = _MOD_RET_ERR_PREFIX + " - "
 
 /*
 Main is the function to call to request a detection of commands in a given sentence of words.
@@ -55,11 +56,11 @@ If any error occurred, a string beginning with ERR_CMD_DETECT, followed by a Go 
 func Main(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool, prev_cmd_info string) string {
 	var ret_var string = ""
 
-	Tcf.Tcf{
+	Tcef.Tcef{
 		Try: func() {
 			ret_var = MainInternal(sentence_str, remove_repet_cmds, invalidate_detec_words, prev_cmd_info)
 		},
-		Catch: func(e Tcf.Exception) {
+		Catch: func(e Tcef.Exception) {
 			ret_var = ERR_CMD_DETECT + fmt.Sprint(e)
 		},
 	}.Do()
@@ -211,12 +212,12 @@ func removeRepeatedCmds(detected_cmds_str_param string) string {
 const ANY_MAIN_WORD string = ";4;"
 
 // ATTENTION - none of these constants below can collide with the WARN_-started constants on CmdsInfo!!!
-// const spec_cmd_dont_instead_CONST float32 = -1.1
-// const spec_cmd_stop_CONST float32 = -2
-// const spec_cmd_forget_CONST float32 = -3
-const spec_cmd_dont_CONST float32 = -1
+// const SPEC_CMD_DONT_INSTEAD float32 = -1.1
+// const SPEC_CMD_STOP float32 = -2
+// const SPEC_CMD_FORGET float32 = -3
+const _SPEC_CMD_DONT float32 = -1
 
-const invalidate_word_CONST string = ";5;"
+const _INVALIDATE_WORD string = ";5;"
 
 /*
 sentenceCmdsDetector detects which of the cmds_GL commands are present in a sentence of words.
@@ -230,7 +231,7 @@ sentenceCmdsDetector detects which of the cmds_GL commands are present in a sent
     (useful to prevent wrong detections), false otherwise. Example of a problematic sentence: "fast reboot the phone", with
     "fast" and "reboot" being both command main words - 2 command detections will be triggered and phone (fast reboot and
     reboot normally) --> with this set to true, not anymore, because each word used on a successful detection will be
-    replaced by invalidate_word_CONST and hence will not be used again.
+    replaced by _INVALIDATE_WORD and hence will not be used again.
 
 > Returns:
 
@@ -252,7 +253,7 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 	for sentence_counter, sentence_word := range sentence {
 
 		if "don't" == sentence_word {
-			detected_cmds = append(detected_cmds, spec_cmd_dont_CONST)
+			detected_cmds = append(detected_cmds, _SPEC_CMD_DONT)
 		} else if WHATS_IT == sentence_word {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			detected_cmds = append(detected_cmds, float32(float))
@@ -304,11 +305,11 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 								//}
 
 								if invalidate_detec_words {
-									sentence[sentence_counter] = invalidate_word_CONST
+									sentence[sentence_counter] = _INVALIDATE_WORD
 									for _, j := range results_WordsVerificationDADi[final_cond] {
 										var index int = j[1].(int)
 										if index >= 0 {
-											sentence[index] = invalidate_word_CONST
+											sentence[index] = _INVALIDATE_WORD
 										}
 									}
 								}
@@ -359,7 +360,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	const MARK_TERMINATION_FLOAT32 float32 = 0
 
 	for counter, number := range *sentence_cmds {
-		if spec_cmd_dont_CONST == number {
+		if _SPEC_CMD_DONT == number {
 
 			var delete_number_before_dont bool = false
 
@@ -430,7 +431,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	for counter := 0; counter < len(*sentence_cmds); {
 		// Don't forget (again) --> the length must checked every time on the loop because it is changed on it
 		if MARK_TERMINATION_FLOAT32 == (*sentence_cmds)[counter] {
-			delElemInSlice(sentence_cmds, counter)
+			Utils.DelElemSLICES(sentence_cmds, counter)
 		} else {
 			counter++
 		}

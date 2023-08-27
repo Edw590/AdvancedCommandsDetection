@@ -20,7 +20,7 @@ import (
 	"log"
 	"strings"
 
-	"AdvancedCommandsDetection/ACD"
+	"ACD/ACD"
 )
 
 type commandTestsInfo struct {

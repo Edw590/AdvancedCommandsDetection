@@ -21,7 +21,7 @@ import (
 	"os"
 	"strings"
 
-	"AdvancedCommandsDetection/ACD"
+	"ACD/ACD"
 )
 
 const ERR_NOT_ENOUGH_ARGS string = "3234_ERR_NOT_ENOUGH_ARGS"
