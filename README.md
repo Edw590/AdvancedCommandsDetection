@@ -6,7 +6,7 @@ I made it for my virtual assistant, VISOR, but it can be used anywhere, not just
 ## Notice
 This project is a part of a bigger project, consisting of the following:
 - [V.I.S.O.R. - A better Android assistant](https://github.com/DADi590/VISOR---A-better-Android-assistant)
-- [Advanced Commands Detection](https://github.com/DADi590/Advanced-Commands-Detection)
+- [V.I.S.O.R. - Server Version Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant)
 
 ## Examples of successful detections
 A list of sentences sent to the module and what it successfully understands at its output:
