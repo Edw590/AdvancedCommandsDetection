@@ -4,16 +4,12 @@ module ACD
 // supporting it).
 go 1.20
 
-require (
-	VISOR_S_L v0.0.0-00010101000000-000000000000
-	github.com/dchest/jsmin v0.0.0-20220218165748-59f39799265f
-	github.com/jdkato/prose/v2 v2.0.0
-	github.com/ztrue/tracerr v0.4.0
-)
+require github.com/jdkato/prose/v2 v2.0.0
 
 // Do NOT exclude golang.org/x/mobile,mod,sys,tools even if they seem unused (Gomobile - Android AAR)
 // If it goes away, run `go get golang.org/x/mobile/bind` on the main ACD folder. Before that, come here to install
 // Gomobile: https://pkg.go.dev/golang.org/x/mobile/cmd/gomobile.
+
 require (
 	golang.org/x/mobile v0.0.0-20230818142238-7088062f872d // indirect
 	golang.org/x/mod v0.12.0 // indirect
