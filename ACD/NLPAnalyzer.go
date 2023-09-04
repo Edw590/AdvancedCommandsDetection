@@ -19,6 +19,8 @@ package ACD
 import (
 	"strings"
 
+	"github.com/jdkato/prose/v2"
+
 	"VISOR_Server/Utils"
 )
 
@@ -432,7 +434,7 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 			if nlp_verbs_passed == 1 {
 				if strings.HasPrefix(current_tag, "VB") {
 					var adjectives_list []string = nil
-					for i := nlp_sentence_counter-1; i >= 0; i-- {
+					for i := nlp_sentence_counter - 1; i >= 0; i-- {
 						if strings.HasPrefix((*tokens)[i].Tag, "J") {
 							// Add all adjectives right behind the current word in case it's a verb.
 							adjectives_list = append(adjectives_list, (*sentence)[i])

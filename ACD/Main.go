@@ -285,7 +285,7 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 							//log.Println(results_WordsVerificationDADi)
 							var final_cond int = checkMainWordsRetConds(results_WordsVerificationDADi, sentence_word, i)
 							if final_cond != -1 {
-								var detected_command float32 = float32(final_cond+1)/MAX_SUB_CMDS+float32(cmds_GL[i].cmd_id)
+								var detected_command float32 = float32(final_cond+1)/MAX_SUB_CMDS + float32(cmds_GL[i].cmd_id)
 								detected_cmds = append(detected_cmds, detected_command)
 								// results_WordsVerificationDADi + 1 because 0.00 must not happen
 								// / 100 to go from 0+1 = 1 to 0.00001
