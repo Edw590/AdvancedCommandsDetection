@@ -21,7 +21,7 @@ import (
 
 	"github.com/jdkato/prose/v2"
 
-	"VISOR_Server/Utils"
+	"Utils"
 )
 
 //////////////////////////

@@ -5,12 +5,11 @@ module ACD
 go 1.20
 
 require (
-	VISOR_Server/Utils v0.0.0-00010101000000-000000000000
 	github.com/jdkato/prose/v2 v2.0.0
 )
 
 // Do NOT exclude golang.org/x/mobile,mod,sys,tools even if they seem unused (Gomobile - Android AAR)
-// If it goes away, run `go get golang.org/x/mobile/bind` on the main ACD folder. Before that, come here to install
+// If they go away, run `go get golang.org/x/mobile/bind` on the main ACD folder. Before that, come here to install
 // Gomobile: https://pkg.go.dev/golang.org/x/mobile/cmd/gomobile.
 
 require (
@@ -22,4 +21,5 @@ require (
 	gopkg.in/neurosnap/sentences.v1 v1.0.7 // indirect
 )
 
-replace VISOR_Server/Utils => ./Utils
+//require Utils v0.0.0-00010101000000-000000000000
+//replace Utils => ./Utils

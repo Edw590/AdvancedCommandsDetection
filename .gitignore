@@ -6,5 +6,6 @@
 *_EOG.*
 
 bin/
-data/
-temp/
+
+.idea/
+.vscode/
