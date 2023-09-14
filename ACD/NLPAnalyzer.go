@@ -120,11 +120,11 @@ replaceAnds().
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence – a pointer to the header of the created 'sentence' slice on the function mainInternal()
   - sentence_str – the string sent to mainInternal() but with the modifications done on sentenceNLPPreparation()
 
-> Returns:
+– Returns:
   - the updated 'sentence_str' according to the also updated 'sentence'
 */
 func nlpAnalyzer(sentence *[]string, sentence_str string, nlp_meanings []string) []string {
@@ -221,11 +221,11 @@ must not be removed.
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence – same as in nlpAnalyzer()
   - tokens – a list with the tokens of all the 'sentence' words
 
-> Returns:
+– Returns:
   - nothing
 */
 func replaceIts(sentence *[]string, tokens *[]prose.Token) {
@@ -332,11 +332,11 @@ turn off the airplane mode".
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence – same as in nlpAnalyzer()
   - tokens – a list with the tokens of all the 'sentence' words
 
-> Returns:
+– Returns:
   - nothing
 */
 func replaceAnds(sentence *[]string, tokens *[]prose.Token) {

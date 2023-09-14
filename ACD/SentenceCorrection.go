@@ -39,10 +39,10 @@ To see all it does, take a look at the function (easy reading).
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence_str – same as in Main()
 
-> Returns:
+– Returns:
   - a string with everything replaced/corrected on it
 */
 func sentenceCorrection(sentence_str string, sentence *[]string, before_nlp_analyzer bool) string {
@@ -107,11 +107,11 @@ analyzed by the command detector.
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence – a pointer to the header of the created 'sentence' slice on the beginning of mainInternal()
   - before_sending – true if this function is being called before the NLP analyzer, false if it's being called after it
 
-> Returns:
+– Returns:
   - a string with the 'sentence' elements joined with a space between each (equivalent to 'sentence_str' on Main()).
 */
 func sentenceNLPPreparation(sentence_str string, sentence *[]string, before_nlp_analyzer bool) string {

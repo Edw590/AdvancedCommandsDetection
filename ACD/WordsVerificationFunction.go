@@ -118,7 +118,7 @@ completed on the current condition, and only in case no word was found.
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence – same as in sentenceCmdsDetector()
   - sentence_index – index on the sentence where to start the search
   - main_words – 1D slice with the words that activated the command detection. Example: for commands pair
@@ -216,7 +216,7 @@ because "on" is no longer on it.
 Note that this will not remove the word found (if it detects "off", it will only remove the other mutually exclusive
 words - which excludes "off"). For that, use the 'exclude_word_found_group' parameter.
 
-> Returns:
+– Returns:
   - a 3D array with the first arrays being the number of command variations (len(words_list)), the second arrays being
     the number of word maps in the command variation, and the third arrays are arrays of 2 elements only, with the 1st
     a bool indicating if the word was detected or not, and the 2nd the index in which it was detected, or -1 if the 1st
@@ -613,12 +613,12 @@ for the command 'main_words'.
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - results_wordsVerifFunc – the direct return from wordsVerificationFunction()
   - sentence_word – the current 'sentence_word' on the sentenceCmdsDetector()
   - cmds_GL_index – the current 'cmds_GL' looping index on the sentenceCmdsDetector()
 
-> Returns:
+– Returns:
 
 – the index of the final accepted 'words_list' condition for the current 'sentence_word'
 */

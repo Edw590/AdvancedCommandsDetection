@@ -32,14 +32,14 @@ Main is the function to call to request a detection of commands in a given sente
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence_str – a sentence of words, for example coming directly from speech recognition
   - remove_repet_cmds – true to remove repeated adjacent commands and leave only the last one, false to not remove them.
     Note that repeated commands means any commands with the same ID, whether or not they have the same sub-output.
     Example: "1.00001, 1.02, 2.00001, 1.00001" --> "1.02, 2.00001, 1.00001".
   - invalidate_detec_words – same as in sentenceCmdsDetector()
 
-> Returns:
+– Returns:
 
 – a list of the detected commands of the form
 
@@ -224,7 +224,7 @@ sentenceCmdsDetector detects which of the cmds_GL commands are present in a sent
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence – a 1D slice of words on which the verification will be executed (basically it's sentence_str required by
     Main() split by spaces in a 1D slice).
   - invalidate_detec_words – true to invalidate words used on detections so that they're not used on further detections
@@ -233,7 +233,7 @@ sentenceCmdsDetector detects which of the cmds_GL commands are present in a sent
     reboot normally) --> with this set to true, not anymore, because each word used on a successful detection will be
     replaced by _INVALIDATE_WORD and hence will not be used again.
 
-> Returns:
+– Returns:
 
 – a slice on which each index is a command found in the 'sentence' in the order provided by the 'sentence'. The command
 is a float in which the integer part is the index of the command on cmds_GL and the decimal part is the index+1 of the
@@ -339,10 +339,10 @@ For example, "turn on the lights and play some music. no, don't turn on the ligh
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - sentence_cmds – same as in sentenceCmdsDetector()
 
-> Returns:
+– Returns:
   - nothing
 */
 func taskFilter(sentence_cmds *[]float32) {

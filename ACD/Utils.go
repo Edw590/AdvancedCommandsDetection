@@ -51,10 +51,10 @@ isSpecialCommand check if a string is an internal command, like NONE.
 
 -----------------------------------------------------------
 
-> Params:
+– Params:
   - str – the string to check
 
-> Returns:
+– Returns:
   - true if it's a special command, false otherwise
 */
 func isSpecialCommand(str string) bool {
