@@ -6,7 +6,7 @@ This repository is a submodule on the [V.I.S.O.R. - Server Version Assistant](ht
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
-- [V.I.S.O.R. - A better Android assistant](https://github.com/DADi590/VISOR---A-better-Android-assistant)
+- [V.I.S.O.R. - Android Version Assistant](https://github.com/DADi590/VISOR---A-better-Android-assistant)
 - [V.I.S.O.R. - Server Version Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant)
 
 ## Examples of successful detections
