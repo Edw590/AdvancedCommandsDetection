@@ -270,7 +270,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 	}
 	for i := 0; i < max_sub_verifications; i++ {
 		left_intervs = append(left_intervs, chooseCustomIntervals(cmd.left_intervs, i, 0))
-		right_intervs = append(right_intervs, chooseCustomIntervals(cmd.left_intervs, i, 3))
+		right_intervs = append(right_intervs, chooseCustomIntervals(cmd.left_intervs, i, 5))
 	}
 
 	var init_indexes []int = nil

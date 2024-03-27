@@ -145,5 +145,11 @@ var commands_tests = [...]commandTestsInfo{
 		false, true,
 		"wifi|turn on the|",
 		"wifi|turn off|",
+	}, { // 15
+		"tell me the weather and the news",
+		"26.00001, 27.00001",
+		false, true,
+		"|",
+		"news|tell me the|",
 	},
 }

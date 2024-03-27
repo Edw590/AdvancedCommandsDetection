@@ -56,6 +56,11 @@ func main() {
 	const CMD_STOP_RECORD_MEDIA string = "20"
 	const CMD_CONTROL_MEDIA string = "21"
 	const CMD_CONFIRM string = "22"
+	const CMD_REJECT string = "23"
+	const CMD_STOP_LISTENING string = "24"
+	const CMD_START_LISTENING string = "25"
+	const CMD_TELL_WEATHER string = "26"
+	const CMD_TELL_NEWS string = "27"
 
 	var commands = [...][]string{
 		{CMD_TOGGLE_FLASHLIGHT, ACD.CMDi_TYPE_TURN_ONFF, "", "", "flashlight/lantern"},
@@ -79,6 +84,11 @@ func main() {
 		{CMD_STOP_RECORD_MEDIA, ACD.CMDi_TYPE_STOP, "", "", "recording audio/sound|recording video/camera"},
 		{CMD_CONTROL_MEDIA, ACD.CMDi_TYPE_NONE, "play continue resume pause stop next previous", "play continue resume|pause|stop|next|previous", "media/song/songs/music/audio/musics/video/videos"},
 		{CMD_CONFIRM, ACD.CMDi_TYPE_NONE, "i", "", "do/confirm/approve/certify"},
+		{CMD_REJECT, ACD.CMDi_TYPE_NONE, "i", "", "don't/reject/disapprove"},
+		{CMD_STOP_LISTENING, ACD.CMDi_TYPE_STOP, "", "", "listening"},
+		{CMD_START_LISTENING, ACD.CMDi_TYPE_START, "", "", "listening"},
+		{CMD_TELL_WEATHER, ACD.CMDi_TYPE_ASK, "", "", "weather"},
+		{CMD_TELL_NEWS, ACD.CMDi_TYPE_ASK, "", "", "news"},
 	}
 
 	var commands_almost_str []string = nil
