@@ -47,7 +47,7 @@ var cmds_types_keywords = [...][][]string{
 		// something. what? on or off)
 	},
 	{ // 2
-		{"what's", "what", "tell", "say"},
+		{"what's", "what", "tell", "say", "how", "how's", "how're"},
 	},
 	{ // 3
 		{"stop", "end", "finish", "cease", "conclude", "terminate"},

@@ -67,18 +67,27 @@ func sentenceCorrection(sentence_str string, sentence *[]string, before_nlp_anal
 
 		sentence_str = strings.Replace(sentence_str, "what is", "what's", -1)
 		sentence_str = strings.Replace(sentence_str, "whats", "what's", -1)
+		sentence_str = strings.Replace(sentence_str, "what are", "what're", -1)
+
+		sentence_str = strings.Replace(sentence_str, "which is", "which's", -1)
+		sentence_str = strings.Replace(sentence_str, "which are", "which're", -1)
 
 		sentence_str = strings.Replace(sentence_str, "who is", "who's", -1)
 		sentence_str = strings.Replace(sentence_str, "whos", "who's", -1)
+		sentence_str = strings.Replace(sentence_str, "who are", "who're", -1)
 
 		sentence_str = strings.Replace(sentence_str, "how is", "how's", -1)
 		sentence_str = strings.Replace(sentence_str, "hows", "how's", -1)
+		sentence_str = strings.Replace(sentence_str, "how are", "how're", -1)
+		sentence_str = strings.Replace(sentence_str, "howre", "how're", -1)
 
 		sentence_str = strings.Replace(sentence_str, "that is", "that's", -1)
 		sentence_str = strings.Replace(sentence_str, "thats", "that's", -1)
+		sentence_str = strings.Replace(sentence_str, "those are", "those're", -1)
 
 		sentence_str = strings.Replace(sentence_str, "there is", "there's", -1)
 		sentence_str = strings.Replace(sentence_str, "theres", "there's", -1)
+		sentence_str = strings.Replace(sentence_str, "there are", "there're", -1)
 
 		sentence_str = strings.Replace(sentence_str, "do not", "don't", -1)
 		sentence_str = strings.Replace(sentence_str, "dont", "don't", -1)
@@ -121,17 +130,27 @@ func sentenceNLPPreparation(sentence_str string, sentence *[]string, before_nlp_
 
 	if before_nlp_analyzer {
 		sentence_str = strings.Replace(sentence_str, "what's", "what is", -1)
+		sentence_str = strings.Replace(sentence_str, "what're", "what are", -1)
 		sentence_str = strings.Replace(sentence_str, "who's", "who is", -1)
+		sentence_str = strings.Replace(sentence_str, "who're", "who are", -1)
 		sentence_str = strings.Replace(sentence_str, "how's", "how is", -1)
+		sentence_str = strings.Replace(sentence_str, "how're", "how are", -1)
 		sentence_str = strings.Replace(sentence_str, "that's", "that is", -1)
+		sentence_str = strings.Replace(sentence_str, "those're", "those are", -1)
 		sentence_str = strings.Replace(sentence_str, "there's", "there is", -1)
+		sentence_str = strings.Replace(sentence_str, "there're", "there are", -1)
 		sentence_str = strings.Replace(sentence_str, "don't", "do not", -1)
 	} else {
 		sentence_str = strings.Replace(sentence_str, "what is", "what's", -1)
+		sentence_str = strings.Replace(sentence_str, "what are", "what're", -1)
 		sentence_str = strings.Replace(sentence_str, "who is", "who's", -1)
+		sentence_str = strings.Replace(sentence_str, "who are", "who're", -1)
 		sentence_str = strings.Replace(sentence_str, "how is", "how's", -1)
+		sentence_str = strings.Replace(sentence_str, "how are", "how're", -1)
 		sentence_str = strings.Replace(sentence_str, "that is", "that's", -1)
+		sentence_str = strings.Replace(sentence_str, "that are", "those're", -1)
 		sentence_str = strings.Replace(sentence_str, "there is", "there's", -1)
+		sentence_str = strings.Replace(sentence_str, "there are", "there're", -1)
 		sentence_str = strings.Replace(sentence_str, "do not", "don't", -1)
 	}
 

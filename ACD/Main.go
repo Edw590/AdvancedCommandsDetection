@@ -41,17 +41,15 @@ Main is the function to call to request a detection of commands in a given sente
 
 – Returns:
 
-– a list of the detected commands of the form
+  - a list of the detected commands of the form
 
 	last name|last action|\\//CMD1, CMD2, CMD3, ...
 
-The separators are INFO_CMDS_SEPARATOR, CMDS_SEPARATOR and PREV_CMD_INFO_SEPARATOR.
-
-If the function detected no commands, an empty string will be after INFO_CMDS_SEPARATOR. The last name is the last name
-detected in the sentence (can be more than one, like "airplane mode"), and the same goes for the last action ("turn on
-the" wifi, for example).
-
-If any error occurred, a string beginning with ERR_CMD_DETECT, followed by a Go error.
+    The separators are INFO_CMDS_SEPARATOR, CMDS_SEPARATOR and PREV_CMD_INFO_SEPARATOR.
+  - If the function detected no commands, an empty string will be after INFO_CMDS_SEPARATOR. The last name is the last
+    name detected in the sentence (can be more than one, like "airplane mode"), and the same goes for the last action
+    ("turn on the" wifi, for example).
+  - If any error occurred, a string beginning with ERR_CMD_DETECT, followed by a Go error.
 */
 func Main(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool, prev_cmd_info string) string {
 	var ret_var string = ""

@@ -19,7 +19,7 @@ package ACD
 // VERSION is the constant to check to know the version of the module. The format is
 //
 //	"yyyy-MM-dd -- HH:mm:ss.SSSSSS ([timezone taken from the system])"
-const VERSION string = "2023-03-21 -- 00:53:22.149343 (Hora padrão de GMT)"
+const VERSION string = "2023-11-26 -- 22:25:20.158590 (Hora padrão de GMT)"
 
 // MOD_NAME is the constant to check to know the name module through a library file.
 const MOD_NAME string = "Advanced Commands Detection"

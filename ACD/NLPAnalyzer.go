@@ -123,6 +123,8 @@ replaceAnds().
 – Params:
   - sentence – a pointer to the header of the created 'sentence' slice on the function mainInternal()
   - sentence_str – the string sent to mainInternal() but with the modifications done on sentenceNLPPreparation()
+  - nlp_meanings – a slice with 2 strings: the first is the meaning of the first "it" that may be found on the sentence
+	(the last noun detected from the output of this module), and the second is the meaning of the last "and" found
 
 – Returns:
   - the updated 'sentence_str' according to the also updated 'sentence'
