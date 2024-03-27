@@ -6,7 +6,7 @@ This repository is a submodule on the [V.I.S.O.R. - Server Version Assistant](ht
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
-- [V.I.S.O.R. - A better Android assistant](https://github.com/DADi590/VISOR---A-better-Android-assistant)
+- [V.I.S.O.R. - Android Version Assistant](https://github.com/DADi590/VISOR---A-better-Android-assistant)
 - [V.I.S.O.R. - Server Version Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant)
 
 ## Examples of successful detections
@@ -23,9 +23,9 @@ A list of sentences sent to the module and what it successfully understands at i
 - "fast reboot the phone"  -->  fast reboot device (this test exists because "fast" and "reboot" are both command triggers, but here only "fast" is used to trigger and "reboot" is ignored)
 - "fast phone recovery"  -->  nothing (because of the way the reboot command is configured, this is a useful test)
 - "the video stop it and then play it again"  -->  stop and play the video
-- "stop the song and play the next one" --> stop the current song and play the next one
-- "and the airplane mode too", with last cmd info being "turn on the wifi" --> turn on the airplane mode
-- "and now turn it off", with last cmd info being "turn on the wifi" --> turn off the Wi-Fi
+- "stop the song and play the next one"  -->  stop the current song and play the next one
+- "and the airplane mode too", with last cmd info being "turn on the wifi"  -->  turn on the airplane mode
+- "and now turn it off", with last cmd info being "turn on the wifi"  -->  turn off the Wi-Fi
 ```
 These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications (can only improve or maintain, but never go back).
 
