@@ -61,6 +61,7 @@ func main() {
 	const CMD_START_LISTENING string = "25"
 	const CMD_TELL_WEATHER string = "26"
 	const CMD_TELL_NEWS string = "27"
+	const CMD_GONNA_SLEEP string = "28"
 
 	var commands = [...][]string{
 		{CMD_TOGGLE_FLASHLIGHT, ACD.CMDi_TYPE_TURN_ONFF, "", "", "flashlight/lantern"},
@@ -89,6 +90,7 @@ func main() {
 		{CMD_START_LISTENING, ACD.CMDi_TYPE_START, "", "", "listening"},
 		{CMD_TELL_WEATHER, ACD.CMDi_TYPE_ASK, "", "", "weather"},
 		{CMD_TELL_NEWS, ACD.CMDi_TYPE_ASK, "", "", "news"},
+		{CMD_GONNA_SLEEP, ACD.CMDi_TYPE_WILL_GO, "", "", "sleep"},
 	}
 
 	var commands_almost_str []string = nil
@@ -110,7 +112,7 @@ func main() {
 	}
 	log.Println("")
 
-	var sentence_str string = "record audio"
+	var sentence_str string = "I'm gonna sleep"
 	// to do None of these below work decently... Fix them.
 	//var sentence_str string = "" // All done so far!
 

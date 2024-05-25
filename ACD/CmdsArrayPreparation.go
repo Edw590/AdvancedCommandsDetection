@@ -34,6 +34,7 @@ const CMDi_TYPE_SHUT_DOWN string = "5"
 const CMDi_TYPE_REBOOT string = "6"
 const CMDi_TYPE_REPEAT_SPEECH string = "7"
 const CMDi_TYPE_START string = "8"
+const CMDi_TYPE_WILL_GO string = "9"
 
 // Each list of type keywords can have at most 2 arrays inside it (if more are needed, change the implementation, maybe
 // even generalize it - for now it's made for case of 1 array and case of 2 arrays).
@@ -67,6 +68,9 @@ var cmds_types_keywords = [...][][]string{
 	},
 	{ // 8
 		{"start", "begin", "initialize", "commence"},
+	},
+	{ // 9
+		{"will", "gonna", "going", "I'll"},
 	},
 }
 
