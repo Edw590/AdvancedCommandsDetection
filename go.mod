@@ -26,6 +26,3 @@ require (
 	gonum.org/v1/gonum v0.14.0 // indirect
 	gopkg.in/neurosnap/sentences.v1 v1.0.7 // indirect
 )
-
-//require Utils v0.0.0-00010101000000-000000000000
-//replace Utils => ./Utils
