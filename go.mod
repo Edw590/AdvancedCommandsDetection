@@ -21,7 +21,7 @@ require (
 	github.com/mingrammer/commonregex v1.0.1 // indirect
 	golang.org/x/mobile v0.0.0-20231108233038-35478a0c49da // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	gonum.org/v1/gonum v0.15.0 // indirect
 	gopkg.in/neurosnap/sentences.v1 v1.0.7 // indirect
