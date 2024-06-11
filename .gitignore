@@ -4,8 +4,3 @@
 # Exclude Only from Git (EOG) - personal things
 *_EOG
 *_EOG.*
-
-bin/
-
-.idea/
-.vscode/
