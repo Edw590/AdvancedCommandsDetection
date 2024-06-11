@@ -1,4 +1,4 @@
-# VISOR-AdvancedCommandsDetection
+# AdvancedCommandsDetection
 Advanced Commands Detection library of V.I.S.O.R.
 
 I made it for my virtual assistant, but it can be used anywhere, not just with my assistant, and in any OS/architecture that Go can compile to (I only have releases for Android in AAR package form because for the other project I just use it as normal code and don't need a library file - only on Android).
