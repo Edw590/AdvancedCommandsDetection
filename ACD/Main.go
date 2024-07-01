@@ -192,7 +192,7 @@ func removeRepeatedCmds(detected_cmds_str_param string) string {
 			//log.Println(prev_j[:prev_j_index)
 			//log.Println(j)
 			//log.Println(j[:j_index)
-			if (-1 != next_j_index) && (-1 != j_index) && (j[:j_index] == next_j[:next_j_index]) {
+			if (next_j_index != -1) && (j_index != -1) && (j[:j_index] == next_j[:next_j_index]) {
 				detected_cmds_list[i] = MARK_TERMINATION_STR
 			}
 		}
@@ -257,16 +257,16 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 
 		if "don't" == sentence_word {
 			detected_cmds = append(detected_cmds, _SPEC_CMD_DONT)
-		} else if WHATS_IT == sentence_word {
+		} else if sentence_word == WHATS_IT {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			detected_cmds = append(detected_cmds, float32(float))
-		} else if WHATS_AND == sentence_word {
+		} else if sentence_word == WHATS_AND {
 			float, _ := strconv.ParseFloat(WARN_WHATS_AND, 32)
 			detected_cmds = append(detected_cmds, float32(float))
 		} else {
 			for i := range cmds_GL {
 				// Uncomment for testing
-				//if 14 != cmds_GL[i].cmd_id {
+				//if cmds_GL[i].cmd_id != 14 {
 				//	continue
 				//}
 				for _, main_word := range cmds_GL[i].main_words {
@@ -363,7 +363,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	const MARK_TERMINATION_FLOAT32 float32 = 0
 
 	for counter, number := range *sentence_cmds {
-		if _SPEC_CMD_DONT == number {
+		if number == _SPEC_CMD_DONT {
 
 			var delete_number_before_dont bool = false
 
@@ -433,7 +433,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	// Delete all elements marked for deletion
 	for counter := 0; counter < len(*sentence_cmds); {
 		// Don't forget (again) --> the length must checked every time on the loop because it is changed on it
-		if MARK_TERMINATION_FLOAT32 == (*sentence_cmds)[counter] {
+		if (*sentence_cmds)[counter] == MARK_TERMINATION_FLOAT32 {
 			Utils.DelElemSLICES(sentence_cmds, counter)
 		} else {
 			counter++

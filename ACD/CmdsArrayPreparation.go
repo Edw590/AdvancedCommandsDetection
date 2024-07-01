@@ -1,18 +1,23 @@
-/*
- * Copyright 2021 DADi590
+/*******************************************************************************
+ * Copyright 2023-2024 Edw590
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
 
 package ACD
 
@@ -92,7 +97,7 @@ func AddUpdateCmd(command_info_str string) {
 	}
 	var words_list_param []string = strings.Split(cmd_info[4], "|")
 
-	if (cmd_id <= 0) || (0 == len(types_str)) || (0 == len(words_list_param)) {
+	if (cmd_id <= 0) || (len(types_str) == 0) || (len(words_list_param) == 0) {
 		return
 	}
 
@@ -171,7 +176,7 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 
 	// main_words
 	for i, j := range types_str {
-		if CMDi_TYPE_NONE != j {
+		if j != CMDi_TYPE_NONE {
 			cmd_info_GL.main_words = append(cmd_info_GL.main_words, cmds_types_keywords[types_int[i]][0]...)
 		}
 	}
@@ -223,7 +228,7 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 				words_list[1][words_list_0_len-1][1][0] = "off"
 			}
 			default: {
-				if 2 == len(cmds_types_keywords[types_int[i]]) {
+				if len(cmds_types_keywords[types_int[i]]) == 2 {
 					for ii := range words_list {
 						words_list[ii] = append(words_list[ii], nil)
 						var words_list_i_len int = len(words_list[ii])

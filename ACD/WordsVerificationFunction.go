@@ -1,18 +1,23 @@
-/*
- * Copyright 2021 DADi590
+/*******************************************************************************
+ * Copyright 2023-2024 Edw590
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
 
 package ACD
 
@@ -39,7 +44,7 @@ func chooseCustomIntervals(intervs_map map[int]int, sub_verif_number int, defaul
 	} else {
 		// Check for an index corresponding to either even or odd sub-verifications.
 		var int_to_find int = INDEX_ODD
-		if 0 == (sub_verif_number % 2) {
+		if (sub_verif_number % 2) == 0 {
 			int_to_find = INDEX_EVEN
 		}
 		if interv_temp, ok = intervs_map[int_to_find]; ok {
@@ -55,7 +60,7 @@ func chooseCustomIntervals(intervs_map map[int]int, sub_verif_number int, defaul
 		}
 	}
 
-	if DEFAULT_INDEX == interv {
+	if interv == DEFAULT_INDEX {
 		return default_interv
 	} else {
 		return interv
@@ -238,7 +243,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 	if cmd.exclude_main_words {
 		for i, j := range words_list {
 			for ii, jj := range j {
-				if 0 == len(jj) {
+				if len(jj) == 0 {
 					// If this map is empty, go to the next one
 					continue
 				}
@@ -333,7 +338,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 				//log.Println(index)
 
 				for index_words_map, words_map := range curr_words_condition {
-					if 0 == len(words_map) {
+					if len(words_map) == 0 {
 						// Nothing to check here
 						continue
 					}
@@ -343,7 +348,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 					//log.Println(words_map)
 
 					var use_words_here bool = false
-					if ALL_SUB_VERIFS_INT == words_map[0][0] {
+					if words_map[0][0] == ALL_SUB_VERIFS_INT {
 						use_words_here = true
 					} else {
 						for _, allowed_index := range words_map[0] {
@@ -362,7 +367,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 					anything_searched = true
 
 					for _, word := range words_map[1] {
-						if (NONE == word && !search_NONE_now) || (NONE != word && search_NONE_now) {
+						if (word == NONE && !search_NONE_now) || (word != NONE && search_NONE_now) {
 							// Go to the next word if the current one on the list is NONE (can't check for that in the
 							// beginning, as that's what's found before starting to search: nothing --> NONE) and if
 							// it's not supposed to be checked for special commands right now, or vice-versa.
@@ -373,7 +378,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 						switch word {
 						case IS_DIGIT:
 							{
-								if _, err := strconv.Atoi(sentence[index]); nil == err {
+								if _, err := strconv.Atoi(sentence[index]); err == nil {
 									word_detected = true
 								}
 							}
@@ -490,10 +495,10 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 						}
 					}
 				end_of_loops:
-					if -1 != idx_array_mut_excl_words {
+					if idx_array_mut_excl_words != -1 {
 						for i := range words_list {
 							for ii := range words_list[i] {
-								if 0 == len(words_list[i][ii]) {
+								if len(words_list[i][ii]) == 0 {
 									continue
 								}
 								for iii := 0; iii < len(words_list[i][ii][1]); iii++ {
@@ -516,7 +521,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 					// If it's to exclude from the 'words_list' the word group found in this sub-verification, check
 					// to see if it's the ALL_SUB_VERIFS_INT command, or if it's only for specific sub-verifications.
 					var exclude_word_found_now bool = false
-					if ALL_SUB_VERIFS_INT == cmd.exclude_word_found_group[0] {
+					if cmd.exclude_word_found_group[0] == ALL_SUB_VERIFS_INT {
 						exclude_word_found_now = true
 					} else {
 						for _, number := range cmd.exclude_word_found_group {
@@ -527,13 +532,13 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 							}
 						}
 					}
-					if exclude_word_found_now && (-1 != word_found_info.index_word_found_map) {
+					if exclude_word_found_now && (word_found_info.index_word_found_map != -1) {
 						var words_to_exclude []interface{} = nil
 						// Full copy of the slice here (I'll be deleting from the original)
 						Utils.CopyFullSLICES(&words_to_exclude, curr_words_condition[word_found_info.index_word_found_map][1])
 
 						for ii := range curr_words_condition {
-							if 0 == len(curr_words_condition[ii]) {
+							if len(curr_words_condition[ii]) == 0 {
 								continue
 							}
 							var word_map *[]interface{} = &curr_words_condition[ii][1]
@@ -552,7 +557,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 
 				var init_index_next_sub_verif_str string = ""
 
-				if 0 != len(cmd.init_indexes_sub_verifs) {
+				if len(cmd.init_indexes_sub_verifs) != 0 {
 					// Here it will check if the next index was specified in the function's parameters.
 					if next_index, ok := cmd.init_indexes_sub_verifs[sub_verification+1]; ok {
 						init_index_next_sub_verif_str = next_index
@@ -580,7 +585,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 					// not true anymore.
 					init_index_next_sub_verif_str = strconv.Itoa(word_found_info.index_word_found)
 				} else if strings.Contains(init_index_next_sub_verif_str, INDEX_WORD_FOUND) {
-					if INDEX_WORD_FOUND == init_index_next_sub_verif_str {
+					if init_index_next_sub_verif_str == INDEX_WORD_FOUND {
 						init_index_next_sub_verif_str = strconv.Itoa(word_found_info.index_word_found)
 					} else if strings.Contains(init_index_next_sub_verif_str, "+") {
 						number, _ := strconv.Atoi(strings.Split(init_index_next_sub_verif_str, "+")[1])
@@ -648,15 +653,15 @@ func checkMainWordsRetConds(results_wordsVerifFunc [][][]interface{}, sentence_w
 			}
 
 			var any_main_word bool = false
-			if (1 == len(main_words_ret_conds[arr_id])) &&
-				(ANY_MAIN_WORD == main_words_ret_conds[arr_id][0]) {
+			if (len(main_words_ret_conds[arr_id]) == 1) &&
+				(main_words_ret_conds[arr_id][0] == ANY_MAIN_WORD) {
 				any_main_word = true
 			}
 			var words_exclude_anyway []string = nil
 			//log.Println("SSSSSSSSSSSSSSS")
 			//log.Println(main_words_ret_conds[arr_id])
 			for _, word := range main_words_ret_conds[arr_id] {
-				if ANY_MAIN_WORD == word {
+				if word == ANY_MAIN_WORD {
 					any_main_word = true
 				} else if strings.HasPrefix(word, "-") {
 					words_exclude_anyway = append(words_exclude_anyway, regexp.MustCompile("[^a-zA-Z]+").ReplaceAllString(word, ""))
