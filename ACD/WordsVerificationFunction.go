@@ -376,19 +376,15 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 
 						// Checking special commands here
 						switch word {
-						case IS_DIGIT:
-							{
+							case IS_DIGIT:
 								if _, err := strconv.Atoi(sentence[index]); err == nil {
 									word_detected = true
 								}
-							}
-						default:
-							{
+							default:
 								// If it's not a special command, just check the word normally
 								if sentence[index] == word {
 									word_detected = true
 								}
-							}
 						}
 
 						if word_detected {
