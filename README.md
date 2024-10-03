@@ -1,14 +1,14 @@
-# AdvancedCommandsDetection
+# Advanced Commands Detection
 Advanced Commands Detection library of V.I.S.O.R.
 
 I made it for my virtual assistant, but it can be used anywhere, not just with my assistant, and in any OS/architecture that Go can compile to (I only have releases for Android in AAR package form because for the other project I just use it as normal code and don't need a library file - only on Android).
 
-This repository is a submodule on the [V.I.S.O.R. - Server Version Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant) project (the main project) and is compiled and used on its [Android version](https://github.com/DADi590/VISOR---A-better-Android-assistant) as an AAR package.
+This repository is a submodule on the [V.I.S.O.R. - A Voice Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant) project (the main project) and is compiled and used on its [Android version](https://github.com/DADi590/VISOR---A-better-Android-assistant) as an AAR package.
 
 ## Notice
 This project is a part of a bigger project, consisting of the following:
 - [V.I.S.O.R. - Android Version Assistant](https://github.com/DADi590/VISOR---A-better-Android-assistant)
-- [V.I.S.O.R. - Server Version Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant)
+- [V.I.S.O.R. - A Voice Assistant](https://github.com/Edw590/VISOR---Server-Version-Assistant)
 
 ## Examples of successful detections
 A list of sentences sent to the module and what it successfully understands at its output:
