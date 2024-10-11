@@ -219,6 +219,7 @@ const ANY_MAIN_WORD string = ";4;"
 // const SPEC_CMD_STOP float32 = -2
 // const SPEC_CMD_FORGET float32 = -3
 const _SPEC_CMD_DONT float32 = -1
+const _SPEC_CMD_NEVER_MIND float32 = -2
 
 const _INVALIDATE_WORD string = ";5;"
 
@@ -255,8 +256,10 @@ func sentenceCmdsDetector(sentence []string, invalidate_detec_words bool) []floa
 
 	for sentence_counter, sentence_word := range sentence {
 
-		if "don't" == sentence_word {
+		if sentence_word == "don't" {
 			detected_cmds = append(detected_cmds, _SPEC_CMD_DONT)
+		} else if sentence_word == "never" && sentence[sentence_counter+1] == "mind" {
+			detected_cmds = append(detected_cmds, _SPEC_CMD_NEVER_MIND)
 		} else if sentence_word == WHATS_IT {
 			float, _ := strconv.ParseFloat(WARN_WHATS_IT, 32)
 			detected_cmds = append(detected_cmds, float32(float))
@@ -363,66 +366,84 @@ func taskFilter(sentence_cmds *[]float32) {
 	const MARK_TERMINATION_FLOAT32 float32 = 0
 
 	for counter, number := range *sentence_cmds {
-		if number == _SPEC_CMD_DONT {
+		if number == _SPEC_CMD_DONT || number == _SPEC_CMD_NEVER_MIND {
+			//log.Println("0 -", *sentence_cmds)
 
-			var delete_number_before_dont bool = false
-
-			// Delete the "don't"
+			// Delete the "don't" or "never mind"
 			(*sentence_cmds)[counter] = MARK_TERMINATION_FLOAT32
 
 			//log.Println("1 -", *sentence_cmds)
-			if counter != len(*sentence_cmds)-1 {
-				// If the next index is within the maximum index (which means, if the next number exists)...
+			if number == _SPEC_CMD_DONT {
+				var delete_number_before bool = false
 
-				var next_number float32 = (*sentence_cmds)[counter+1]
-				if next_number > 0 { // Means if it's a normal command. If it is, assume the below case.
-					// Case: "do [1] and do [2]. no don't do [1]" - delete this, don't, and this. Also, if by any reason
-					// there are more copies of [1], delete them also - if they're before the next element only.
+				if counter != len(*sentence_cmds)-1 {
+					// If the next index is within the maximum index (which means, if the next number exists)...
 
-					var number_mentioned bool = false
-					var pos_next_number []int = nil
-					for counter1, number1 := range *sentence_cmds {
-						if number1 == next_number {
-							pos_next_number = append(pos_next_number, counter1)
-							number_mentioned = true
+					var next_number float32 = (*sentence_cmds)[counter+1]
+					if next_number > 0 { // Means if it's a normal command. If it is, assume the below case.
+						// Case: "do [1] and do [2]. no don't do [1]" - delete this, don't, and this. Also, if by any reason
+						// there are more copies of [1], delete them also - if they're before the next element only.
+
+						var number_mentioned bool = false
+						var pos_next_number []int = nil
+						for counter1, number1 := range *sentence_cmds {
+							if number1 == next_number {
+								pos_next_number = append(pos_next_number, counter1)
+								number_mentioned = true
+							}
+							if counter1 == counter {
+								// Stop when it gets to before the next element
+								break
+							}
 						}
-						if counter1 == counter {
-							// Stop when it gets to before the next element
-							break
-						}
-					}
-					if number_mentioned {
-						// If the number was mentioned before (like [24, 25, 24, -1, 24]), delete all copies and the -1.
-						(*sentence_cmds)[counter+1] = MARK_TERMINATION_FLOAT32
+						if number_mentioned {
+							// If the number was mentioned before (like [24, 25, 24, -1, 24]), delete all copies and the -1.
+							(*sentence_cmds)[counter+1] = MARK_TERMINATION_FLOAT32
 
-						//log.Println("2 -", *sentence_cmds)
+							//log.Println("2 -", *sentence_cmds)
 
-						for _, index_element := range pos_next_number {
-							(*sentence_cmds)[index_element] = MARK_TERMINATION_FLOAT32
+							for _, index_element := range pos_next_number {
+								(*sentence_cmds)[index_element] = MARK_TERMINATION_FLOAT32
+							}
+							//log.Println("3 -", *sentence_cmds)
+						} else {
+							// Else, delete only the element before the current "don't" (if there exists one).
+							// Example: [24, -1, 26, 25, -1, 25, 24] will become [26, 24], because, "do 24, no don't do
+							// it. do 26 and do 25. no don't do 25. do 24."
+							delete_number_before = true
 						}
-						//log.Println("3 -", *sentence_cmds)
 					} else {
-						// Else, delete only the element before the current "don't" (if there exists one).
-						// Example: [24, -1, 26, 25, -1, 25, 24] will become [26, 24], because, "do 24, no don't do
-						// it. do 26 and do 25. no don't do 25. do 24."
-						delete_number_before_dont = true
+						// Else, if it's not a positive number, assume the below case.
+						// Case: "do this, no don't do it, don't do it. do that". Delete only the current "don't" as was done
+						// above and keep doing it (the loop will automatically) until there's only one, which will be the one
+						// used to decide what to delete (done above).
+						// EDIT: confusing. I've set it to delete the number before now. Wasn't working the way it should.
+						delete_number_before = true
+					}
+				} else {
+					// If there's no more elements, there can be previous ones. So delete the previous number to the "don't".
+					// Which would be a "do [1]. no, never mind, don't do it".
+					delete_number_before = true
+				}
+
+				if delete_number_before {
+					// Do it only if there's a normal command before. If it's for example WARN_WHATS_IT, don't delete it.
+					if counter-1 >= 0 && (*sentence_cmds)[counter-1] > 0 {
+						(*sentence_cmds)[counter-1] = MARK_TERMINATION_FLOAT32
+						//log.Println("4 -", *sentence_cmds)
 					}
 				}
-				// Else, if it's not a positive number, assume the below case.
-				// Case: "do this, no don't do it, don't do it. do that". Delete only the current "don't" as was done
-				// above and keep doing it (the loop will automatically) until there's only one, which will be the one
-				// used to decide what to delete (done above).
-			} else {
-				// If there's no more elements, there can be previous ones. So delete the previous number to the "don't".
-				// Which would be a "do [1]. no, never mind, don't do it".
-				delete_number_before_dont = true
-			}
+			} else if number == _SPEC_CMD_NEVER_MIND {
+				// Delete the "never mind"
+				(*sentence_cmds)[counter] = MARK_TERMINATION_FLOAT32
 
-			if delete_number_before_dont {
-				// Do it only if there's a normal command before. If it's for example WARN_WHATS_IT, don't delete it.
-				if counter-1 >= 0 && (*sentence_cmds)[counter-1] > 0 {
-					(*sentence_cmds)[counter-1] = MARK_TERMINATION_FLOAT32
-					//log.Println("4 -", *sentence_cmds)
+				// Delete all the numbers before the "never mind"
+				for counter1 := counter - 1; counter1 >= 0; counter1-- {
+					if (*sentence_cmds)[counter1] > 0 {
+						(*sentence_cmds)[counter1] = MARK_TERMINATION_FLOAT32
+					} else {
+						break
+					}
 				}
 			}
 		}

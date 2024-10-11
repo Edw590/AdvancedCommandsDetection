@@ -27,6 +27,7 @@ A list of sentences sent to the module and what it successfully understands at i
 - "stop the song and play the next one"  -->  stop the current song and play the next one
 - "and the airplane mode too", with last cmd info being "turn on the wifi"  -->  turn on the airplane mode
 - "and now turn it off", with last cmd info being "turn on the wifi"  -->  turn off the Wi-Fi
+- "turn on the mobile data and the bluetooth never mind don't do it turn on the wifi"  -->  turn on the Wi-Fi
 ```
 These are automated test sentences that are tested each time modifications are made to the engine, to be sure it at least remains working as good as it was before the modifications (can only improve or maintain, but never go back).
 

@@ -171,5 +171,12 @@ var commands_tests = [...]commandTestsInfo{
 		invalidate_detec_words: true,
 		prev_cmd_info:          "|",
 		exp_cmd_info:           "news|tell me the|",
+	}, { // 16
+		sentence:               "turn on the mobile data and the bluetooth never mind don't do it turn on the wifi",
+		exp_cmd_list:           "4.00001",
+		remove_repet_cmds:      false,
+		invalidate_detec_words: true,
+		prev_cmd_info:          "|",
+		exp_cmd_info:           "wifi|turn on the|",
 	},
 }
