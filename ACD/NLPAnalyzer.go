@@ -153,7 +153,7 @@ func nlpAnalyzer(sentence *[]string, sentence_str string, nlp_meanings []string)
 	// increment it manually depending on the modifications to the tokens' slice.
 	for counter, token_text := 0, ""; counter < len(tokens); counter++ {
 		token_text = tokens[counter].Text
-		if "'s" == token_text {
+		if token_text == "'s" {
 			// Remove all possessive cases - not helpful yet, so can remove them with no problems, as they just get
 			// things harder because "what's" goes to "what" and "'s" on the NLP tokens detector, but not on the
 			// 'sentence', so the loop doesn't work. Removing the "'s" from the tokens list might help. It doesn't
@@ -242,7 +242,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 
 	// Leave len(*sentence) there and don't assign a variable to it. That way it keeps checking the length, and it's not
 	// needed to increase or decrease based on changes on the 'sentence' (it will calculate the length every time).
-	if "it" == (*sentence)[nlp_sentence_counter] {
+	if (*sentence)[nlp_sentence_counter] == "it" {
 		//log.Println("-------")
 		//log.Println(nlp_sentence_counter)
 		//log.Println(nlp_last_was_an_it)
@@ -351,7 +351,7 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 	// "turn on wifi and and the airplane mode and the flashlight"
 	// When the implementation is changed, swap the places of "on" and "wifi" and check if it still works.
 
-	if "and" == (*sentence)[nlp_sentence_counter] {
+	if (*sentence)[nlp_sentence_counter] == "and" {
 		if nlp_last_was_an_and ||
 			((len(*tokens) > nlp_sentence_counter+1) && strings.HasPrefix((*tokens)[nlp_sentence_counter+1].Tag, "VB")) ||
 			((len(*tokens) > nlp_sentence_counter+2) && strings.HasPrefix((*tokens)[nlp_sentence_counter+2].Tag, "VB")) {

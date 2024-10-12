@@ -246,7 +246,7 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 	//log.Println(cmd_info_GL.words_list)
 
 	// main_words_ret_conds
-	if "" == main_words_ret_conds_str {
+	if main_words_ret_conds_str == "" {
 		cmd_info_GL.main_words_ret_conds = append(cmd_info_GL.main_words_ret_conds, []string{ANY_MAIN_WORD})
 	} else {
 		for _, j := range strings.Split(main_words_ret_conds_str, "|") {

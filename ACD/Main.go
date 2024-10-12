@@ -84,7 +84,7 @@ instead (no protection here), so always call the other one in production code.
 Note: if you find this function exported, know it's just for testing from the main package. Do NOT use it in production.
 */
 func MainInternal(sentence_str string, remove_repet_cmds bool, invalidate_detec_words bool, prev_cmd_info string) string {
-	if "" == strings.TrimSpace(sentence_str) {
+	if strings.TrimSpace(sentence_str) == "" {
 		// If the string is empty on visible characters (space counts as invisible here...), return now, because the
 		// code ahead may not work with strings like that (and some of it does not - panic --> reason I'm returning
 		// here).

@@ -566,7 +566,7 @@ func wordsVerificationFunction(sentence []string, sentence_index int, cmd comman
 					}
 				}
 				// Now check if the index is a number or a special command.
-				if "" == init_index_next_sub_verif_str || strings.Contains(init_index_next_sub_verif_str, INDEX_DEFAULT) {
+				if init_index_next_sub_verif_str == "" || strings.Contains(init_index_next_sub_verif_str, INDEX_DEFAULT) {
 					// If no index was specified or the default one was specified, calculate the next initial index by
 					// calculating an average and summing 0.5.
 					// If it was index 3, it's now 3.5, which is 3 when converted to int. If it was 3.5, it's now 4.

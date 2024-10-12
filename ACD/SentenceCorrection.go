@@ -56,7 +56,7 @@ func sentenceCorrection(sentence_str string, sentence *[]string, before_nlp_anal
 
 	// NOTE ABOUT THIS FUNCTION VS THE FUNCTION BELOW
 	// This one normalizes everything for the entire library. This way one doesn't need to worry, for example, about
-	// checking "don't" or "do not" --> ("do" == sentence[counter] && "not" == sentence[counter+1]) - complication.
+	// checking "don't" or "do not" --> (sentence[counter] == "do" && sentence[counter+1] == "not") - complication.
 	// The one below makes some adjustments for the NLP analyzer to better understand and correct the sentence (have
 	// "what" and "'s" on different tags is unhelpful when the sentence doesn't divide those, nor should it).
 
