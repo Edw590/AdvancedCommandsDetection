@@ -25,8 +25,6 @@ import (
 	"strings"
 
 	"github.com/jdkato/prose/v2"
-
-	"Utils"
 )
 
 //////////////////////////
@@ -162,7 +160,7 @@ func nlpAnalyzer(sentence *[]string, sentence_str string, nlp_meanings []string)
 			// intact. It's just removed from the tokens to synchronize them with the 'sentence' and nothing else. If
 			// possible nothing would be removed... (don't like the idea too much, but no better ideas at the moment).
 
-			Utils.DelElemSLICES(&tokens, counter)
+			DelElemSLICES(&tokens, counter)
 			// Decrement the counter, so we go to the previous, to then be incremented by the loop and go to the
 			// current one, which is now the old next one.
 			counter--
@@ -250,7 +248,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			// If the last word was an "it", it means there are repeated ones - delete all the repeated ones and use
 			// only the first one. If they were not deleted, too many words would be in between the command words -->
 			// no detection.
-			Utils.DelElemSLICES(sentence, nlp_sentence_counter)
+			DelElemSLICES(sentence, nlp_sentence_counter)
 			nlp_sentence_counter-- // And since an element was deleted, decrement the sentence_counter.
 			//log.Println("*****")
 			//log.Println(*sentence)
@@ -265,7 +263,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			if len(nlp_last_name_found) > 1 {
 				for name_index, name := range nlp_last_name_found[1:] {
 					// +1 below because we're starting from [1:].
-					Utils.AddElemSLICES(sentence, name, nlp_sentence_counter+name_index+1)
+					AddElemSLICES(sentence, name, nlp_sentence_counter+name_index+1)
 				}
 			}
 			// Increment the sentence_counter. -1 because it needs to stay at the element before the next. The next
@@ -287,7 +285,7 @@ func replaceIts(sentence *[]string, tokens *[]prose.Token) {
 			(*sentence)[nlp_sentence_counter] = whats_it_list[0]
 			if len(whats_it_list) > 1 {
 				for name_index, name := range whats_it_list[1:] {
-					Utils.AddElemSLICES(sentence, name, nlp_sentence_counter+name_index+1)
+					AddElemSLICES(sentence, name, nlp_sentence_counter+name_index+1)
 				}
 			}
 			nlp_sentence_counter += len(whats_it_list) - 1
@@ -361,7 +359,7 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 			// because the next word is a verb (means after it is said the actual action and not to repeat the previous
 			// one).
 			// Also with +2 because "and then reboot". The verb is the 2nd word here, not the 1st.
-			Utils.DelElemSLICES(sentence, nlp_sentence_counter)
+			DelElemSLICES(sentence, nlp_sentence_counter)
 			nlp_sentence_counter--
 			//log.Println("*****")
 			//log.Println(*sentence)
@@ -379,7 +377,7 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 			if len(nlp_second_last_to_last_non_allowed_tag) > 1 {
 				for non_name_index, non_name := range nlp_second_last_to_last_non_allowed_tag[1:] {
 					// +1 below because we're starting from [1:].
-					Utils.AddElemSLICES(sentence, non_name, nlp_sentence_counter+non_name_index+1)
+					AddElemSLICES(sentence, non_name, nlp_sentence_counter+non_name_index+1)
 				}
 			}
 			nlp_sentence_counter += len(nlp_second_last_to_last_non_allowed_tag) - 1
@@ -402,7 +400,7 @@ func replaceAnds(sentence *[]string, tokens *[]prose.Token) {
 			(*sentence)[nlp_sentence_counter] = whats_and_list[0]
 			if len(whats_and_list) > 1 {
 				for non_name_index, non_name := range whats_and_list[1:] {
-					Utils.AddElemSLICES(sentence, non_name, nlp_sentence_counter+non_name_index+1)
+					AddElemSLICES(sentence, non_name, nlp_sentence_counter+non_name_index+1)
 				}
 			}
 			nlp_sentence_counter += len(whats_and_list) - 1

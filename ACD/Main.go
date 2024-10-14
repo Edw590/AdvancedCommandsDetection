@@ -26,8 +26,6 @@ import (
 	Tcef "github.com/Edw590/TryCatch-go"
 	"strconv"
 	"strings"
-
-	"Utils"
 )
 
 const ERR_CMD_DETECT string = _MOD_RET_ERR_PREFIX + " - "
@@ -455,7 +453,7 @@ func taskFilter(sentence_cmds *[]float32) {
 	for counter := 0; counter < len(*sentence_cmds); {
 		// Don't forget (again) --> the length must checked every time on the loop because it is changed on it
 		if (*sentence_cmds)[counter] == MARK_TERMINATION_FLOAT32 {
-			Utils.DelElemSLICES(sentence_cmds, counter)
+			DelElemSLICES(sentence_cmds, counter)
 		} else {
 			counter++
 		}

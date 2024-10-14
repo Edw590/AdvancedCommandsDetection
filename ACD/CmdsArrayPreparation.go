@@ -24,8 +24,6 @@ package ACD
 import (
 	"strconv"
 	"strings"
-
-	"Utils"
 )
 
 // The value of each TYPE constant is its index on the cmds_types_keywords array
@@ -139,7 +137,7 @@ func RemoveCmd(cmd_id int) {
 	}
 
 	if cmds_GL_index >= 1 {
-		Utils.DelElemSLICES(&cmds_GL, cmds_GL_index)
+		DelElemSLICES(&cmds_GL, cmds_GL_index)
 	}
 }
 
@@ -224,7 +222,7 @@ func loadCmdToArray(cmd_info_GL *commandInfo, types_str []string, main_words_man
 				words_list[0][words_list_0_len-1] = append(words_list[0][words_list_0_len-1], []interface{}{"on"})
 
 				words_list = append(words_list, nil)
-				Utils.CopyFullSLICES(&words_list[1], words_list[0])
+				CopyFullSLICES(&words_list[1], words_list[0])
 				words_list[1][words_list_0_len-1][1][0] = "off"
 			}
 			default: {
