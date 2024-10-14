@@ -50,7 +50,7 @@ var cmds_types_keywords = [...][][]string{
 	{ // 1
 		{"turn", "get", "switch", "put"}, // Default main words for this type to put be on the main_words array
 		{"on", "off"},                    // Other optional words to continue the first ones if necessary (turn... what?
-		// something. what? on or off)
+		                                  // something. what? on or off)
 	},
 	{ // 2
 		{"what's", "what", "tell", "say", "how", "how's", "how're"},

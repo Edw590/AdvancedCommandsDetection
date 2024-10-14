@@ -71,7 +71,7 @@ func main() {
 	var commands = [...][]string{
 		{CMD_TOGGLE_FLASHLIGHT, ACD.CMDi_TYPE_TURN_ONFF, "", "", "flashlight/lantern"},
 		{CMD_ASK_TIME, ACD.CMDi_TYPE_ASK, "", "", "time"},
-		{CMD_ASK_DATE, ACD.CMDi_TYPE_ASK, "", "", "date"},
+		{CMD_ASK_DATE, ACD.CMDi_TYPE_ASK, "", "", "date/day/month/year"},
 		{CMD_TOGGLE_WIFI, ACD.CMDi_TYPE_TURN_ONFF, "", "", "wifi"},
 		{CMD_TOGGLE_MOBILE_DATA, ACD.CMDi_TYPE_TURN_ONFF, "", "", "mobile data"},
 		{CMD_TOGGLE_BLUETOOTH, ACD.CMDi_TYPE_TURN_ONFF, "", "", "bluetooth"},
@@ -79,7 +79,7 @@ func main() {
 		{CMD_END_CALL, ACD.CMDi_TYPE_STOP, "", "", "call"},
 		{CMD_TOGGLE_SPEAKERS, ACD.CMDi_TYPE_TURN_ONFF, "", "", "speaker/speakers"},
 		{CMD_TOGGLE_AIRPLANE_MODE, ACD.CMDi_TYPE_TURN_ONFF, "", "", "airplane mode"},
-		{CMD_ASK_BATTERY_PERCENT, ACD.CMDi_TYPE_ASK, "", "", "battery percentage", "battery status", "battery level"},
+		{CMD_ASK_BATTERY_PERCENT, ACD.CMDi_TYPE_ASK, "", "", "battery percentage/status/level/levels"},
 		{CMD_SHUT_DOWN_DEVICE, ACD.CMDi_TYPE_SHUT_DOWN, "", "", "device/phone"},
 		{CMD_REBOOT_DEVICE, ACD.CMDi_TYPE_REBOOT, "fast", "fast|;4; -fast", "reboot/restart device/phone|device/phone|device/phone recovery|device/phone safe mode|device/phone bootloader"},
 		{CMD_TAKE_PHOTO, ACD.CMDi_TYPE_NONE, "take", "", "picture/photo|frontal picture/photo"},
@@ -117,7 +117,7 @@ func main() {
 	}
 	log.Println("")
 
-	var sentence_str string = "hi how are you turn on the wifi I'm sleepy"
+	var sentence_str string = "what's the battery status"
 	// TO DO: None of these below work decently... Fix them.
 	//var sentence_str string = "" // All done so far!
 
