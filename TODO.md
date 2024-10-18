@@ -31,13 +31,7 @@ manually and hardcode it.
 - Use NLP to exclude other adjectives from the words_list if the only one was said already, for example? (Or a verb or
   whatever) Of course, works only (as said) when there is only and only 1 adjective to form the command.
 
-- "turn airplane mode off and the wifi too" - he doesn't know "turn" is linked to "off". how will he know? as soon as he
-  understands that the command is to {TURN_OFF, something}... --> do this
-
-Another example: "turn wifi on and the airplane mode and the flashlight" - only the Wi-Fi is detected there. Only works
-if "on" is before "wifi" (which is expected, by the current implementation).
-
-And yet another example: "take a frontal and rear picture", which becomes "take a frontal take rear picture" - because
+Example: "take a frontal and rear picture", which becomes "take a frontal take rear picture" - because
 picture is a name, which is not included with the "and" replace function. "take a frontal picture and a rear one"
 doesn't work either. ---> It needs to know it's taking a picture here **to then be informed of its type**! <---
 What I just wrote is a core idea of the supposed implementation!!!

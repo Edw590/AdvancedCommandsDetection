@@ -117,9 +117,9 @@ func main() {
 	}
 	log.Println("")
 
-	var sentence_str string = "what's the battery status"
-	// TO DO: None of these below work decently... Fix them.
-	//var sentence_str string = "" // All done so far!
+	var sentence_str string = "take a frontal picture and a rear picture"
+	// TODO: None of these below work decently... Fix them.
+	//var sentence_str string = "take a frontal picture and a rear picture"
 
 	log.Println(sentence_str) // Just to also see it on the terminal (better than getting back here just to read it)
 	log.Println("To do: " + ACD.MainInternal(sentence_str, false, true, "|"))

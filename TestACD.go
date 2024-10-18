@@ -178,5 +178,12 @@ var commands_tests = [...]commandTestsInfo{
 		invalidate_detec_words: true,
 		prev_cmd_info:          "|",
 		exp_cmd_info:           "wifi|turn on the|",
+	}, { // 17
+		sentence:               "take a frontal picture and a rear picture",
+		exp_cmd_list:           "15.00002, 15.00001",
+		remove_repet_cmds:      false,
+		invalidate_detec_words: true,
+		prev_cmd_info:          "|",
+		exp_cmd_info:           "picture|NOT SURE|",
 	},
 }
