@@ -9,16 +9,6 @@ require (
 	github.com/jdkato/prose/v2 v2.0.0
 )
 
-// Do NOT exclude golang.org/x/mobile,mod,sys,tools from require() even if they seem unused (Gomobile - Android AAR).
-// If they go away, run `go get golang.org/x/mobile/bind` on the main ACD folder. Before that, come here to install
-// Gomobile: https://pkg.go.dev/golang.org/x/mobile/cmd/gomobile.
-// If the lines are not in require(), the app may hang on startup saying.
-
-// golang.org/x/mobile v0.0.0-20231108233038-35478a0c49da // indirect
-// golang.org/x/mod v0.14.0 // indirect
-// golang.org/x/sys v0.14.0 // indirect
-// golang.org/x/tools v0.15.0 // indirect
-
 require (
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/mingrammer/commonregex v1.0.1 // indirect
