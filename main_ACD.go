@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2023-2024 Edw590
+ * Copyright 2023-2025 Edw590
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -67,8 +67,11 @@ func main() {
 	const CMD_TELL_WEATHER string = "26"
 	const CMD_TELL_NEWS string = "27"
 	const CMD_GONNA_SLEEP string = "28"
+	const CMD_HELP_VISION string = "32"
 
 	var commands = [...][]string{
+		// {command ID, types separated by "+", manual main words, return conditions for the main words, list of words
+		//  separated by "|" with optional words separated by "/"} - look at the examples below
 		{CMD_TOGGLE_FLASHLIGHT, ACD.CMDi_TYPE_TURN_ONFF, "", "", "flashlight/lantern"},
 		{CMD_ASK_TIME, ACD.CMDi_TYPE_ASK, "", "", "time"},
 		{CMD_ASK_DATE, ACD.CMDi_TYPE_ASK, "", "", "date/day/month/year"},
@@ -96,6 +99,7 @@ func main() {
 		{CMD_TELL_WEATHER, ACD.CMDi_TYPE_ASK, "", "", "weather"},
 		{CMD_TELL_NEWS, ACD.CMDi_TYPE_ASK, "", "", "news"},
 		{CMD_GONNA_SLEEP, ACD.CMDi_TYPE_WILL_GO, "", "", "sleep"},
+		{CMD_HELP_VISION, ACD.CMDi_TYPE_NONE, "help", "", "this image/picture|image/picture clipboard/copied"},
 	}
 
 	var commands_almost_str []string = nil

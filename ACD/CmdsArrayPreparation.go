@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2023-2024 Edw590
+ * Copyright 2023-2025 Edw590
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -73,7 +73,7 @@ var cmds_types_keywords = [...][][]string{
 		{"start", "begin", "initialize", "commence"},
 	},
 	{ // 9
-		{"will", "gonna", "going", "I'll"},
+		{"will", "gonna", "going", "i'll"},
 	},
 }
 
